@@ -1,0 +1,29 @@
+{
+  "name": "defi_jul2_sol_hd_ts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts/issues"
+  },
+  "homepage": "https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "hardhat": "^2.16.1"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.2",
+    "keccak256": "^1.0.6",
+    "merkletreejs": "^0.3.10"
+  }
+}
