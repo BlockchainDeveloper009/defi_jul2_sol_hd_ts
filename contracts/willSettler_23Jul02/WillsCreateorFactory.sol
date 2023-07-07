@@ -70,6 +70,7 @@ contract WillsCreateorFactory is WWethBase20 {
     mapping(address => bool) public adminrole;
 
     /* Events */
+    event LogDepositReceived(address sender);
     /** 
         @param assetId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
 
@@ -170,6 +171,8 @@ contract WillsCreateorFactory is WWethBase20 {
     }
     
     /**  
+     * Step1: Get Admin access,if yes, then 
+     * Step2: Create Assetts
     @param assetName: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
     @param assetAmount: who gets the funds
     
@@ -276,7 +279,7 @@ contract WillsCreateorFactory is WWethBase20 {
         return address(this).balance;
     }
      /** @dev this function is to initialize the admin role. This will provide the devs with funds 
-     * 
+     * Step3: Create  Will, generates will id,  
     */
     function a_createCryptoVault(
         string memory _assetId,
@@ -473,6 +476,7 @@ contract WillsCreateorFactory is WWethBase20 {
 
     fallback() external payable override {
         // custom function code
+        require(msg.data.length == 0); emit LogDepositReceived(msg.sender); 
     }
 
     receive() external payable override {

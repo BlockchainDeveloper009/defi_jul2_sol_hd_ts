@@ -2,7 +2,7 @@ const { time, loadFixture } = require("@nomicfoundation/hardhat-network-helpers"
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-// const { testData } = require("./testData.js");
+const { testdata_localchain_WillCreator } = require("./testdata_localchain_WillCreator.js");
 
 //import  testData  from "./MockData_willSettler";
 // const  testData = require("./MockData_willSettler");
@@ -39,12 +39,9 @@ describe("WillsCreateorFactory_localhost", function () {
 
       // Contracts are deployed using the first signer/account by default
       const [owner, otherAccount] = await ethers.getSigners();
-      const contracts = [
-        "./artifacts/contracts/src/erc20WWeth/WWethcreateWillsERC20", 
-        "../../../artifacts/contracts/src/erc20WWeth/WWethcreateWillsERC20",
-        "WillsCreateorFactory"];
+      const contracts = ["WillsCreateorFactory"];
         
-      const Lock = await ethers.getContractFactory(contracts[2]);
+      const Lock = await ethers.getContractFactory(contracts[0]);
       const lock = await Lock.deploy();
       console.log('Lock-----bytecode' )
       // console.log('deployTransaction<hash,type,accessList,blockHash,blockNumber,transactionIndex, from, gasPrice, gasLimit, to, value, nonce, data>')
@@ -194,7 +191,7 @@ describe("WillsCreateorFactory_localhost", function () {
             let amt1 = 1 * 10 * 18;
 
             await expect(
-                await lock.createAsset(testData.hhData.data_0.assetName, 
+                await lock.createAsset(testdata_localchain_WillCreator.hhData.data_0.assetName, 
                   testData.hhData.data_0.amount)
                 
               ).to.emit(lock, "assetCreated")
