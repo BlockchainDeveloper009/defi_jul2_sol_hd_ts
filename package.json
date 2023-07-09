@@ -22,6 +22,7 @@
     "hardhat": "^2.16.1"
   },
   "dependencies": {
+    "@ethersproject/providers": "^5.7.2",
     "@openzeppelin/contracts": "^4.9.2",
     "keccak256": "^1.0.6",
     "merkletreejs": "^0.3.10"

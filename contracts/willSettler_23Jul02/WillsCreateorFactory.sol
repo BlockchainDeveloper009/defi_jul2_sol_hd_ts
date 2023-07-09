@@ -47,8 +47,9 @@ contract WillsCreateorFactory is WWethBase20 {
     /* states variables */
     mapping(string => cryptoAssetInfo) public cryptoAssets;
     string[] private s_arr_cryptoAssetIds;
-    uint256 s_assetsCurrentId = 0;
-    uint256 s_currentBondId = 0;
+    uint256 public s_assetsCurrentId = 0;
+    uint256 public s_currentBondId = 0;
+    uint256 public s_Contract_birthdate;
     uint256 private immutable i_entranceFee = 1;
 
     bool private s_DoesAdminExist;
@@ -63,13 +64,16 @@ contract WillsCreateorFactory is WWethBase20 {
     willlInfo[] private s_willsinExistence;
 
     mapping(address => willlInfo[]) private userCreatedWills;
-    mapping(uint => uint[]) private s_WillsByMaturityDate;
-    mapping(uint => uint) private s_MaturityDates;
-
+    /* contains maturity date and contract ids mature on a certain day*/
+    mapping(uint256 => uint256[]) private s_WillsByMaturityDate;
+    
+    mapping(uint256 => uint256) public s_MaturityDates;
+    uint256[] public s_MaturityDates_keys;
+    
     //this is to create an ADMIN role
     mapping(address => bool) public adminrole;
 
-    /* Events */
+    /* #Events */
     event LogDepositReceived(address sender);
     /** 
         @param assetId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
@@ -169,6 +173,20 @@ contract WillsCreateorFactory is WWethBase20 {
             // using a map to 
         return false;
     }
+        /**
+         * 
+         * @param _birthdate :contract start date for testing purpose
+         */
+    function setContractBirthDate(uint256 _birthdate) public {
+        s_Contract_birthdate = _birthdate;
+    }
+
+    function getContractBirthDate() public view returns (uint256 _birthdate) {
+        return s_Contract_birthdate;
+    }
+    //1690606800 july-29
+    //1690693200 july-30 12 am  //86,400 (1 day in seconds)
+    //https://www.unixtimestamp.com/index.php?ref=theredish.com%2Fweb
     
     /**  
      * Step1: Get Admin access,if yes, then 
@@ -176,10 +194,9 @@ contract WillsCreateorFactory is WWethBase20 {
     @param assetName: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
     @param assetAmount: who gets the funds
     
-    
     */
 
-    function createAsset(
+    function a_createAssets(
         string memory assetName,
         uint256 assetAmount
     ) public {
@@ -231,43 +248,43 @@ contract WillsCreateorFactory is WWethBase20 {
         return s_arr_cryptoAssetIds;
     }
 
-    function init() external virtual {
+    function a_init_Assets() external virtual {
         uint256 amt1 = 1 * 10 * 18;
         uint256 amt2 = 2 * 10 * 18;
         uint256 amt3 = 3 * 10 * 18;
 
-        createAsset("t1", amt1);
-        createAsset("t2", amt2);
-        createAsset("t3", amt3);
+        a_createAssets("t1", amt1);
+        a_createAssets("t2", amt2);
+        a_createAssets("t3", amt3);
         uint256 amt4 = 3 * 10 * 1;
 
-        createAsset("t4", amt4);
+        a_createAssets("t4", amt4);
         // createCryptoVault("ca-1", 7, 7,100,["0x17F6AD8Ef982297579C203069C1DbfFE4348c372"]);
     }
 
-    function createTxn_zero() external payable virtual {
+    function b_createTxn_zero() external payable virtual {
         a_createCryptoVault(
             "ca-0",
-            20221210,
-            20221220,
+            1690606800,
+            1690693200,
             payable(0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2)
         );
     }
 
-    function createTxn_one() external payable virtual {
+    function b_createTxn_one() external payable virtual {
         a_createCryptoVault(
             "ca-1",
-            20221210,
-            20221220,
+            1690606800,
+            1690866000,
             payable(0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2)
         );
     }
 
-    function createTxn_Metamask() external payable {
+    function b_createTxn_Metamask() external payable {
         a_createCryptoVault(
             "ca-3",
-            20221210,
-            20221220,
+            1690606800,  //29-jul;
+            1693371600,     //30-jul
             payable(0xf821142CC270dAb63767cFAae15dC36D1b043348)
         );
     }
@@ -308,8 +325,23 @@ contract WillsCreateorFactory is WWethBase20 {
         userCreatedWills[msg.sender].push(s_willlInfo[s_currentBondId]);
         uint dateHash = generateHash(willMaturityDate);
         s_WillsByMaturityDate[willMaturityDate].push(s_currentBondId);
-        //s_maturityDates.push(s_willlInfo);
-        s_MaturityDates[willMaturityDate]++;
+        
+        
+        if(s_MaturityDates[willMaturityDate] > 0 ){
+// maturity date already exists
+
+        console.log("s_MaturityDates[willMaturityDate]");
+        console.log(s_MaturityDates[willMaturityDate]);
+        s_MaturityDates[willMaturityDate] = s_WillsByMaturityDate[willMaturityDate].length;
+        console.log("s_MaturityDates[willMaturityDate]");
+        console.log(s_MaturityDates[willMaturityDate]);
+        }else{
+            //new maturity date found and thereofre adding to the array
+            console.log(s_MaturityDates[willMaturityDate]);
+            console.log("adding will maturity");
+            s_MaturityDates_keys.push(willMaturityDate);
+        }
+        
         s_willsinExistence.push(
             willlInfo(
                 s_currentBondId,
@@ -449,6 +481,7 @@ contract WillsCreateorFactory is WWethBase20 {
         if (s_willlInfo[willId].s_baseStatus == baseStatus.Settled) {
             return "Settled"; //Started, Matured, Settled
         }
+        return "InvalidStatus";
     }
 
              /**  
@@ -487,28 +520,33 @@ contract WillsCreateorFactory is WWethBase20 {
         return i_entranceFee;
     }
 
-    function getMaturityDates() public {}
+     function getMaturityDates  () public view returns (uint256[] memory){
+       for(uint256 i=0; i< s_MaturityDates_keys.length; i++){
+           console.log(s_MaturityDates_keys[i]);
+       }
+       return s_MaturityDates_keys;
+     }
 
-    function getWillsByMaturityDates()
-        public
-        view
-        returns (willsByMaturitydates[] memory)
-    {
-        willsByMaturitydates[] memory loc;
-        int k = 0;
-        // for(uint i=0;i<s_WillsByMaturityDate.length;i++)
-        // {
+    // function getWillsByMaturityDates()
+    //     public
+    //     view
+    //     returns (willsByMaturitydates[] memory)
+    // {
+    //     willsByMaturitydates[] memory loc;
+    //     int k = 0;
+    //     for(uint i=0;i<s_WillsByMaturityDate.length;i++)
+    //     {
 
-        //     for(uint j=0;j< s_WillsByMaturityDate[s_MaturityDates[i]].length; j++)
-        //     {
-        //         loc[k].maturityDate = s_WillsByMaturityDate[i];
-        //         loc[k].willId =  s_WillsByMaturityDate[s_MaturityDates[i]][j];
-        //     }
+    //         for(uint j=0;j< s_WillsByMaturityDate[s_MaturityDates[i]].length; j++)
+    //         {
+    //             loc[k].maturityDate = s_WillsByMaturityDate[i];
+    //             loc[k].willId =  s_WillsByMaturityDate[s_MaturityDates[i]][j];
+    //         }
 
-        // }
+    //     }
 
-        return loc;
-    }
+    //     return loc;
+    // }
 
     function generateHash(uint matDate) public returns (uint) {
         return uint(keccak256(abi.encodePacked(matDate)));
