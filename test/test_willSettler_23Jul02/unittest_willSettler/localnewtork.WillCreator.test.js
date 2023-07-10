@@ -225,7 +225,13 @@ console.log(`contract1Address= '${contract1Address}'`)
 
 
 
-    describe.only("create_assets",  function () {
+    describe("create_assets_wills",  function () {
+let _lock;
+      before(async function () {
+        const { lock } = await loadFixture(deployOneYearLockFixture);
+        
+        _lock = lock;
+      });
 
           // it("print vars", async function () {
           //   const { lock, unlockTime, lockedAmount,  owner, otherAccount, thirdAcct } = await loadFixture(
@@ -277,14 +283,14 @@ console.log(`contract1Address= '${contract1Address}'`)
           captureWarnings();
 
           it("test1", async function () {
-            const { lock, unlockTime } = await loadFixture(deployOneYearLockFixture);
+            
             // const contractAddress = deployedContractAddr;
             // printToConsole(`contractADdr: ${contractAddress}`)
             // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
 
           //  await lock.init();
 
-          let beforeCreatingAsset = await lock.getAllAsset();
+          let beforeCreatingAsset = await _lock.getAllAsset();
           if(IsAssetAlreadyCreated(beforeCreatingAsset, 'ca-0')){
             console.warn(`asset already exists ; 'ca-0'`);
 
@@ -310,10 +316,10 @@ console.log(`contract1Address= '${contract1Address}'`)
             
           // });
       
-          it("#2. ca-0 asset Creation", async function () {
+          it("#0. ca-0 asset Creation", async function () {
             
 
-            const { lock, unlockTime } = await loadFixture(deployOneYearLockFixture);
+            
             let amt1 = 1 * 10 * 18;
 
             printToConsole("#1. assetCreation","expected to emit events");
@@ -321,24 +327,27 @@ console.log(`contract1Address= '${contract1Address}'`)
             console.log(`testdata_localchain_WillCreator.hhData.data_0.assetId = '${testdata_localchain_WillCreator.hhData.data_0.assetId}'`);
             console.log(`testdata_localchain_WillCreator.hhData.data_0.assetName = '${testdata_localchain_WillCreator.hhData.data_0.assetName}'`);
             console.log(`testdata_localchain_WillCreator.hhData.data_0.amount = '${testdata_localchain_WillCreator.hhData.data_0.amount}'`);
-            let beforeCreatingAsset = await lock.getAllAsset();
+            let beforeCreatingAsset = await _lock.getAllAsset();
             if(IsAssetAlreadyCreated(beforeCreatingAsset, testdata_localchain_WillCreator.hhData.data_0.assetId)){
 
               //stop the test
               throw new Error(`asset already exists ; '${testdata_localchain_WillCreator.hhData.data_0.assetId}'`);
             }
-
+            let currentAsstId = await _lock.getNextAssetId();
+           console.log(`currentAsstId = '${currentAsstId}'`)
+            expect(currentAsstId).to.equal(0);
+          
             await expect(
-                await lock.a_createAssets(testdata_localchain_WillCreator.hhData.data_0.assetName, 
+                await _lock.a_createAssets(testdata_localchain_WillCreator.hhData.data_0.assetName, 
                   testdata_localchain_WillCreator.hhData.data_0.amount)
                 
-              ).to.emit(lock, "assetCreated")
+              ).to.emit(_lock, "assetCreated")
               .withArgs(
                 testdata_localchain_WillCreator.hhData.data_0.assetId,
                 testdata_localchain_WillCreator.hhData.data_0.assetName,
               testdata_localchain_WillCreator.hhData.data_0.amount);  
 
-                                                                                          //  const {tx, hash, value} = await lock.a_createAssets("t0", amt1);
+                                                                                          //  const {tx, hash, value} = await _lock.a_createAssets("t0", amt1);
 
                                                                                           //  printToConsole(hash);
                                                                                           //  console.log(value.toString());
@@ -351,7 +360,7 @@ console.log(`contract1Address= '${contract1Address}'`)
              
             
             // check asset available for will to use
-          const result = await lock.checkAssetisAvailable('ca-0');    
+          const result = await _lock.checkAssetisAvailable('ca-0');    
           printToConsole(result);
             expect(result).to.equal(true);
             
@@ -359,26 +368,33 @@ console.log(`contract1Address= '${contract1Address}'`)
       
           it("#3. 'ca-1' asset creation", async function () {
             
-            const { lock } = await loadFixture(deployOneYearLockFixture);
+            
             let amt2 = 2 * 10 * 18;
             const eventName='assetCreated'
             
             console.log(`testdata_localchain_WillCreator.hhData.data_1.assetId = '${testdata_localchain_WillCreator.hhData.data_1.assetId}'`);
             console.log(`testdata_localchain_WillCreator.hhData.data_1.assetName = '${testdata_localchain_WillCreator.hhData.data_1.assetName}'`);
             console.log(`testdata_localchain_WillCreator.hhData.data_1.amount = '${testdata_localchain_WillCreator.hhData.data_1.amount}'`);
-            let beforeCreatingAsset = await lock.getAllAsset();
+
+            let currentAsstId = await _lock.getNextAssetId();
+            console.log(`currentAsstId = '${currentAsstId}'`)
+            expect(currentAsstId).to.equal(1);
+
+            let beforeCreatingAsset = await _lock.getAllAsset();
             if(IsAssetAlreadyCreated(beforeCreatingAsset, testdata_localchain_WillCreator.hhData.data_1.assetId)){
 
               //stop the test
               throw new Error(`asset already exists ; '${testdata_localchain_WillCreator.hhData.data_1.assetId}'`);
+            }else{
+
             }
             
             
               await expect(
-                await lock.a_createAssets(testdata_localchain_WillCreator.hhData.data_1.assetName, 
+                await _lock.a_createAssets(testdata_localchain_WillCreator.hhData.data_1.assetName, 
                   testdata_localchain_WillCreator.hhData.data_1.amount)
                 
-              ).to.emit(lock, "assetCreated")
+              ).to.emit(_lock, "assetCreated")
               .withArgs(
                 testdata_localchain_WillCreator.hhData.data_1.assetId,
                 testdata_localchain_WillCreator.hhData.data_1.assetName,
@@ -408,16 +424,22 @@ console.log(`contract1Address= '${contract1Address}'`)
             
             printToConsole(`does 'ca-1' exist? --> 
             '${testdata_localchain_WillCreator.hhData.data_1.assetId}'`);
-let result = await lock.checkAssetisAvailable
+let result = await _lock.checkAssetisAvailable
 (testdata_localchain_WillCreator.hhData.data_1.assetId);
 printToConsole('ca-1',result);
             expect(result).to.equal(true);
           });
+
           it(`#4. CreateAsset - '${testdata_localchain_WillCreator.hhData.data_2.assetId}'!`, async function () {
-            const { lock } = await loadFixture(deployOneYearLockFixture);
+            
             let amt3 = 3 * 10 * 18;
+
+            let currentAsstId = await _lock.getNextAssetId();
+            console.log(`currentAsstId = '${currentAsstId}'`)
+            expect(currentAsstId).to.equal(2);
+
             //returns all Assets
-            let beforeCreatingAsset = await lock.getAllAsset();
+            let beforeCreatingAsset = await _lock.getAllAsset();
             if(IsAssetAlreadyCreated(beforeCreatingAsset, testdata_localchain_WillCreator.hhData.data_2.assetId)){
 
               //stop the test
@@ -426,15 +448,15 @@ printToConsole('ca-1',result);
             
                        
             await expect(
-              await lock.a_createAssets(testdata_localchain_WillCreator.hhData.data_2.assetName, 
+              await _lock.a_createAssets(testdata_localchain_WillCreator.hhData.data_2.assetName, 
                 testdata_localchain_WillCreator.hhData.data_2.amount)
               
-            ).to.emit(lock, "assetCreated")
+            ).to.emit(_lock, "assetCreated")
             .withArgs(testdata_localchain_WillCreator.hhData.data_2.assetId,
               testdata_localchain_WillCreator.hhData.data_2.assetName,
               testdata_localchain_WillCreator.hhData.data_2.amount); // We accept any value as `when` arg
              
-              let result = await lock.checkAssetisAvailable
+              let result = await _lock.checkAssetisAvailable
               (testdata_localchain_WillCreator.hhData.data_2.assetId);
               printToConsole('ca-2',result);
               
@@ -445,26 +467,73 @@ printToConsole('ca-1',result);
 
 
           it("#5. create_test_a_createCryptoVault_0", async function () {
-            const { lock } = await loadFixture(deployOneYearLockFixture);
+            
 
-            let amt1 = 1 * 10 * 18;
-            var k = await lock.a_createCryptoVault(
-              testdata_localchain_WillCreator.hhData.data_0.assetId,
-              testdata_localchain_WillCreator.hhData.data_0.willStartDate,
-              testdata_localchain_WillCreator.hhData.data_0.willEndDate,
-              testdata_localchain_WillCreator.hhData.data_0.hardhat_BenefitorAddr
-            );
-            console.log(`k--val`);
-            console.log(k)
-            await expect(k
-            ).to.emit(lock, "willCreated")
+            
+            console.log(`testdata_localchain_WillCreator.hhData.data_0.assetId = '${testdata_localchain_WillCreator.hhData.data_0.assetId}'`);
+            console.log(`testdata_localchain_WillCreator.hhData.data_0.willStartDate = '${testdata_localchain_WillCreator.hhData.data_0.willStartDate}'`);
+            console.log(`testdata_localchain_WillCreator.hhData.data_0.willMaturityDate = '${testdata_localchain_WillCreator.hhData.data_0.willMaturityDate}'`);
+            console.log(`testdata_localchain_WillCreator.hhData.data_0.Benefitors = '${testdata_localchain_WillCreator.hhData.data_0.Benefitors}'`);
+            const ONE_GWEI = 1_000_000_000;//ethers.utils.parseEther("1");
+            // var k = await _lock.a_createCryptoVault(
+            //   testdata_localchain_WillCreator.hhData.data_0.assetId,
+            //   testdata_localchain_WillCreator.hhData.data_0.willStartDate,
+            //   testdata_localchain_WillCreator.hhData.data_0.willEndDate,
+            //   testdata_localchain_WillCreator.hhData.data_0.hardhat_BenefitorAddr,
+            //   { value: ONE_GWEI }
+            // );
+            // k.wait();
+            // console.log(`k--val`);
+            // console.log(k)
+            //expect(k).to.be.an.instanceOf(Promise);
+            await expect(
+              await _lock.a_createCryptoVault(
+                testdata_localchain_WillCreator.hhData.data_0.assetId,
+                testdata_localchain_WillCreator.hhData.data_0.willStartDate,
+                testdata_localchain_WillCreator.hhData.data_0.willMaturityDate,
+                testdata_localchain_WillCreator.hhData.data_0.Benefitors,
+                { value: ONE_GWEI }
+              )
+
+            ).to.emit(_lock, "willCreated")
             .withArgs( testdata_localchain_WillCreator.hhData.data_0.assetId, 
             testdata_localchain_WillCreator.hhData.data_0.willStartDate, 
-            testdata_localchain_WillCreator.hhData.data_0willEndDate,
+            testdata_localchain_WillCreator.hhData.data_0.willMaturityDate,
             0); // We accept any value as `when` arg
             
            
           });
+
+          it("#6. recreate_test_a_createCryptoVault_0", async function () {
+            
+        
+            await _lock.a_createCryptoVault(
+              testdata_localchain_WillCreator.hhData.data_0.assetId,
+              testdata_localchain_WillCreator.hhData.data_0.willStartDate,
+              testdata_localchain_WillCreator.hhData.data_0.willMaturityDate,
+              testdata_localchain_WillCreator.hhData.data_0.Benefitors
+              
+            );
+          }); 
+          it("#7. create_txn#1   _expectEvent", async function () {
+            
+            
+            await expect(
+              await _lock.a_createCryptoVault(
+                testdata_localchain_WillCreator.hhData.data_1.assetId,
+                testdata_localchain_WillCreator.hhData.data_1.willStartDate,
+                testdata_localchain_WillCreator.hhData.data_1.willMaturityDate,
+                testdata_localchain_WillCreator.hhData.data_1.Benefitors,
+                { value: ONE_GWEI }
+              )
+
+            ).to.emit(_lock, "willCreated")
+            .withArgs( testdata_localchain_WillCreator.hhData.data_1.assetId, 
+            testdata_localchain_WillCreator.hhData.data_1.willStartDate, 
+            testdata_localchain_WillCreator.hhData.data_1.willMaturityDate,
+            1); // We accept any value as `when` arg
+    
+          }); 
 
          
     
@@ -472,45 +541,1139 @@ printToConsole('ca-1',result);
 
 
 
-    describe("create_wills", function(){
+    describe.only("post_of_create_wills", function(){
+      let _lock;
+      let owner;
+      let contractAbi;
+      let contract1Address ;
+      let contractName;
+      before(async function () {
+        //const provider = ethers.provider;
+        // contractAbi is passed from fixture, its already tested            console.log(contractAbi)
+          //      const contract = new ethers.Contract(contract1Address, contractAbi, provider);
 
-      it("#6. recreate_test_a_createCryptoVault_0", async function () {
-            
-        const { lock } = await loadFixture(deployOneYearLockFixture);
-        await lock.a_createCryptoVault(
-          testdata_localchain_WillCreator.hhData.data_0.assetId,
-          testdata_localchain_WillCreator.hhData.data_0.willStartDate,
-          testdata_localchain_WillCreator.hhData.data_0.willEndDate,
-          testdata_localchain_WillCreator.hhData.data_0.hardhat_BenefitorAddr
-          
-        );
-      }); 
-      it("#7. a_createCryptoVault1_expectEvent", async function () {
+        contract1Address = '0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f';
+        contractName = "WillsCreateorFactory";
+        //const contractArtifact = await artifacts.readArtifact(contractName);
+        contractAbi = [
+          {
+            "inputs": [],
+            "name": "willCreatorFactory__NotEnoughETHEntered",
+            "type": "error"
+          },
+          {
+            "inputs": [],
+            "name": "willCreatorFactory__UpkeepNotNeeded",
+            "type": "error"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+              },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "spender",
+                "type": "address"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+              }
+            ],
+            "name": "Approval",
+            "type": "event"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+              }
+            ],
+            "name": "Deposit",
+            "type": "event"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": false,
+                "internalType": "address",
+                "name": "sender",
+                "type": "address"
+              }
+            ],
+            "name": "LogDepositReceived",
+            "type": "event"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "from",
+                "type": "address"
+              },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "to",
+                "type": "address"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+              }
+            ],
+            "name": "Transfer",
+            "type": "event"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+              }
+            ],
+            "name": "Withdraw",
+            "type": "event"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": false,
+                "internalType": "string",
+                "name": "assetId",
+                "type": "string"
+              },
+              {
+                "indexed": false,
+                "internalType": "string",
+                "name": "assetName",
+                "type": "string"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "assetAmount",
+                "type": "uint256"
+              }
+            ],
+            "name": "assetCreated",
+            "type": "event"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": false,
+                "internalType": "string",
+                "name": "willofPropertyName",
+                "type": "string"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "willStartDate",
+                "type": "uint256"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "willMaturityDate",
+                "type": "uint256"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "cryptoWillId",
+                "type": "uint256"
+              }
+            ],
+            "name": "willCreated",
+            "type": "event"
+          },
+          {
+            "anonymous": false,
+            "inputs": [
+              {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "cryptoWillId",
+                "type": "uint256"
+              },
+              {
+                "indexed": true,
+                "internalType": "address",
+                "name": "benefitor",
+                "type": "address"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "willMaturityDate",
+                "type": "uint256"
+              },
+              {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "willAmount",
+                "type": "uint256"
+              }
+            ],
+            "name": "willSettled",
+            "type": "event"
+          },
+          {
+            "stateMutability": "payable",
+            "type": "fallback"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "assetName",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "assetAmount",
+                "type": "uint256"
+              }
+            ],
+            "name": "a_createAssets",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "_assetId",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "willStartDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "willMaturityDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address payable",
+                "name": "Benefitors",
+                "type": "address"
+              }
+            ],
+            "name": "a_createCryptoVault",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "a_init_Assets",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "addADMINrole",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "name": "adminrole",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "spender",
+                "type": "address"
+              }
+            ],
+            "name": "allowance",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "spender",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+              }
+            ],
+            "name": "approve",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "b_createTxn_Metamask",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "b_createTxn_one",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "b_createTxn_zero",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+              }
+            ],
+            "name": "balanceOf",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "c_getContractBalance",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "_assetId",
+                "type": "string"
+              }
+            ],
+            "name": "checkAssetisAvailable",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "checkIfAddminRoleIsPresent",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "locId",
+                "type": "string"
+              }
+            ],
+            "name": "check_position_s_arr_cryptoAssetIds",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "locId",
+                "type": "string"
+              }
+            ],
+            "name": "check_position_s_arr_cryptoAssetIds_expensive",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+              }
+            ],
+            "name": "cryptoAssets",
+            "outputs": [
+              {
+                "internalType": "string",
+                "name": "AssetId",
+                "type": "string"
+              },
+              {
+                "internalType": "string",
+                "name": "Name",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "bool",
+                "name": "isAvailable",
+                "type": "bool"
+              },
+              {
+                "internalType": "enum WWethBase20.cryptoAssetStatus",
+                "name": "assetStatus",
+                "type": "uint8"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "decimals",
+            "outputs": [
+              {
+                "internalType": "uint8",
+                "name": "",
+                "type": "uint8"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "spender",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "subtractedValue",
+                "type": "uint256"
+              }
+            ],
+            "name": "decreaseAllowance",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "deposit",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "depositWithCharges",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "matDate",
+                "type": "uint256"
+              }
+            ],
+            "name": "generateHash",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "pure",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "getAllAsset",
+            "outputs": [
+              {
+                "internalType": "string[]",
+                "name": "",
+                "type": "string[]"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "getAllBonds",
+            "outputs": [
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "willId",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "assetId",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "willStartDate",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "willMaturityDate",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "willOwner",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "willManager",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address payable",
+                    "name": "Benefitors",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "enum WWethBase20.baseStatus",
+                    "name": "s_baseStatus",
+                    "type": "uint8"
+                  }
+                ],
+                "internalType": "struct WWethBase20.willlInfo[]",
+                "name": "",
+                "type": "tuple[]"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "string",
+                "name": "_assetId",
+                "type": "string"
+              }
+            ],
+            "name": "getAssetStatus",
+            "outputs": [
+              {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "getContractBirthDate",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "_birthdate",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "getEntranceFee",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "getMaturityDates",
+            "outputs": [
+              {
+                "internalType": "uint256[]",
+                "name": "",
+                "type": "uint256[]"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "getNextAssetId",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "getNextWillId",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "addr",
+                "type": "address"
+              }
+            ],
+            "name": "getUserCreatedBonds",
+            "outputs": [
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "willId",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "assetId",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "willStartDate",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "willMaturityDate",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "willOwner",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "willManager",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "address payable",
+                    "name": "Benefitors",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "enum WWethBase20.baseStatus",
+                    "name": "s_baseStatus",
+                    "type": "uint8"
+                  }
+                ],
+                "internalType": "struct WWethBase20.willlInfo[]",
+                "name": "",
+                "type": "tuple[]"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "willId",
+                "type": "uint256"
+              }
+            ],
+            "name": "getWillStatus",
+            "outputs": [
+              {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "spender",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "addedValue",
+                "type": "uint256"
+              }
+            ],
+            "name": "increaseAllowance",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "name",
+            "outputs": [
+              {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "s_Contract_birthdate",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "name": "s_MaturityDates",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "name": "s_MaturityDates_keys",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "s_assetsCurrentId",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "s_currentBondId",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "name": "s_willlInfo",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "willId",
+                "type": "uint256"
+              },
+              {
+                "internalType": "string",
+                "name": "assetId",
+                "type": "string"
+              },
+              {
+                "internalType": "uint256",
+                "name": "willStartDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "willMaturityDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "willOwner",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "willManager",
+                "type": "address"
+              },
+              {
+                "internalType": "address payable",
+                "name": "Benefitors",
+                "type": "address"
+              },
+              {
+                "internalType": "enum WWethBase20.baseStatus",
+                "name": "s_baseStatus",
+                "type": "uint8"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "_birthdate",
+                "type": "uint256"
+              }
+            ],
+            "name": "setContractBirthDate",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "willId",
+                "type": "uint256"
+              }
+            ],
+            "name": "settleAssets",
+            "outputs": [],
+            "stateMutability": "payable",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "symbol",
+            "outputs": [
+              {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [],
+            "name": "totalSupply",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "to",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+              }
+            ],
+            "name": "transfer",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "from",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "to",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+              }
+            ],
+            "name": "transferFrom",
+            "outputs": [
+              {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+              }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "inputs": [
+              {
+                "internalType": "uint256",
+                "name": "_amount",
+                "type": "uint256"
+              }
+            ],
+            "name": "withDraw",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+          },
+          {
+            "stateMutability": "payable",
+            "type": "receive"
+          }
+        ] //contractArtifact.contractAbi;
+        console.log(`in before contract just to print contractAbi`)
         
-        const { lock } = await loadFixture(deployOneYearLockFixture);
-        await lock.a_createCryptoVault(
-          testdata_localchain_WillCreator.hhData.data_1.assetId,
-          testdata_localchain_WillCreator.hhData.data_1.willStartDate,
-          testdata_localchain_WillCreator.hhData.data_1.willEndDate,
-          testdata_localchain_WillCreator.hhData.data_1.hardhat_BenefitorAddr,
-          
+        _lock = new ethers.Contract(contract1Address,contractAbi, ethers.provider )
+        owner = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
+      });
 
-          
-        );
+    
 
-      }); 
-
-      it("#8. a_createCryptoVault1_expectEvent", async function () {
+      it("#8. verify Next Ids after 2 asset, 2 will ", async function () {
+        console.log(`calling to get Nextasset id`)
         
-        const { lock } = await loadFixture(deployOneYearLockFixture);
-        console.log('dummy test')
+        let nextAssetid = await _lock.getNextAssetId()
+        console.log(`calling to get NextWill id`)
+        let nextWillid = await _lock.getNextWillId()
+
+        expect(nextAssetid).to.equal(2);
+
+        expect(nextWillid).to.equal(2);
+        
 
       }); 
-
+      it("#9. get all Assets", async function () {
+        
+        
+        let allAssets = await _lock.getAllAsset();
+        expect(allAssets.length).to.be(2);
+        
+          //printToConsole(await lock.getAllBonds());
+      });
       it("#9. get all Wills", async function () {
         
-        const { lock } = await loadFixture(deployOneYearLockFixture);
-        let userCreatedBonds = await lock.getUserCreatedBonds(lock.owner.address);
+        
+        let allWills = await _lock.getAllBonds();
+        expect(allWills.length).to.be(2);
         
           //printToConsole(await lock.getAllBonds());
       });
@@ -523,24 +1686,19 @@ printToConsole('ca-1',result);
         // Debond-bank
         // Debond-Exchange
         // 
-        const { lock,owner } = await loadFixture(deployOneYearLockFixture);
+        
         //const userCreatedBonds  = await lock.getUserCreatedBonds(owner.address);
         const t  = await lock.getUserCreatedBonds(owner.address);
 
+        let contractInstance_Addr_july9_355 = '0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f'
+        let contractAbi_july9_355 = '0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f'
         printToConsole(`t --> '${t}'`)
 
       }); 
 
-      it("getTransactionCount", async function () {
-        // debond
-        // Debond-Token
-        // Debond-Governace
-        // Debond-Bank
-        // Debond-oracle
-        // Debond-bank
-        // Debond-Exchange
-        // 
-        const { lock,owner } = await loadFixture(deployOneYearLockFixture);
+      it("getTransactionCount for an User", async function () {
+
+        
         const userCreatedBonds  = await lock.getUserCreatedBonds(owner.address);
         console.log('----');
     //    console.log(web3.eth.getTransactionCount);
@@ -550,7 +1708,7 @@ printToConsole('ca-1',result);
 
       it("#10.getContractBalance", async function () {
   
-        const { lock,owner } = await loadFixture(deployOneYearLockFixture);
+        
         //const contractBalance  = await lock.getBalance(lock.target);
         const contractBalance  = await lock.c_getContractBalance();
         console.log('----');
@@ -563,9 +1721,8 @@ printToConsole('ca-1',result);
 
       it("queryEvents", async function () {
 
-
-        const { lock,owner, contractAbi,contract1Address } = await loadFixture(deployOneYearLockFixture);
         
+
         
         const provider = ethers.provider;
 // contractAbi is passed from fixture, its already tested            console.log(contractAbi)
@@ -584,7 +1741,7 @@ printToConsole('ca-1',result);
       }); 
 
       it("print all Txns in this run", async function () {
-        const { lock, unlockTime , contract1Address} = await loadFixture(deployOneYearLockFixture);
+        
         // const contractAddress = deployedContractAddr;
         // printToConsole(`contractADdr: ${contractAddress}`)
         // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);

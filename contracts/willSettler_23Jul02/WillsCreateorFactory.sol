@@ -47,8 +47,8 @@ contract WillsCreateorFactory is WWethBase20 {
     /* states variables */
     mapping(string => cryptoAssetInfo) public cryptoAssets;
     string[] private s_arr_cryptoAssetIds;
-    uint256 public s_assetsCurrentId = 0;
-    uint256 public s_currentBondId = 0;
+    uint256 public s_assetsCurrentId;
+    uint256 public s_currentBondId;
     uint256 public s_Contract_birthdate;
     uint256 private immutable i_entranceFee = 1;
 
@@ -73,7 +73,7 @@ contract WillsCreateorFactory is WWethBase20 {
     //this is to create an ADMIN role
     mapping(address => bool) public adminrole;
 
-    /* #Events */
+    /* Events */
     event LogDepositReceived(address sender);
     /** 
         @param assetId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
@@ -144,12 +144,13 @@ contract WillsCreateorFactory is WWethBase20 {
     //     );
     //     _;
     // }
+
     /**
      * 
      * @param locId takes an assset id for eg: 'ca-0'
      */
     function check_position_s_arr_cryptoAssetIds  (string memory locId)
-            public returns (bool) {
+            public view returns (bool) {
         for (uint i = 0; i < s_arr_cryptoAssetIds.length; i++) {
             if(keccak256(abi.encodePacked(s_arr_cryptoAssetIds[i])) == 
             keccak256(abi.encodePacked(locId)))
@@ -159,9 +160,16 @@ contract WillsCreateorFactory is WWethBase20 {
             }
         }
         return false;
-
-    
     }
+
+    function getNextAssetId() public view returns (uint256) {
+        return s_assetsCurrentId;
+    }
+    function getNextWillId() public view returns (uint256) {
+        return s_currentBondId;
+
+    }
+
 /**
  * this method had a bool map to store if a position in an array is set or not
  * Optimization: since this involved unncessary storage, removed this method as part of gas optimization
@@ -304,6 +312,8 @@ contract WillsCreateorFactory is WWethBase20 {
         uint256 willMaturityDate,
         address payable Benefitors
     ) public payable onlyValidAsset(_assetId) {
+
+        console.log("create - initiation Will for _assetId %s", _assetId);
         
         s_willlInfo[s_currentBondId].willId = s_currentBondId;
         s_willlInfo[s_currentBondId].assetId = _assetId;
@@ -548,8 +558,8 @@ contract WillsCreateorFactory is WWethBase20 {
     //     return loc;
     // }
 
-    function generateHash(uint matDate) public returns (uint) {
-        return uint(keccak256(abi.encodePacked(matDate)));
+    function generateHash(uint256 matDate) public pure returns (uint256) {
+        return uint256(keccak256(abi.encodePacked(matDate)));
     }
 
     // function performUpKeep(
