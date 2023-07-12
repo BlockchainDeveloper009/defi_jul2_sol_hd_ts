@@ -1688,7 +1688,7 @@ printToConsole('ca-1',result);
         // 
         
         //const userCreatedBonds  = await lock.getUserCreatedBonds(owner.address);
-        const t  = await lock.getUserCreatedBonds(owner.address);
+        const t  = await _lock.getUserCreatedBonds(owner.address);
 
         let contractInstance_Addr_july9_355 = '0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f'
         let contractAbi_july9_355 = '0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f'
@@ -1699,7 +1699,7 @@ printToConsole('ca-1',result);
       it("getTransactionCount for an User", async function () {
 
         
-        const userCreatedBonds  = await lock.getUserCreatedBonds(owner.address);
+        const userCreatedBonds  = await _lock.getUserCreatedBonds(owner.address);
         console.log('----');
     //    console.log(web3.eth.getTransactionCount);
         console.log('----');
@@ -1710,7 +1710,7 @@ printToConsole('ca-1',result);
   
         
         //const contractBalance  = await lock.getBalance(lock.target);
-        const contractBalance  = await lock.c_getContractBalance();
+        const contractBalance  = await this._runnablelock.c_getContractBalance();
         console.log('----');
         printToConsole('getContractBalance',contractBalance)
         
@@ -1765,9 +1765,11 @@ printToConsole('ca-1',result);
 
     });
 
-    describe("settle_assets",  function () { 
-      it("settle_ca-0", async function () {
-        const { lock, unlockTime , contract1Address} = await loadFixture(deployOneYearLockFixture);
+    describe("settle_Cancel_Mature_Txns_assets",  async function () { 
+      const { lock, unlockTime , contract1Address} = await loadFixture(deployOneYearLockFixture);
+
+      it("Manuallysettle_Txn_#0", async function () {
+        
         // const contractAddress = deployedContractAddr;
         // printToConsole(`contractADdr: ${contractAddress}`)
         // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
@@ -1787,9 +1789,59 @@ printToConsole('ca-1',result);
             testdata_localchain_WillCreator.hhData.data_0.amount);
       });
 
+
+      
+
+      it("Cancell_Txn__#1", async function () {
+        
+        // const contractAddress = deployedContractAddr;
+        // printToConsole(`contractADdr: ${contractAddress}`)
+        // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
+
+      //  await lock.init();
+      console.log(`contract1Address= '${contract1Address}'`)
+      const willStatus_0 = await lock.getWillStatus(1);
+      printToConsole('will_0 ==> status')
+      printToConsole(willStatus_0);
+
+      expect(willStatus_0).to.equal('Assigned');
+
+      expect(await lock.settleAssets(0))
+            .to.emit(lock, "willSettled")
+            .withArgs('0',testdata_localchain_WillCreator.hhData.data_0.hardhat_BenefitorAddr,
+            testdata_localchain_WillCreator.hhData.data_0.willEndDate,
+            testdata_localchain_WillCreator.hhData.data_0.amount);
+      });
+
+
+      it("Mature_Txn_mimic_chainlink__#2", async function () {
+        
+        // const contractAddress = deployedContractAddr;
+        // printToConsole(`contractADdr: ${contractAddress}`)
+        // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
+
+      //  await lock.init();
+      console.log(`contract1Address= '${contract1Address}'`)
+      const willStatus_0 = await lock.getWillStatus(2);
+      printToConsole('will_0 ==> status')
+      printToConsole(willStatus_0);
+
+      expect(willStatus_0).to.equal('Assigned');
+
+      expect(await lock.settleAssets(0))
+            .to.emit(lock, "willSettled")
+            .withArgs('0',testdata_localchain_WillCreator.hhData.data_0.hardhat_BenefitorAddr,
+            testdata_localchain_WillCreator.hhData.data_0.willEndDate,
+            testdata_localchain_WillCreator.hhData.data_0.amount);
+      });
+
+
+      
+
       
     });
     
+   
 
 });
 

@@ -109,6 +109,32 @@ contract WillsCreateorFactory is WWethBase20 {
         uint256 willAmount
     );
 
+      /**  
+    @param cryptoWillId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
+    @param benefitor: who gets the funds
+    @param willMaturityDate: deadline after which will gets executed automatically
+    @param willAmount: will amount
+    */
+    event willMatured(
+        uint indexed cryptoWillId,
+        address indexed benefitor,
+        uint256 willMaturityDate,
+        uint256 willAmount
+    );
+
+    /**  
+    @param cryptoWillId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
+    @param willOwner: who gets the funds
+    @param willMaturityDate: deadline after which will gets executed automatically
+    @param willAmount: will amount
+    */
+    event willCancelled(
+        uint indexed cryptoWillId,        
+        address indexed willOwner,
+        uint256 willMaturityDate,
+        uint256 willAmount
+    );
+
     struct willsByMaturitydates {
         uint maturityDate;
         uint willId;
@@ -312,8 +338,6 @@ contract WillsCreateorFactory is WWethBase20 {
         uint256 willMaturityDate,
         address payable Benefitors
     ) public payable onlyValidAsset(_assetId) {
-
-        console.log("create - initiation Will for _assetId %s", _assetId);
         
         s_willlInfo[s_currentBondId].willId = s_currentBondId;
         s_willlInfo[s_currentBondId].assetId = _assetId;
@@ -322,7 +346,7 @@ contract WillsCreateorFactory is WWethBase20 {
         s_willlInfo[s_currentBondId].willMaturityDate = willMaturityDate;
         s_willlInfo[s_currentBondId].willManager = msg.sender;
         s_willlInfo[s_currentBondId].willOwner = msg.sender;
-        s_willlInfo[s_currentBondId].s_baseStatus = baseStatus.Started;
+        s_willlInfo[s_currentBondId].s_baseStatus = baseWillStatus.Started;
         s_willlInfo[s_currentBondId].Benefitors = payable(Benefitors);
         cryptoAssets[_assetId].isAvailable = false;
         cryptoAssets[_assetId].assetStatus = cryptoAssetStatus.Assigned;
@@ -447,10 +471,10 @@ contract WillsCreateorFactory is WWethBase20 {
     @param willId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
     
     */
-    function settleAssets(uint256 willId) public payable {
+    function manuallySettleWill(uint256 willId) public payable {
         string memory asst = s_willlInfo[willId].assetId;
         require(
-            s_willlInfo[willId].s_baseStatus == baseStatus.Started,
+            s_willlInfo[willId].s_baseStatus == baseWillStatus.Started,
             "Will is not in Start Status"
         );
         //require for maturity date comparisoin
@@ -462,7 +486,7 @@ contract WillsCreateorFactory is WWethBase20 {
         payable(s_willlInfo[willId].Benefitors).transfer(
             cryptoAssets[asst].amount
         );
-        s_willlInfo[willId].s_baseStatus = baseStatus.Settled;
+        s_willlInfo[willId].s_baseStatus = baseWillStatus.ManuallySettled;
         emit willSettled(
             willId,
             s_willlInfo[willId].Benefitors,
@@ -470,6 +494,67 @@ contract WillsCreateorFactory is WWethBase20 {
             cryptoAssets[asst].amount
         );
     }
+
+        /**  
+      * 
+    @notice : "provies all bodns created for an address"
+    @param willId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
+    
+    */
+    function automaticMatureWill(uint256 willId) public payable {
+        string memory asst = s_willlInfo[willId].assetId;
+        require(
+            s_willlInfo[willId].s_baseStatus == baseWillStatus.Started,
+            "Will is not in Start Status"
+        );
+        //require for maturity date comparisoin
+        //add only owner can call
+        // s_willlInfo[willId].Benefitors.transfer(
+        //     cryptoAssets[asst].amount);
+
+        //safeTransferFrom(address(this),s_willlInfo[willId].Benefitors, willId, cryptoAssets[asst].amount, "0x0");
+        payable(s_willlInfo[willId].Benefitors).transfer(
+            cryptoAssets[asst].amount
+        );
+        s_willlInfo[willId].s_baseStatus = baseWillStatus.Matured;
+        emit willMatured(
+            willId,
+            s_willlInfo[willId].Benefitors,
+            s_willlInfo[willId].willMaturityDate,
+            cryptoAssets[asst].amount
+        );
+    }
+
+     function cancelWill(uint256 willId) public payable {
+        string memory asst = s_willlInfo[willId].assetId;
+        require(
+            s_willlInfo[willId].s_baseStatus == baseWillStatus.Started,
+            "Will is not in Start Status"
+        );
+        // only willl owner can cancell this txn
+         require(
+            s_willlInfo[willId].willOwner == msg.sender,
+            "only will owner can perform this operation"
+        );
+
+        //require for maturity date comparisoin
+        //add only owner can call
+        // s_willlInfo[willId].Benefitors.transfer(
+        //     cryptoAssets[asst].amount);
+
+        //safeTransferFrom(address(this),s_willlInfo[willId].Benefitors, willId, cryptoAssets[asst].amount, "0x0");
+        payable( s_willlInfo[willId].willOwner).transfer(
+            cryptoAssets[asst].amount
+        );
+        s_willlInfo[willId].s_baseStatus = baseWillStatus.Cancelled;
+        emit willCancelled(
+            willId,
+            s_willlInfo[willId].willOwner,            
+            s_willlInfo[willId].willMaturityDate,
+            cryptoAssets[asst].amount
+        );
+    }
+
          /**  
       * 
     @notice : "provies all bodns created for an address"
@@ -479,22 +564,26 @@ contract WillsCreateorFactory is WWethBase20 {
     
     */
     function getWillStatus(uint willId) public view returns (string memory) {
-        if (s_willlInfo[willId].s_baseStatus == baseStatus.Created) {
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.Created) {
             return "Created";
         }
-        if (s_willlInfo[willId].s_baseStatus == baseStatus.Started) {
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.Started) {
             return "Started";
         }
-        if (s_willlInfo[willId].s_baseStatus == baseStatus.Matured) {
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.Matured) {
             return "Matured";
         }
-        if (s_willlInfo[willId].s_baseStatus == baseStatus.Settled) {
-            return "Settled"; //Started, Matured, Settled
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.Cancelled) {
+            return "Cancelled"; //Started, Matured, Settled
+        }
+
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.ManuallySettled) {
+            return "ManuallySettled"; //Started, Matured, Settled
         }
         return "InvalidStatus";
     }
 
-             /**  
+    /**  
       * 
     @notice : "status of an address"
     @param _assetId: 'ca-0'
@@ -510,6 +599,8 @@ contract WillsCreateorFactory is WWethBase20 {
         if (cryptoAssets[_assetId].assetStatus == cryptoAssetStatus.Assigned) {
             return "Assigned";
         }
+         
+        return "InvalidAssetStatus";
  
     }
 
@@ -526,7 +617,7 @@ contract WillsCreateorFactory is WWethBase20 {
         // custom function code
     }
 
-    function getEntranceFee() public view returns (uint256) {
+    function getEntranceFee() public pure returns (uint256) {
         return i_entranceFee;
     }
 

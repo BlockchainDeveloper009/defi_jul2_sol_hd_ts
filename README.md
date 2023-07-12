@@ -35,6 +35,8 @@ No Fees | N/I
 Fees 2% will be collected as charge
 
 ```
+
+only Robert as owner of the will can cancell this will. [MultiSign can be added to authorize the txn, in phase 3]
 Will/Txn status - to be udpated | Phase2 Feature
 asset status - to be udpated || Phase2 Feature
 
