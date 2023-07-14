@@ -73,8 +73,6 @@ contract WillsCreateorFactory is WWethBase20 {
     //this is to create an ADMIN role
     mapping(address => bool) public adminrole;
 
-    constructor(string memory name, string memory symbol) WWethBase20(name, symbol) {}
-
     /* Events */
     event LogDepositReceived(address sender);
     /** 
@@ -137,7 +135,10 @@ contract WillsCreateorFactory is WWethBase20 {
         uint256 willAmount
     );
 
-
+    struct willsByMaturitydates {
+        uint maturityDate;
+        uint willId;
+    }
 
     // function createCashvault () external {
 
@@ -340,7 +341,8 @@ contract WillsCreateorFactory is WWethBase20 {
     ) public payable onlyValidAsset(_assetId) {
         
         s_willlInfo[s_currentBondId].willId = s_currentBondId;
-        s_willlInfo[s_currentBondId].assetId = _assetId;  
+        s_willlInfo[s_currentBondId].assetId = _assetId;
+
         s_willlInfo[s_currentBondId].willStartDate = willStartDate;
         s_willlInfo[s_currentBondId].willMaturityDate = willMaturityDate;
         s_willlInfo[s_currentBondId].willManager = msg.sender;
@@ -494,7 +496,35 @@ contract WillsCreateorFactory is WWethBase20 {
         );
     }
 
-     
+        /**  
+      * 
+    @notice : "provies all bodns created for an address"
+    @param willId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
+    
+    */
+    function automaticMatureWill(uint256 willId) public payable {
+        string memory asst = s_willlInfo[willId].assetId;
+        require(
+            s_willlInfo[willId].s_baseStatus == baseWillStatus.Started,
+            "Will is not in Start Status"
+        );
+        //require for maturity date comparisoin
+        //add only owner can call
+        // s_willlInfo[willId].Benefitors.transfer(
+        //     cryptoAssets[asst].amount);
+
+        //safeTransferFrom(address(this),s_willlInfo[willId].Benefitors, willId, cryptoAssets[asst].amount, "0x0");
+        payable(s_willlInfo[willId].Benefitors).transfer(
+            cryptoAssets[asst].amount
+        );
+        s_willlInfo[willId].s_baseStatus = baseWillStatus.Matured;
+        emit willMatured(
+            willId,
+            s_willlInfo[willId].Benefitors,
+            s_willlInfo[willId].willMaturityDate,
+            cryptoAssets[asst].amount
+        );
+    }
 
      function cancelWill(uint256 willId) public payable {
         string memory asst = s_willlInfo[willId].assetId;
@@ -535,8 +565,23 @@ contract WillsCreateorFactory is WWethBase20 {
     
     */
     function getWillStatus(uint willId) public view returns (string memory) {
-        
-        return checkEnumStatus(s_willlInfo[willId].s_baseStatus);
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.Created) {
+            return "Created";
+        }
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.Started) {
+            return "Started";
+        }
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.Matured) {
+            return "Matured";
+        }
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.Cancelled) {
+            return "Cancelled"; //Started, Matured, Settled
+        }
+
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.ManuallySettled) {
+            return "ManuallySettled"; //Started, Matured, Settled
+        }
+        return "InvalidStatus";
     }
 
     /**  
@@ -548,22 +593,29 @@ contract WillsCreateorFactory is WWethBase20 {
     
     */
     function getAssetStatus(string memory _assetId) public view returns (string memory) {
-       return checkAssetStatus(cryptoAssets[_assetId].assetStatus);
-
+        
+        if (cryptoAssets[_assetId].assetStatus == cryptoAssetStatus.Created) {
+            return "Created";
+        }
+        if (cryptoAssets[_assetId].assetStatus == cryptoAssetStatus.Assigned) {
+            return "Assigned";
+        }
+         
+        return "InvalidAssetStatus";
+ 
     }
 
     //0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
     //0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
     //0x540d7E428D5207B30EE03F2551Cbb5751D3c7569
 
-    fallback() external payable  {
+    fallback() external payable override {
         // custom function code
         require(msg.data.length == 0); emit LogDepositReceived(msg.sender); 
     }
 
-    receive() external payable  {
+    receive() external payable override {
         // custom function code
-        require(0 == 0); emit LogDepositReceived(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4); 
     }
 
     function getEntranceFee() public pure returns (uint256) {
@@ -577,6 +629,26 @@ contract WillsCreateorFactory is WWethBase20 {
        return s_MaturityDates_keys;
      }
 
+    // function getWillsByMaturityDates()
+    //     public
+    //     view
+    //     returns (willsByMaturitydates[] memory)
+    // {
+    //     willsByMaturitydates[] memory loc;
+    //     int k = 0;
+    //     for(uint i=0;i<s_WillsByMaturityDate.length;i++)
+    //     {
+
+    //         for(uint j=0;j< s_WillsByMaturityDate[s_MaturityDates[i]].length; j++)
+    //         {
+    //             loc[k].maturityDate = s_WillsByMaturityDate[i];
+    //             loc[k].willId =  s_WillsByMaturityDate[s_MaturityDates[i]][j];
+    //         }
+
+    //     }
+
+    //     return loc;
+    // }
 
     function generateHash(uint256 matDate) public pure returns (uint256) {
         return uint256(keccak256(abi.encodePacked(matDate)));
@@ -657,8 +729,37 @@ contract WillsCreateorFactory is WWethBase20 {
     // }
 }
 
+library WillCreatorHelper {
 
 
 
+             /**  
+      * 
+    @notice : "provies all bodns created for an address"
+    @param willId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
+    
+    @return : returns string "Created | Started | Matured | Settled"
+    
+    */
+    function getWillStatus(uint willId) public view returns (string memory) {
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.Created) {
+            return "Created";
+        }
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.Started) {
+            return "Started";
+        }
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.Matured) {
+            return "Matured";
+        }
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.Cancelled) {
+            return "Cancelled"; //Started, Matured, Settled
+        }
+
+        if (s_willlInfo[willId].s_baseStatus == baseWillStatus.ManuallySettled) {
+            return "ManuallySettled"; //Started, Matured, Settled
+        }
+        return "InvalidStatus";
+    }
 
 
+}

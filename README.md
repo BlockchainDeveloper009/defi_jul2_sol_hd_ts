@@ -1,7 +1,12 @@
 # ERC20 based Hardhat Project
 
-This is as javascript project. has 'ts' in project name as mistake.
-WillsCreatorFactory - this contract enables users to create assets, assign benefitors, and timeline by when benefitors will accept it.
+
+WillsCreatorFactory - this contract enables users to create assets, assign benefitors, and timeline by when, smartcontract wlll
+liquidate the funds to assigned benefitors.
+
+
+Note: This is as javascript project. has 'ts' in project name as mistake.
+
 
 1. Robert creates an asset for eg. crypto 4 ETH with id 'ca-0' with status 'Available:
 ```
@@ -71,6 +76,9 @@ ts-node ./scripts/gasEstimater.ts
 nvm list
 nvm use 16.0.0
 nvm --vesrion
+
+#to run a script/task  from package.json
+npm run deploy_to_mumbai
 
 #to run a js script from 
 node ./scripts/gasEsitmater.js

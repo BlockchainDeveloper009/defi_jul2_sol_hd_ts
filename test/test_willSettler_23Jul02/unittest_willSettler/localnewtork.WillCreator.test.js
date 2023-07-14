@@ -4,7 +4,7 @@ const { expect } = require("chai");
 const { ethers, artifacts, deployments, hardhatArguments  } = require("hardhat");
 const { JsonRpcProvider } = require("@ethersproject/providers");
 //import { testdata_localchain_WillCreator } from "./testdata_localchain_WillCreator.js";
-const testdata_localchain_WillCreator = 
+const testdata_localchain_WillCreator =
 {
             "hhData" :{
                 "data_0":{
@@ -48,32 +48,32 @@ const testdata_localchain_WillCreator =
                     "assetId":"ca-0",
                     "assetName":"t0",
                     "willId": 0,
-            
+
                     "willStartDate": 1690606800,
                     "willMaturityDate": 1693371600,
                     "amount":'200',
                     "Benefitors": '0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2',
-                                  
-            
+
+
                 },
                 "data_1":{
                     "assetId":"ca-1",
                     "assetName":"t1",
                     "willId": 1,
-            
+
                     "willStartDate": 1690606800,
                     "willMaturityDate": 1693371600,
                     "amount":'300',
                     "Benefitors": '0xf821142CC270dAb63767cFAae15dC36D1b043348',
-            
+
                 }
-            
+
             },
 };
 const { d1 } = require("./testdata_localchain_WillCreator");
 let debugMode = true;
 
-printToConsole(`testData---check`) 
+printToConsole(`testData---check`)
 //printToConsole(`testData---check`,d1)
 
 
@@ -90,7 +90,7 @@ function printToConsole(header,str)
     console.log(str);
     console.log(`======${header}=END=======`)
   }
-  
+
 }
 function printToConsole(str)
 { if(debugMode)
@@ -99,33 +99,39 @@ function printToConsole(str)
     console.log(str);
     console.log('==============')
   }
-  
+
 }
 const meta_benefitorAddr = 0xf821142CC270dAb63767cFAae15dC36D1b043348;
 const meta_txnAsst = "ca-3";
 const hardhat_BenefitorAddr="0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2";
-      
+
 
 
 
 //hh test --grep "picks a winner"
 //hardhat run test --grep "picks a winner"
-describe("WillsCreateorFactory_localhost", async function () {
-  
+describe.only("WillsCreateorFactory_localhost", async function () {
+
   // We define a fixture to reuse the same setup in every test.
   // We use loadFixture to run this setup once, snapshot that state,
   // and reset Hardhat Network to that snapshot in every test.
   let deployedContractAddr;
     async function deployOneYearLockFixture() {
-      
+      const arg1 = "Wrapped Will Ether";
+      const arg2 = "WWETH";
 
       // Contracts are deployed using the first signer/account by default
       const [owner, otherAccount] = await ethers.getSigners();
       const contracts = ["WillsCreateorFactory","C:\\source\\repos\\solidity_dev\\defi_jul2_sol_hd_ts\\artifacts\\contracts\\willSettler_23Jul02\\WillsCreateorFactory"];
       const contractName = contracts[0]; // Replace with your contract name
-      
+
       const Lock = await ethers.getContractFactory(contracts[0]);
-      const lock = await Lock.deploy();
+      const lock = await Lock.deploy(arg1,arg2);
+
+        // Estimate the gas for deployment
+  // const gasEstimate = await contract.estimateGas();
+
+  // console.log("Gas Estimate for contract Deployment:", gasEstimate.toString());
 
 const contractArtifact = await artifacts.readArtifact(contractName);
 const contractAbi = contractArtifact.abi;
@@ -141,22 +147,26 @@ console.log(`contract1Address= '${contract1Address}'`)
       //console.log(lock)
       console.log(`--------------------`)
       // console.log('deployTransaction<hash,type,accessList,blockHash,blockNumber,transactionIndex, from, gasPrice, gasLimit, to, value, nonce, data>')
-      
+
       console.log('lock-----abi, signer, provider, callstatic, estimageGas, populateTransaction, filters, Approval, runningEvents, address')
       console.log('deployTransaction<hash,type,accessList,blockHash,blockNumber,transactionIndex, from, gasPrice, gasLimit, to, value, nonce, data, r,s,v,chainId>')
       // deployedContractAddr = lock.deployTransaction.creates;
       // console.log(`contract address: ${deployedContractAddr}`);
       // const initresult = await lock.init();
-      
+
       // printToConsole(initresult.data);
       // const allSS = await lock.getAllAsset();
       // printToConsole(allSS.data);
       //console.log();
       return { lock, owner, contractAbi, contract1Address, otherAccount };
     }
-    describe("check_state_of_chain",  function () { 
+    describe.only("check_state_of_chain",  function () {
       it("get_assetIds", async function () {
-        const { lock, owner,unlockTime } = await loadFixture(deployOneYearLockFixture);
+         const { lock, owner,unlockTime } = await loadFixture(deployOneYearLockFixture);
+         //.catch((error)=> {
+        //   console.error(error);
+        //   process.exit(1);
+        // });
         // const contractAddress = deployedContractAddr;
         // printToConsole(`contractADdr: ${contractAddress}`)
         // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
@@ -171,7 +181,7 @@ console.log(`contract1Address= '${contract1Address}'`)
       printToConsole(`tampa --> '${t}'`)
       printToConsole(t);
 
-           
+
   });
       it("check_assets", async function () {
             const { lock, owner,unlockTime } = await loadFixture(deployOneYearLockFixture);
@@ -189,7 +199,7 @@ console.log(`contract1Address= '${contract1Address}'`)
           printToConsole(`t --> '${t}'`)
           printToConsole(t);
 
-               
+
       });
     });
 
@@ -201,10 +211,10 @@ console.log(`contract1Address= '${contract1Address}'`)
 //       //  await lock.init();
 //       let date = (new Date()).getDate();
 //       let birthDateInUnixTimestamp = date / 1000;
-//       printToConsole(`birthDateInUnixTimestamp ==> ${birthDateInUnixTimestamp}`)  
+//       printToConsole(`birthDateInUnixTimestamp ==> ${birthDateInUnixTimestamp}`)
 //      // await BirthDate.methods.set(birthDateInUnixTimestamp).send(opts);
 //      let dummy = await lock.setContractBirthDate(birthDateInUnixTimestamp);
-    
+
 //     const verify_contractBirthDate = await lock.getContractBirthDate();
 
 //     printToConsole('verify_contractBirthDate ==> status')
@@ -215,8 +225,8 @@ console.log(`contract1Address= '${contract1Address}'`)
 
 //     // let birthDateInUnixTimestamp_2 = await BirthDate.methods.get().call();
 //     // let date_2 = new Date(birthDateInUnixTimestamp * 1000);
-         
-    
+
+
 //      let birthDateInUnixTimestamp_2 = await lock.getContractBirthDate();
 //      let date_2 = new Date(birthDateInUnixTimestamp_2 * 1000);
 //      printToConsole('birthDateInUnixTimestamp_2 ==> status')
@@ -225,11 +235,11 @@ console.log(`contract1Address= '${contract1Address}'`)
 
 
 
-    describe("create_assets_wills",  function () {
+    describe.only("create_assets_wills",  function () {
 let _lock;
       before(async function () {
         const { lock } = await loadFixture(deployOneYearLockFixture);
-        
+
         _lock = lock;
       });
 
@@ -237,8 +247,8 @@ let _lock;
           //   const { lock, unlockTime, lockedAmount,  owner, otherAccount, thirdAcct } = await loadFixture(
           //     deployOneYearLockFixture
           //   );
-            
-   
+
+
           //   const startDatestr = new Date('YYYY-MM-DD');
           //   const startDatestr_timestampInSeconds = Math.floor(startDatestr.getTime() / 1000);
 
@@ -254,19 +264,19 @@ let _lock;
           //   console.log(timestampInSeconds);
           //   const ONE_GWEI = 1_000_000_000;
           //   //web3.eth.abi.decodeParameters(typesArray, hexString)
-          //    //  await lock.addADMINrole(); 
+          //    //  await lock.addADMINrole();
           //   await lock.addADMINrole({value:lockedAmount});
           //   let allAssets = await lock.getAllAsset();
-            
+
           //   printToConsole('....allAssets before change.......')
           //   printToConsole(allAssets)
-            
+
           //   await lock.init();
           //   let allAssets2 = await lock.getAllAsset();
           //   printToConsole(`allAssets2 after-- ${allAssets2}`)
           //   printToConsole('---')
           //   printToConsole(allAssets2)
-            
+
           //             // const event = String.toString(await lock.a_createCryptoVault(
           //             //   "ca-0",
           //             //   startDatestr_timestampInSeconds,
@@ -283,7 +293,7 @@ let _lock;
           captureWarnings();
 
           it("test1", async function () {
-            
+
             // const contractAddress = deployedContractAddr;
             // printToConsole(`contractADdr: ${contractAddress}`)
             // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
@@ -307,19 +317,19 @@ let _lock;
           }
 
             //expect(await lock.checkAssetisAvailable('ca-0')).to.equal(false);
-            
+
           });
 
           // it("create assets ", async function (lock) {
-            
-          //   await lock.init();
-            
-          // });
-      
-          it("#0. ca-0 asset Creation", async function () {
-            
 
-            
+          //   await lock.init();
+
+          // });
+
+          it("#0. ca-0 asset Creation", async function () {
+
+
+
             let amt1 = 1 * 10 * 18;
 
             printToConsole("#1. assetCreation","expected to emit events");
@@ -336,16 +346,16 @@ let _lock;
             let currentAsstId = await _lock.getNextAssetId();
            console.log(`currentAsstId = '${currentAsstId}'`)
             expect(currentAsstId).to.equal(0);
-          
+
             await expect(
-                await _lock.a_createAssets(testdata_localchain_WillCreator.hhData.data_0.assetName, 
+                await _lock.a_createAssets(testdata_localchain_WillCreator.hhData.data_0.assetName,
                   testdata_localchain_WillCreator.hhData.data_0.amount)
-                
+
               ).to.emit(_lock, "assetCreated")
               .withArgs(
                 testdata_localchain_WillCreator.hhData.data_0.assetId,
                 testdata_localchain_WillCreator.hhData.data_0.assetName,
-              testdata_localchain_WillCreator.hhData.data_0.amount);  
+              testdata_localchain_WillCreator.hhData.data_0.amount);
 
                                                                                           //  const {tx, hash, value} = await _lock.a_createAssets("t0", amt1);
 
@@ -357,21 +367,21 @@ let _lock;
                                                                                           // const receipt = await ethers.provider.getTransactionReceipt(hash);
 
                                                                                           //  printToConsole(receipt);
-             
-            
+
+
             // check asset available for will to use
-          const result = await _lock.checkAssetisAvailable('ca-0');    
+          const result = await _lock.checkAssetisAvailable('ca-0');
           printToConsole(result);
             expect(result).to.equal(true);
-            
+
           });
-      
+
           it("#3. 'ca-1' asset creation", async function () {
-            
-            
+
+
             let amt2 = 2 * 10 * 18;
             const eventName='assetCreated'
-            
+
             console.log(`testdata_localchain_WillCreator.hhData.data_1.assetId = '${testdata_localchain_WillCreator.hhData.data_1.assetId}'`);
             console.log(`testdata_localchain_WillCreator.hhData.data_1.assetName = '${testdata_localchain_WillCreator.hhData.data_1.assetName}'`);
             console.log(`testdata_localchain_WillCreator.hhData.data_1.amount = '${testdata_localchain_WillCreator.hhData.data_1.amount}'`);
@@ -388,19 +398,23 @@ let _lock;
             }else{
 
             }
-            
-            
+
+            const estimate  = await _lock.a_createAssets(testdata_localchain_WillCreator.hhData.data_1.assetName,
+              testdata_localchain_WillCreator.hhData.data_1.amount);
+              console.log(`---`);
+              console.log(estimate)
+              console.log("Gas Estimate:", estimate.toString());
+
               await expect(
-                await _lock.a_createAssets(testdata_localchain_WillCreator.hhData.data_1.assetName, 
-                  testdata_localchain_WillCreator.hhData.data_1.amount)
-                
+                estimate
+
               ).to.emit(_lock, "assetCreated")
               .withArgs(
                 testdata_localchain_WillCreator.hhData.data_1.assetId,
                 testdata_localchain_WillCreator.hhData.data_1.assetName,
               testdata_localchain_WillCreator.hhData.data_1.amount);
-            
-         
+
+
 /* code to be removed
 //             // Get the transaction receipt
 //             const receipt = await ethers.provider.getTransactionReceipt(hash);
@@ -411,7 +425,7 @@ let _lock;
     // Assert the emitted event
     // expect(yourEvent).to.equal(eventName);
 */
-        // ethers without hardhat name    
+        // ethers without hardhat name
             // lock.events[eventName]((error,event) => {
             //   if(error){
             //     console.error('Error:', error);
@@ -419,10 +433,10 @@ let _lock;
             //     console.log('Event emitted:',event.returnValues);
             //     //Process the emitted event here
             //   }
-              
+
             // })
-            
-            printToConsole(`does 'ca-1' exist? --> 
+
+            printToConsole(`does 'ca-1' exist? -->
             '${testdata_localchain_WillCreator.hhData.data_1.assetId}'`);
 let result = await _lock.checkAssetisAvailable
 (testdata_localchain_WillCreator.hhData.data_1.assetId);
@@ -431,7 +445,7 @@ printToConsole('ca-1',result);
           });
 
           it(`#4. CreateAsset - '${testdata_localchain_WillCreator.hhData.data_2.assetId}'!`, async function () {
-            
+
             let amt3 = 3 * 10 * 18;
 
             let currentAsstId = await _lock.getNextAssetId();
@@ -445,31 +459,31 @@ printToConsole('ca-1',result);
               //stop the test
               throw new Error(`asset already exists ; '${testdata_localchain_WillCreator.hhData.data_2.assetId}'`);
             }
-            
-                       
+
+
             await expect(
-              await _lock.a_createAssets(testdata_localchain_WillCreator.hhData.data_2.assetName, 
+              await _lock.a_createAssets(testdata_localchain_WillCreator.hhData.data_2.assetName,
                 testdata_localchain_WillCreator.hhData.data_2.amount)
-              
+
             ).to.emit(_lock, "assetCreated")
             .withArgs(testdata_localchain_WillCreator.hhData.data_2.assetId,
               testdata_localchain_WillCreator.hhData.data_2.assetName,
               testdata_localchain_WillCreator.hhData.data_2.amount); // We accept any value as `when` arg
-             
+
               let result = await _lock.checkAssetisAvailable
               (testdata_localchain_WillCreator.hhData.data_2.assetId);
               printToConsole('ca-2',result);
-              
-            expect(result).to.equal(true);
-          }); 
 
-      
+            expect(result).to.equal(true);
+          });
+
+
 
 
           it("#5. create_test_a_createCryptoVault_0", async function () {
-            
 
-            
+
+
             console.log(`testdata_localchain_WillCreator.hhData.data_0.assetId = '${testdata_localchain_WillCreator.hhData.data_0.assetId}'`);
             console.log(`testdata_localchain_WillCreator.hhData.data_0.willStartDate = '${testdata_localchain_WillCreator.hhData.data_0.willStartDate}'`);
             console.log(`testdata_localchain_WillCreator.hhData.data_0.willMaturityDate = '${testdata_localchain_WillCreator.hhData.data_0.willMaturityDate}'`);
@@ -496,52 +510,54 @@ printToConsole('ca-1',result);
               )
 
             ).to.emit(_lock, "willCreated")
-            .withArgs( testdata_localchain_WillCreator.hhData.data_0.assetId, 
-            testdata_localchain_WillCreator.hhData.data_0.willStartDate, 
+            .withArgs( testdata_localchain_WillCreator.hhData.data_0.assetId,
+            testdata_localchain_WillCreator.hhData.data_0.willStartDate,
             testdata_localchain_WillCreator.hhData.data_0.willMaturityDate,
             0); // We accept any value as `when` arg
-            
-           
+
+
           });
 
           it("#6. recreate_test_a_createCryptoVault_0", async function () {
-            
-        
-            await _lock.a_createCryptoVault(
+
+
+
+            await expect(_lock.a_createCryptoVault(
               testdata_localchain_WillCreator.hhData.data_0.assetId,
               testdata_localchain_WillCreator.hhData.data_0.willStartDate,
               testdata_localchain_WillCreator.hhData.data_0.willMaturityDate,
               testdata_localchain_WillCreator.hhData.data_0.Benefitors
-              
-            );
-          }); 
+
+            )).to.be.revertedWith("Asset is not in Created Status ");
+
+          });
           it("#7. create_txn#1   _expectEvent", async function () {
-            
-            
+
+
             await expect(
               await _lock.a_createCryptoVault(
                 testdata_localchain_WillCreator.hhData.data_1.assetId,
                 testdata_localchain_WillCreator.hhData.data_1.willStartDate,
                 testdata_localchain_WillCreator.hhData.data_1.willMaturityDate,
-                testdata_localchain_WillCreator.hhData.data_1.Benefitors,
-                { value: ONE_GWEI }
+                testdata_localchain_WillCreator.hhData.data_1.Benefitors
+
               )
 
             ).to.emit(_lock, "willCreated")
-            .withArgs( testdata_localchain_WillCreator.hhData.data_1.assetId, 
-            testdata_localchain_WillCreator.hhData.data_1.willStartDate, 
+            .withArgs( testdata_localchain_WillCreator.hhData.data_1.assetId,
+            testdata_localchain_WillCreator.hhData.data_1.willStartDate,
             testdata_localchain_WillCreator.hhData.data_1.willMaturityDate,
             1); // We accept any value as `when` arg
-    
-          }); 
 
-         
-    
+          });
+
+
+
     });
 
 
 
-    describe.only("post_of_create_wills", function(){
+    describe("post_of_create_wills", function(){
       let _lock;
       let owner;
       let contractAbi;
@@ -1641,16 +1657,16 @@ printToConsole('ca-1',result);
           }
         ] //contractArtifact.contractAbi;
         console.log(`in before contract just to print contractAbi`)
-        
+
         _lock = new ethers.Contract(contract1Address,contractAbi, ethers.provider )
         owner = '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266'
       });
 
-    
+
 
       it("#8. verify Next Ids after 2 asset, 2 will ", async function () {
         console.log(`calling to get Nextasset id`)
-        
+
         let nextAssetid = await _lock.getNextAssetId()
         console.log(`calling to get NextWill id`)
         let nextWillid = await _lock.getNextWillId()
@@ -1658,23 +1674,23 @@ printToConsole('ca-1',result);
         expect(nextAssetid).to.equal(2);
 
         expect(nextWillid).to.equal(2);
-        
 
-      }); 
+
+      });
       it("#9. get all Assets", async function () {
-        
-        
+
+
         let allAssets = await _lock.getAllAsset();
         expect(allAssets.length).to.be(2);
-        
+
           //printToConsole(await lock.getAllBonds());
       });
       it("#9. get all Wills", async function () {
-        
-        
+
+
         let allWills = await _lock.getAllBonds();
         expect(allWills.length).to.be(2);
-        
+
           //printToConsole(await lock.getAllBonds());
       });
       it("getUserCreatedBonds ", async function () {
@@ -1685,8 +1701,8 @@ printToConsole('ca-1',result);
         // Debond-oracle
         // Debond-bank
         // Debond-Exchange
-        // 
-        
+        //
+
         //const userCreatedBonds  = await lock.getUserCreatedBonds(owner.address);
         const t  = await _lock.getUserCreatedBonds(owner.address);
 
@@ -1694,36 +1710,36 @@ printToConsole('ca-1',result);
         let contractAbi_july9_355 = '0x5081a39b8A5f0E35a8D959395a630b68B74Dd30f'
         printToConsole(`t --> '${t}'`)
 
-      }); 
+      });
 
       it("getTransactionCount for an User", async function () {
 
-        
+
         const userCreatedBonds  = await _lock.getUserCreatedBonds(owner.address);
         console.log('----');
     //    console.log(web3.eth.getTransactionCount);
         console.log('----');
 
-      }); 
+      });
 
       it("#10.getContractBalance", async function () {
-  
-        
+
+
         //const contractBalance  = await lock.getBalance(lock.target);
         const contractBalance  = await this._runnablelock.c_getContractBalance();
         console.log('----');
         printToConsole('getContractBalance',contractBalance)
-        
+
         console.log('----');
 
-      }); 
+      });
 
 
       it("queryEvents", async function () {
 
-        
 
-        
+
+
         const provider = ethers.provider;
 // contractAbi is passed from fixture, its already tested            console.log(contractAbi)
         const contract = new ethers.Contract(contract1Address, contractAbi, provider);
@@ -1738,10 +1754,10 @@ printToConsole('ca-1',result);
         }
 
         console.log(`contract1Address= '${contract1Address}'`)
-      }); 
+      });
 
       it("print all Txns in this run", async function () {
-        
+
         // const contractAddress = deployedContractAddr;
         // printToConsole(`contractADdr: ${contractAddress}`)
         // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
@@ -1753,23 +1769,23 @@ printToConsole('ca-1',result);
       for (let i = 0; i <= blockNumber; i++) {
         const block = await provider.getBlock(i);
         const transactions = block.transactions;
-      
+
         for (const txHash of transactions) {
           const transaction = await provider.getTransaction(txHash);
           console.log("Transaction details:", transaction);
         }
       }
 
-   
+
       });
 
     });
 
-    describe("settle_Cancel_Mature_Txns_assets",  async function () { 
+    describe("settle_Cancel_Mature_Txns_assets",  async function () {
       const { lock, unlockTime , contract1Address} = await loadFixture(deployOneYearLockFixture);
 
       it("Manuallysettle_Txn_#0", async function () {
-        
+
         // const contractAddress = deployedContractAddr;
         // printToConsole(`contractADdr: ${contractAddress}`)
         // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
@@ -1790,10 +1806,10 @@ printToConsole('ca-1',result);
       });
 
 
-      
+
 
       it("Cancell_Txn__#1", async function () {
-        
+
         // const contractAddress = deployedContractAddr;
         // printToConsole(`contractADdr: ${contractAddress}`)
         // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
@@ -1815,7 +1831,7 @@ printToConsole('ca-1',result);
 
 
       it("Mature_Txn_mimic_chainlink__#2", async function () {
-        
+
         // const contractAddress = deployedContractAddr;
         // printToConsole(`contractADdr: ${contractAddress}`)
         // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
@@ -1836,18 +1852,18 @@ printToConsole('ca-1',result);
       });
 
 
-      
 
-      
+
+
     });
-    
-   
+
+
 
 });
 
 
 function IsAssetAlreadyCreated(beforeCreatingAsset, assetId){
-  
+
   let i=0;
   for(; i<beforeCreatingAsset.length; i++)
   {

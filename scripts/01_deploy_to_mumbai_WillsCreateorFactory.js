@@ -1,0 +1,65 @@
+const {ethers} = require("hardhat");
+const { HardhatConfig, HardhatUserConfig } = require("hardhat/types");
+
+const { extendConfig, extendEnvironment } = require("hardhat/config");
+
+async function main(hre) {
+ //"Wrapped Will Ether", "WWETH"
+
+  //const lockedAmount = ethers.utils.parseEther("1");
+
+  const Lock = await ethers.getContractFactory("WillsCreateorFactory");
+  const arg1 = "Wrapped Will Ether";
+  const arg2 = "WWETH";
+  //const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  // const lock = await Lock.deploy(arg1,arg2);
+
+  // await lock.deployed();
+
+   // deploy the contract
+   const deployedVerifyContract = await Lock.deploy(arg1,arg2);
+
+   //await deployedVerifyContract.deployed();
+ 
+   // print the address of the deployed contract
+   console.log("Verify Contract Address:", deployedVerifyContract.address);
+ 
+   console.log("Sleeping.....");
+   // Wait for etherscan to notice that the contract has been deployed
+   await sleep(10000);
+ 
+   // Verify the contract after deploying
+   await hre.run("verify:verify", {
+     address: deployedVerifyContract.address,
+     constructorArguments: [arg1,arg2],
+   });
+
+  console.log(`Lock with 1 ETH and unlock timestamp deployed to ${deployedVerifyContract.address}`);
+}
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// We recommend this pattern to be able to use async/await everywhere
+// and properly handle errors.
+main(hre).catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
+
+async function verify (contractAddress, args) {
+  console.log("verifying contract..")
+  try{
+    await run("verify:verify", {
+      address: contractAddress,
+      constructorArguments: args,
+    })
+
+  } catch (e) {
+    if(e.message.toLowerCase().includes("already verified")){
+      console.log("Already Verified!")
+    }else{
+      console.log(e)
+    }
+  }
+}
