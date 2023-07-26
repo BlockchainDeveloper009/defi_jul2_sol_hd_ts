@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/utils/SafeMath.sol";
 //import "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol";
 //import "./Vault.sol";
 //import "./lib/willInfo.sol";
@@ -42,6 +43,9 @@ import "hardhat/console.sol";
 //error Raffle__UpkeepNotNeeded1(uint256 currentBalance, uint256 numPlayers, uint256 raffleState);
 
 contract WillsCreateorFactory is WWethBase20 {
+
+    using SafeMath for uint256;
+
     error willCreatorFactory__NotEnoughETHEntered();
     error willCreatorFactory__UpkeepNotNeeded();
     /* states variables */
@@ -50,6 +54,7 @@ contract WillsCreateorFactory is WWethBase20 {
     uint256 public s_assetsCurrentId;
     uint256 public s_currentBondId;
     uint256 public s_Contract_birthdate;
+    address public s_Contract_moderator;
     uint256 private immutable i_entranceFee = 1;
 
     bool private s_DoesAdminExist;
@@ -73,7 +78,9 @@ contract WillsCreateorFactory is WWethBase20 {
     //this is to create an ADMIN role
     mapping(address => bool) public adminrole;
 
-    constructor(string memory name, string memory symbol) WWethBase20(name, symbol) {}
+    constructor(string memory name, string memory symbol, address mod) WWethBase20(name, symbol) {
+        s_Contract_moderator = mod;
+    }
 
     /* Events */
     event LogDepositReceived(address sender);
@@ -85,6 +92,15 @@ contract WillsCreateorFactory is WWethBase20 {
         string assetId,
         string assetName,
         uint256 assetAmount
+    );
+    /**
+     * 
+     * @param willId - willId from which funds to be released
+     * @param willAmount 
+     */
+    event moderatorOverrideToReleaseFunds(
+        string willId,        
+        uint256 willAmount
     );
     /**  
     @param willofPropertyName: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
@@ -142,6 +158,14 @@ contract WillsCreateorFactory is WWethBase20 {
     // function createCashvault () external {
 
     // }
+
+    modifier onlyModerator() {
+        require(
+            msg.sender == s_Contract_moderator,
+            "You must be an Moderator to execute this function"
+        );
+        _;
+    }
 
     modifier onlyAdmin() {
         require(
@@ -494,9 +518,16 @@ contract WillsCreateorFactory is WWethBase20 {
         );
     }
 
-     
-
-     function cancelWill(uint256 willId) public payable {
+    function makeModeratorToReleaseFunds(uint256 willId, address payable recipient, uint256 amount) public payable onlyModerator {
+        require(msg.value >= amount, "Insufficient Ethers");
+        (bool success, ) = recipient.call(value, amount)("");
+        
+        require(success, "Ether transfer failed");
+        s_willlInfo[willId].s_baseStatus = baseWillStatus.Cancelled;
+        emit moderatorOverrideToReleaseFunds(willId, amount);
+    }
+    //**Cancell the Will  */
+    function cancelWill(uint256 willId) public payable {
         string memory asst = s_willlInfo[willId].assetId;
         require(
             s_willlInfo[willId].s_baseStatus == baseWillStatus.Started,
@@ -580,6 +611,15 @@ contract WillsCreateorFactory is WWethBase20 {
 
     function generateHash(uint256 matDate) public pure returns (uint256) {
         return uint256(keccak256(abi.encodePacked(matDate)));
+    }
+    function getBlockNumber() public view returns(uint256){
+        return block.number;
+    }
+    function getBlockTimestamp() public view returns(uint256){
+        return block.timestamp;
+    }
+    function getBlockDifficulty() public view returns(uint256){
+        return block.difficulty;
     }
 
     // function performUpKeep(

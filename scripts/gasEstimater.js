@@ -2,7 +2,7 @@ import   ethers  from "hardhat";
 import hre  from "hardhat";
 
 //var FaucetContract = artifacts.require("");
-let contracts = ['WWethcreateWillsERC20.sol']
+let contracts = ['WWethcreateWillsERC20']
 async function mFunction() {
     await hre.run("compile");
     const Lock = await ethers.getContractFactory(contracts[0]);

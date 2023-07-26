@@ -21,7 +21,9 @@
   "homepage": "https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts#readme",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
-    "hardhat": "^2.16.1"
+    "@openzeppelin/hardhat-upgrades": "^2.0.1",
+    "hardhat": "^2.16.1",
+    "web3": "^4.0.3"
   },
   "dependencies": {
     "@ethersproject/providers": "^5.7.2",
