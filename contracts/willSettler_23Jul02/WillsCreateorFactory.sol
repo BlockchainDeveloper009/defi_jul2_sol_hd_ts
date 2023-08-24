@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/utils/SafeMath.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 //import "@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol";
 //import "./Vault.sol";
 //import "./lib/willInfo.sol";
@@ -37,7 +37,7 @@ import "hardhat/console.sol";
  * - find out why contract doesnt get credited
  * - create new ds to fetch wills by maturity date either struct or new mapping + array combination
  * - Access control: https://docs.openzeppelin.com/contracts/3.x/extending-contracts#using-hooks
- * 
+ *
  * DeployVersion-15.0.0
  */
 //error Raffle__UpkeepNotNeeded1(uint256 currentBalance, uint256 numPlayers, uint256 raffleState);
@@ -71,10 +71,10 @@ contract WillsCreateorFactory is WWethBase20 {
     mapping(address => willlInfo[]) private userCreatedWills;
     /* contains maturity date and contract ids mature on a certain day*/
     mapping(uint256 => uint256[]) private s_WillsByMaturityDate;
-    
+
     mapping(uint256 => uint256) public s_MaturityDates;
     uint256[] public s_MaturityDates_keys;
-    
+
     //this is to create an ADMIN role
     mapping(address => bool) public adminrole;
 
@@ -84,7 +84,7 @@ contract WillsCreateorFactory is WWethBase20 {
 
     /* Events */
     event LogDepositReceived(address sender);
-    /** 
+    /**
         @param assetId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
 
     */
@@ -94,15 +94,14 @@ contract WillsCreateorFactory is WWethBase20 {
         uint256 assetAmount
     );
     /**
-     * 
-     * @param willId - willId from which funds to be released
-     * @param willAmount 
-     */
+      @param willId - willId from which funds to be released
+      @param willAmount - will amount in eth
+    */
     event moderatorOverrideToReleaseFunds(
-        string willId,        
+        string willId,
         uint256 willAmount
     );
-    /**  
+    /**
     @param willofPropertyName: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
     @param willStartDate: When will Starts
     @param willMaturityDate: deadline after which will gets executed automatically
@@ -114,7 +113,7 @@ contract WillsCreateorFactory is WWethBase20 {
         uint256 willMaturityDate,
         uint cryptoWillId
     );
-      /**  
+      /**
     @param cryptoWillId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
     @param benefitor: who gets the funds
     @param willMaturityDate: deadline after which will gets executed automatically
@@ -127,7 +126,7 @@ contract WillsCreateorFactory is WWethBase20 {
         uint256 willAmount
     );
 
-      /**  
+      /**
     @param cryptoWillId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
     @param benefitor: who gets the funds
     @param willMaturityDate: deadline after which will gets executed automatically
@@ -140,14 +139,14 @@ contract WillsCreateorFactory is WWethBase20 {
         uint256 willAmount
     );
 
-    /**  
+    /**
     @param cryptoWillId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
     @param willOwner: who gets the funds
     @param willMaturityDate: deadline after which will gets executed automatically
     @param willAmount: will amount
     */
     event willCancelled(
-        uint indexed cryptoWillId,        
+        uint indexed cryptoWillId,
         address indexed willOwner,
         uint256 willMaturityDate,
         uint256 willAmount
@@ -177,14 +176,14 @@ contract WillsCreateorFactory is WWethBase20 {
     modifier onlyValidAsset(string memory locId) {
         console.log('asset--> ');
         //console.log(cryptoAssets[locId].assetStatus);
-        
+
         require(
             cryptoAssets[locId].assetStatus == cryptoAssetStatus.Created,
             "Asset is not in Created Status "
         );
         _;
     }
-        
+
 
     // modifier onlyNewAsset(string memory locId) {
     //     require(
@@ -196,13 +195,13 @@ contract WillsCreateorFactory is WWethBase20 {
     // }
 
     /**
-     * 
+     *
      * @param locId takes an assset id for eg: 'ca-0'
      */
     function check_position_s_arr_cryptoAssetIds  (string memory locId)
             public view returns (bool) {
         for (uint i = 0; i < s_arr_cryptoAssetIds.length; i++) {
-            if(keccak256(abi.encodePacked(s_arr_cryptoAssetIds[i])) == 
+            if(keccak256(abi.encodePacked(s_arr_cryptoAssetIds[i])) ==
             keccak256(abi.encodePacked(locId)))
             {
                 console.log("ids %s", s_arr_cryptoAssetIds[i]);
@@ -228,11 +227,11 @@ contract WillsCreateorFactory is WWethBase20 {
  */
     function check_position_s_arr_cryptoAssetIds_expensive(string memory locId)
     public returns (bool) {
-            // using a map to 
+            // using a map to
         return false;
     }
         /**
-         * 
+         *
          * @param _birthdate :contract start date for testing purpose
          */
     function setContractBirthDate(uint256 _birthdate) public {
@@ -245,13 +244,13 @@ contract WillsCreateorFactory is WWethBase20 {
     //1690606800 july-29
     //1690693200 july-30 12 am  //86,400 (1 day in seconds)
     //https://www.unixtimestamp.com/index.php?ref=theredish.com%2Fweb
-    
-    /**  
-     * Step1: Get Admin access,if yes, then 
+
+    /**
+     * Step1: Get Admin access,if yes, then
      * Step2: Create Assetts
     @param assetName: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
     @param assetAmount: who gets the funds
-    
+
     */
 
     function a_createAssets(
@@ -273,7 +272,7 @@ contract WillsCreateorFactory is WWethBase20 {
         }else{
             revert ("Invalid Asset, may be asset already used");
         }
-        
+
         cryptoAssets[locId].AssetId = locId;
         cryptoAssets[locId].Name = assetName;
         cryptoAssets[locId].amount = assetAmount;
@@ -286,15 +285,15 @@ contract WillsCreateorFactory is WWethBase20 {
         locId,
         assetName,
         assetAmount
-        
+
         );
         console.log("s_assetsCurrentId = %s",s_assetsCurrentId);
         emit assetCreated(locId,assetName,assetAmount);
-       
+
     }
 
     // function receive() external payable { }
-    
+
     function checkAssetisAvailable(
         string memory _assetId
     ) external view returns (bool) {
@@ -346,15 +345,15 @@ contract WillsCreateorFactory is WWethBase20 {
             payable(0xf821142CC270dAb63767cFAae15dC36D1b043348)
         );
     }
-     /** @dev 
-      *  @notice gets contract balance 
-     * 
+     /** @dev
+      *  @notice gets contract balance
+     *
     */
     function c_getContractBalance() public view returns (uint) {
         return address(this).balance;
     }
-     /** @dev this function is to initialize the admin role. This will provide the devs with funds 
-     * Step3: Create  Will, generates will id,  
+     /** @dev this function is to initialize the admin role. This will provide the devs with funds
+     * Step3: Create  Will, generates will id,
     */
     function a_createCryptoVault(
         string memory _assetId,
@@ -362,9 +361,9 @@ contract WillsCreateorFactory is WWethBase20 {
         uint256 willMaturityDate,
         address payable Benefitors
     ) public payable onlyValidAsset(_assetId) {
-        
+
         s_willlInfo[s_currentBondId].willId = s_currentBondId;
-        s_willlInfo[s_currentBondId].assetId = _assetId;  
+        s_willlInfo[s_currentBondId].assetId = _assetId;
         s_willlInfo[s_currentBondId].willStartDate = willStartDate;
         s_willlInfo[s_currentBondId].willMaturityDate = willMaturityDate;
         s_willlInfo[s_currentBondId].willManager = msg.sender;
@@ -382,8 +381,8 @@ contract WillsCreateorFactory is WWethBase20 {
         userCreatedWills[msg.sender].push(s_willlInfo[s_currentBondId]);
         uint dateHash = generateHash(willMaturityDate);
         s_WillsByMaturityDate[willMaturityDate].push(s_currentBondId);
-        
-        
+
+
         if(s_MaturityDates[willMaturityDate] > 0 ){
 // maturity date already exists
 
@@ -398,7 +397,7 @@ contract WillsCreateorFactory is WWethBase20 {
             console.log("adding will maturity");
             s_MaturityDates_keys.push(willMaturityDate);
         }
-        
+
         s_willsinExistence.push(
             willlInfo(
                 s_currentBondId,
@@ -435,9 +434,9 @@ contract WillsCreateorFactory is WWethBase20 {
         // @todo implement maturity date based wills
     }
 
-    
-    /** @dev this function is to initialize the admin role. This will provide the devs with funds 
-     * 
+
+    /** @dev this function is to initialize the admin role. This will provide the devs with funds
+     *
     */
     function addADMINrole() external payable {
         // require (msg.value == 0 ether, " please send .001 ether");
@@ -452,13 +451,13 @@ contract WillsCreateorFactory is WWethBase20 {
         adminrole[msg.sender] = true;
         s_DoesAdminExist = true;
     }
-     /**  
-      * 
+     /**
+      *
     @notice : "provies all bonds created by an address"
     @param addr: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
-    
+
     @return : returns array of userCreaedWills for a user address
-    
+
     */
     //returns Bonds created by a single user
     function getUserCreatedBonds(
@@ -471,12 +470,12 @@ contract WillsCreateorFactory is WWethBase20 {
     function getAllBonds() external view returns (willlInfo[] memory) {
         return s_willsinExistence;
     }
-    /**  
-    * 
+    /**
+    *
     @notice : "provies all bodns created for an address"
-    
+
     @return : string which is Asset id
-    
+
     */
     // returns true, if admin flag is set to calling address;else false
     function checkIfAddminRoleIsPresent() public view returns (bool) {
@@ -488,11 +487,11 @@ contract WillsCreateorFactory is WWethBase20 {
     }
 
     //0x1c91347f2A44538ce62453BEBd9Aa907C662b4bD
-         /**  
-      * 
+         /**
+      *
     @notice : "provies all bodns created for an address"
     @param willId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
-    
+
     */
     function manuallySettleWill(uint256 willId) public payable {
         string memory asst = s_willlInfo[willId].assetId;
@@ -520,11 +519,11 @@ contract WillsCreateorFactory is WWethBase20 {
 
     function makeModeratorToReleaseFunds(uint256 willId, address payable recipient, uint256 amount) public payable onlyModerator {
         require(msg.value >= amount, "Insufficient Ethers");
-        (bool success, ) = recipient.call(value, amount)("");
-        
-        require(success, "Ether transfer failed");
-        s_willlInfo[willId].s_baseStatus = baseWillStatus.Cancelled;
-        emit moderatorOverrideToReleaseFunds(willId, amount);
+        // (bool success, ) = recipient.call(value, amount)("");
+
+        // require(success, "Ether transfer failed");
+
+        // emit moderatorOverrideToReleaseFunds(willId, amount);
     }
     //**Cancell the Will  */
     function cancelWill(uint256 willId) public payable {
@@ -551,32 +550,32 @@ contract WillsCreateorFactory is WWethBase20 {
         s_willlInfo[willId].s_baseStatus = baseWillStatus.Cancelled;
         emit willCancelled(
             willId,
-            s_willlInfo[willId].willOwner,            
+            s_willlInfo[willId].willOwner,
             s_willlInfo[willId].willMaturityDate,
             cryptoAssets[asst].amount
         );
     }
 
-         /**  
-      * 
+         /**
+      *
     @notice : "provies all bodns created for an address"
     @param willId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
-    
+
     @return : returns string "Created | Started | Matured | Settled"
-    
+
     */
     function getWillStatus(uint willId) public view returns (string memory) {
-        
+
         return checkEnumStatus(s_willlInfo[willId].s_baseStatus);
     }
 
-    /**  
-      * 
+    /**
+      *
     @notice : "status of an address"
     @param _assetId: 'ca-0'
-    
+
     @return : returns string "Created | Started | Matured | Settled"
-    
+
     */
     function getAssetStatus(string memory _assetId) public view returns (string memory) {
        return checkAssetStatus(cryptoAssets[_assetId].assetStatus);
@@ -589,29 +588,41 @@ contract WillsCreateorFactory is WWethBase20 {
 
     fallback() external payable  {
         // custom function code
-        require(msg.data.length == 0); emit LogDepositReceived(msg.sender); 
+        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
     }
 
     receive() external payable  {
         // custom function code
-        require(0 == 0); emit LogDepositReceived(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4); 
+        require(0 == 0); emit LogDepositReceived(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
     }
 
     function getEntranceFee() public pure returns (uint256) {
         return i_entranceFee;
     }
-
-     function getMaturityDates  () public view returns (uint256[] memory){
+    function generateHash(uint256 matDate) public pure returns (uint256) {
+        return uint256(keccak256(abi.encodePacked(matDate)));
+    }
+/**
+   @dev: dont call this function;
+/*
+    function getMaturityDates_InEfficient  () public view returns (uint256[] memory){
        for(uint256 i=0; i< s_MaturityDates_keys.length; i++){
            console.log(s_MaturityDates_keys[i]);
        }
        return s_MaturityDates_keys;
-     }
-
-
-    function generateHash(uint256 matDate) public pure returns (uint256) {
-        return uint256(keccak256(abi.encodePacked(matDate)));
     }
+
+    function getMaturityDates_gasEfficient() public view returns (uint256[] memory){
+       //refactored to a memory variable, as storage variable cost high gas to read
+       // remember: mappings can't be in memory
+       uint256[] memory m_maturityDates =  s_MaturityDates_keys;
+       for(uint256 i=0; i< m_maturityDates.length; i++){
+           console.log(m_maturityDates[i]);
+       }
+       return m_maturityDates;
+    }
+
+
     function getBlockNumber() public view returns(uint256){
         return block.number;
     }

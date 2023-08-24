@@ -1852,6 +1852,35 @@ printToConsole('ca-1',result);
       });
 
 
+      it("Automaticsettle_Txn_#3_onLocal_hardhatChain", async function () {
+
+        // const contractAddress = deployedContractAddr;
+        // printToConsole(`contractADdr: ${contractAddress}`)
+        // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
+
+      //  await lock.init();
+      console.log(`contract1Address= '${contract1Address}'`)
+      const willStatus_0 = await lock.getWillStatus(0);
+      printToConsole('will_0 ==> status')
+      printToConsole(willStatus_0);
+      
+      //increase time on hardhat chain to test our application
+      await network.provider.send("evm_increaseTime", [interval.toNumber() + 1])
+      
+      //mine a empty block to confirm above increaseTime
+      await network.provider.send("evm_mine",[])
+      
+      //another way to mine vm chain
+      //await network.provider.request({method: "evm_mine", params: []})
+
+      expect(willStatus_0).to.equal('Assigned');
+
+      expect(await lock.settleAssets(0))
+            .to.emit(lock, "willSettled")
+            .withArgs('0',testdata_localchain_WillCreator.hhData.data_0.hardhat_BenefitorAddr,
+            testdata_localchain_WillCreator.hhData.data_0.willEndDate,
+            testdata_localchain_WillCreator.hhData.data_0.amount);
+      });
 
 
 
@@ -1894,3 +1923,19 @@ function captureWarnings() {
 }
 
 //module.exports = testdata_localchain_WillCreator;
+
+//160
+// 4 x 8  x 22 inch
+
+
+//25 x 2 = 50
+
+
+
+
+
+
+
+
+// 1.6 x 8 
+

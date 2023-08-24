@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "deploy_locally": "npx hardhat run .\\scripts\\01_deploy_to_hh_WillsCreateorFactory.js --network localhost",
-    "deploy_to_mumbai": "npx hardhat run .\\scripts\\01_deploy_to_mumbai_WillsCreateorFactory.js --network mumbai"
+    "deploy_to_mumbai": "npx hardhat run .\\scripts\\01_deploy_to_mumbai_WillsCreateorFactory.js --network mumbai",
+    "deploy_lock_to_mumbai": "npx hardhat run .\\scripts\\deploy.js --network mumbai"
   },
   "repository": {
     "type": "git",
@@ -22,12 +23,13 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
     "@openzeppelin/hardhat-upgrades": "^2.0.1",
+    "ethereumjs-testrpc": "^6.0.3",
     "hardhat": "^2.16.1",
     "web3": "^4.0.3"
   },
   "dependencies": {
     "@ethersproject/providers": "^5.7.2",
-    "@openzeppelin/contracts": "^4.9.2",
+    "@openzeppelin/contracts": "^4.9.3",
     "keccak256": "^1.0.6",
     "merkletreejs": "^0.3.10"
   }
