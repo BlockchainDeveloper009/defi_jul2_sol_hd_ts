@@ -1,0 +1,47 @@
+### Phase1
+
+Write smart contract, unit tests, deployment scripts
+
+use wagmi to connect with UI to allow user to create assets, wills.
+write playwright tests 
+
+Smart contract changes:
+write multi sig wallet
+assign roles for users:
+allow multiple wallets as beneficiary
+
+test 
+- asset data input
+- will data input
+- manual settle feature
+- auto settle feature (hook up with chainlink)
+- 
+
+Store events & user activities in mongoDb
+
+### Phase2
+
+create RestApi to expose below datas.
+
+
+query events from blockchain to show in front end.
+Implement Graphql
+
+BigchainDb - for asset creation, pretty much similar to what i need
+
+User UI 
+page1 - show list of assets created
+
+Sum the values of assets and show in usd
+
+page2 - list of wills created
+
+### Phase3
+
+Admin UI
+
+Admin
+Report to generated lsit of will mattured or settled or activity
+Report to show the list of wills to be matured for a week
+
+
