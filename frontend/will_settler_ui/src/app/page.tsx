@@ -8,6 +8,12 @@ import { createClient } from 'viem';
 // _app.js or _app.tsx
 import { QueryClientProvider, queryClient } from './components/queryClient';
 import { useAccount } from 'wagmi'
+import ComProfile from './components/CompProfile';
+import { chains, publicClient, webSocketPublicClient } from './components/wrapperForWagmi';
+import { InjectedConnector } from 'wagmi/connectors/injected';
+
+import { createConfig } from 'wagmi'
+
 // import { ReactQueryDevtools } from 'react-query/devtools';
 // import { Hydrate } from 'react-query/hydration';
 
@@ -19,8 +25,23 @@ export default function Home() {
   let assetsCreatorDescription = 'Create New Assets, that to be used part of Will';
   let assetsManagerDescription = 'Manage Assets that are not tied to any wills';
   
+  const wagmiConfig = createConfig({
+    autoConnect: true,
+    publicClient,
+    connectors: [
+        new InjectedConnector({
+            chains,
+            options: {
+                name: 'Injected',
+                shimDisconnect: true,
+            }
+        })
+    ],
+    webSocketPublicClient,
+})
   
   return (
+    
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
@@ -28,6 +49,9 @@ export default function Home() {
           Get started by editing&nbsp;
           <code className="font-mono font-bold">src/app/page.tsx</code>
         </p>
+        <WagmiConfig config = {wagmiConfig}>  
+              <ComProfile/>
+        </WagmiConfig>
         
         <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <a
@@ -139,6 +163,7 @@ export default function Home() {
       </div>
       
     </main>
+    
   )
 }
 function getDefaultWallets(arg0: { appName: string; chains: any; }): { connectors: any; } {
