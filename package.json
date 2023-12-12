@@ -23,6 +23,7 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
     "@openzeppelin/hardhat-upgrades": "^2.0.1",
+    "@openzeppelin/test-helpers": "^0.5.16",
     "ethereumjs-testrpc": "^6.0.3",
     "hardhat": "^2.16.1",
     "web3": "^4.0.3"

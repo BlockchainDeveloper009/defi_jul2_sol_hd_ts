@@ -1,5 +1,6 @@
 # ERC20 based Hardhat Project
 
+CORE | ADVANCED
 
 WillsCreatorFactory - this contract enables users to create assets, assign benefitors, and timeline by when, smartcontract wlll
 liquidate the funds to assigned benefitors.
@@ -79,6 +80,12 @@ nvm --vesrion
 
 #to run a script/task  from package.json
 npm run deploy_to_mumbai
+
+#to run a script/task  from package.json
+npm run deploy_locally
+
+#to start hardhat localhost on local machine
+npx hardhat node
 
 #to run a js script from 
 node ./scripts/gasEsitmater.js

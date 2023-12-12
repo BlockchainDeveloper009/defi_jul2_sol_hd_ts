@@ -8,28 +8,30 @@ async function main(hre) {
 
   //const lockedAmount = ethers.utils.parseEther("1");
 
-  const Lock = await ethers.getContractFactory("WillsCreateorFactory");
+  //const Lock = await ethers.getContractFactory("WillsCreatorFactory");
   //const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-  const lock = await Lock.deploy();
+  //const lock = await Lock.deploy();
 
-  await lock.deployed();
+  const lockedAmount = hre.ethers.parseEther("0.0001");
+  const name = "Wrapped Will Ether";
+  const symbol = "WWETH";
+  const deployedVerifyContract 
+  = await hre.ethers.deployContract("WillsCreatorFactory", 
+  [name,symbol,'0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a']
+  //{ value: lockedAmount}
+ );
 
-   // deploy the contract
-   const deployedVerifyContract = await Lock.deploy();
-
-   await deployedVerifyContract.deployed();
+ await deployedVerifyContract.waitForDeployment();
  
    // print the address of the deployed contract
-   console.log("Verify Contract Address:", deployedVerifyContract.address);
+   console.log("Verify Contract Address:", deployedVerifyContract.target);
  
-   console.log("Sleeping.....");
-   // Wait for etherscan to notice that the contract has been deployed
-   await sleep(10000);
- 
+   
+   
    // Verify the contract after deploying
    await hre.run("verify:verify", {
-     address: deployedVerifyContract.address,
-     constructorArguments: [],
+     address: deployedVerifyContract.target,
+     constructorArguments: [name, symbol,'0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a'],
    });
 
   console.log(`Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`);

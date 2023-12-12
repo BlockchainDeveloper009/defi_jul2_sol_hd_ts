@@ -42,7 +42,7 @@ import "hardhat/console.sol";
  */
 //error Raffle__UpkeepNotNeeded1(uint256 currentBalance, uint256 numPlayers, uint256 raffleState);
 
-contract WillsCreateorFactory is WWethBase20 {
+contract WillsCreatorFactory is WWethBase20 {
 
     using SafeMath for uint256;
 

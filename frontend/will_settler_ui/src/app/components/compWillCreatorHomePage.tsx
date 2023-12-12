@@ -1,12 +1,12 @@
 import { WagmiConfig , createConfig, useAccount, useConnect, useEnsName } from 'wagmi'
 
 import { Button } from '@mantine/core'
-import Profile from './compProfile'
+import Profile from './CompProfile'
 
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 
-import CreateAssetsForm from './compCreateAssetsForm'
+import CreateAssetsForm from './CompCreateAssetsForm'
 import { configureChains, polygon, goerli, polygonMumbai, localhost, publicProvider } from './wrapperForWagmi'
 //import { logWarn } from './logger'
 const yourAlchemyApiKey = '3b2s_ycI-VRJbbV-stREOv_x1w3XC5LQ';

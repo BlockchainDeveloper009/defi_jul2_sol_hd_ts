@@ -2,13 +2,14 @@
 import { useAccount, useContractEvent, useContractRead, 
     useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 
-import { createConfig,configureChains, mainnet, } from '@wagmi/core'
+import { configureChains, mainnet, } from '@wagmi/core'
 import { getContract } from 'wagmi/actions'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import {   WagmiConfig  } from 'wagmi'
 
 import { publicProvider } from 'wagmi/providers/public'
 import { polygon, polygonMumbai, hardhat, localhost , goerli} from 'wagmi/chains'
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 // import {
 //     getDefaultWallets,
 //     RainbowKitProvider,
@@ -16,8 +17,12 @@ import { polygon, polygonMumbai, hardhat, localhost , goerli} from 'wagmi/chains
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
     [
-      mainnet,
-      polygon,polygonMumbai,goerli
+      // mainnet,
+      // polygon,
+      polygonMumbai,
+      // goerli,
+
+
     ],
     [publicProvider()]
 )
@@ -28,13 +33,9 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 //     chains,
 // })
   
-const wagmiConfig = createConfig({
-    autoConnect: true,
-    publicClient,
-    webSocketPublicClient,
-})
 
-export { chains, publicClient, webSocketPublicClient, wagmiConfig,WagmiConfig }
+
+export { chains, publicClient, webSocketPublicClient }
 export {  configureChains, mainnet , publicProvider } 
 export { polygon, polygonMumbai, hardhat, localhost, goerli }
 export {  getContract, useContractEvent, useContractRead,

@@ -27,29 +27,6 @@ export default function Home() {
   let assetsManagerDescription = 'Manage Assets that are not tied to any wills';
 
   
-  const metaMaskConnector = new MetaMaskConnector({
-    chains,
-    options: {
-      shimDisconnect: false,
-    },
-
-  })
-
-  const injectedConnector = new InjectedConnector({
-    chains,
-    options: {
-        name: 'Injected',
-        shimDisconnect: true,
-    }
-});
-  const wagmiConfig1 = createConfig({
-    autoConnect: true,
-    publicClient,
-    connectors: [metaMaskConnector
-        
-    ],
-    webSocketPublicClient,
-})
 
 
   
@@ -62,9 +39,7 @@ export default function Home() {
           Get started by editing&nbsp;
           <code className="font-mono font-bold">src/app/page.tsx</code>
         </p>
-        <WagmiConfig config = {wagmiConfig1}>  
-              <ComProfile/>
-        </WagmiConfig>
+        
 
     
         

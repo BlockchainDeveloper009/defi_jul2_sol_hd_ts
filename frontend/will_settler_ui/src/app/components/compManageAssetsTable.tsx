@@ -9,8 +9,10 @@ import {
   CreateBondandAdminRole_CONTRACT_ADDRESS,
 } from "../srcConstants";
 
-import { useNavigate, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, useNavigate, useParams } from "react-router-dom";
 import { formatEther } from 'viem'
+import CompWagmiTestProvider from './CompWagmiTestProvider';
+import { useAccount } from 'wagmi';
 
 interface IAssets {
   assetId:string,
@@ -22,147 +24,153 @@ interface IAssets {
   assetStatus:number,
   
  }
-// function GetWillsByUsers(stttt:any) {
-//   const { data:functionData,status} = useContractRead({
-//     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-//     abi: CreateBondandAdminRole_CONTRACT_ABI,
-//     functionName: 'getUserCreatedBonds',
-//     args: [stttt]
+function GetAssetStaus(assetId:string) {
+  const { data:functionData,status} = useContractRead({
+    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    functionName: 'getAssetStatus',
+    args: [assetId]
     
-//   })
+  })
+  return functionData;
+}
+function  GetAssetsByUsers():IAssets[] {
   
+  const { data:functionData,status} = useContractRead({
+    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    functionName: 'getAllAsset',
+    args: []
+    
+  })
+  const { address } = useAccount()
   
-//   console.log('---getUserCreatedBonds-----')
-//   console.log(functionData)
-//   console.log('---------')
-//   let retData:WillsData[];
-//   retData = functionData as Array<WillsData>;
-//   console.log(retData)
-//   return retData 
+  console.log('---getUserCreatedBonds-----')
+  console.log(address)
+  console.log('--expect use address')
+  console.log('expect function data')
+  console.log(functionData)
+  console.log('---------')
+  
+  let retData = functionData as Array<IAssets>;
+  console.log('decode values')
+  console.log(retData[0].assetName)
+  return retData 
 
-// }
+}
 
 
 function ManageAssetsTable() {
   
   const [assetId, setAssetId] = useState('')
   const [willsId, setWillsId] = useState()
+  const { isConnected } = useAccount()
   let { asId } = useParams();
   // const navigate = useNavigate();
-  // const handleProceed = (assetId:string) => {
-  //   // console.log(id, "home");
-  //   setAssetId(assetId)
-  //   console.log('---handleProceed---')
-  //   console.log(assetId)
-  //   console.log('----------')
-  //   navigate("/WillsFormEdit",  
-  //   {
-  //     state: {
-  //       userId: assetId,
-  //     }
-  //   }
-  //   );
-  // };
+  const handleProceed = (assetId:string) => {
+    // console.log(id, "home");
+    setAssetId(assetId)
+    console.log('---handleProceed---')
+    console.log(assetId)
+    console.log('----------')
+    // navigate("/WillsFormEdit",  
+    // {
+    //   state: {
+    //     userId: assetId,
+    //   }
+    // }
+    // );
+  };
 
   try {
 
-
-    // let d:WillsData = [ { willId: '0'}, {willId: '1'}] //GetWillsByUsers(address)
-    // if(isConnected && d.length>=0)
-    // {
-    //         console.log(d[0].assetId);
-            
-    //       // const trows = d.map((element) => (
-    //       //   <tr key={element.assetId}>
+//[{ assetId:'0',assetName='test0' },{ assetId:'1',assetName='test1' }]
+    let d :IAssets[] =  GetAssetsByUsers() //[ { willId: '0'}, {willId: '1'}] 
+    if(d.length>=0)
+    {
+      console.log('values')
+            console.log(d[0].assetId);
+            console.log(d)
+          const trows = d.map((element) => (
+            <tr key={element.assetId}>
               
-    //       //     <td ><a href="" target="_blank">{element.assetId}</a></td>
-    //       //     <td>{element.willId}</td>
-    //       //     <td>{element.s_baseStatus}</td>
-    //       //     <td>{element.willMaturityDate.toString()}</td>
-    //       //     <td>{element.willStartDate.toString()}</td>
-    //       //     <td>{element.Benefitors}</td>
-    //       //     <td><button onClick={()=>handleProceed(element.assetId)}></button></td>
-    //       //     {/* <td>{element.willManager}</td>
-    //       //     <td>{element.willOwner}</td> */}
+              {/* <td ><a href="" target="_blank">{element.assetId}</a></td> */}
+              let assId = element.assetId.tostring();
+              <td>{element.assetId}</td>
+              <td>{GetAssetStaus(asId)}</td>
+       
+              <td><button onClick={()=>handleProceed(element.assetId)}></button></td>
+              {/* <td>{element.willManager}</td>
+              <td>{element.willOwner}</td> */}
               
-    //       //   </tr>
-    //       // ));
-    //   //
+            </tr>
+          ));
+              
+          console.log(trows)
  
-    //       return (
-    //         <div className="App">
+          return (
+            <div className="App">
           
             
-    //             ---------
-    //             <Table  highlightOnHover withColumnBorders>
-    //             <thead>
-    //                 <tr>
-    //                 <th>assetId</th>
-    //                 <th>status</th>
-    //                 <th>startDate</th>
-    //                 <th>endDate</th>
-    //                 <th>Benefitors</th>
-    //                 <th>manager</th>
-    //                 {/* <th>owner</th>
-    //                 <th>manager</th>
-    //                 */}
-    //                 </tr>
-    //             </thead>
-    //             <tbody>{trows}</tbody>
-    //             </Table>
-
-               
-
-
-                
-    //         </div>
-    //       );
-    // } else{
-    //  return (
-    //    <div className="App">
-    //      <Profile/>
+                ---------
+                <Table  highlightOnHover withColumnBorders>
+                      <thead>
+                          <tr>
+                            <th>assetId</th>
+                            <th>assetName</th>
+                          </tr>
+                      </thead>
+                      {/* <BrowserRouter> 
+                        <Routes>
+                          
+                        </Routes>
+                      </BrowserRouter> */}
+                      <tbody>{trows}</tbody>
+                </Table>
+            </div>
+          );
+    } else{
+     return (
+       <div className="App">
          
+         <h1>No Assets found</h1>
      
-    //    </div>
-    //  );
-    // }
-    return (
-      <div className="App">
-    
+       </div>
+     );
+    }
+    // return (
+    //   <div className="App">
+    //     <CompWagmiTestProvider/>
       
-          ---------
-          <Table  highlightOnHover withColumnBorders>
-          <thead>
-              <tr>
-              <th>assetId</th>
-              <th>status</th>
-              <th>startDate</th>
-              <th>endDate</th>
-              <th>Benefitors</th>
-              <th>manager</th>
-              {/* <th>owner</th>
-              <th>manager</th>
-              */}
-              </tr>
-          </thead>
+    //       ---------
+    //       <Table  highlightOnHover withColumnBorders>
+    //           <thead>
+    //               <tr>
+    //               <th>assetId</th>
+    //               <th>status</th>
+    //               <th>startDate</th>
+    //               <th>endDate</th>
+    //               <th>Benefitors</th>
+    //               <th>manager</th>
+    //               {/* <th>owner</th>
+    //               <th>manager</th>
+    //               */}
+    //               </tr>
+    //           </thead>
          
-          </Table>
+    //       </Table>
 
-         
-
-
-          
-      </div>
-    );
+    //   </div>
+    // );
 
 
     
   } catch (error) {
-    console.log(`Ex-1: GetWillsByUsers - ${error}`)
+    console.log(`ER-1: GetAssetsByUsers page`)
+    console.log(`${error}`)
   }
   return null;
  
-    
    
 }
 

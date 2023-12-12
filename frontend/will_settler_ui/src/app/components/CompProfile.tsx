@@ -2,7 +2,7 @@ import React from 'react'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 
-const Profile = () => {
+const ComProfile = () => {
 
     const { address } = useAccount()
     const { disconnect } = useDisconnect()
@@ -33,4 +33,4 @@ const Profile = () => {
   )
 }
 
-export default Profile
+export default ComProfile

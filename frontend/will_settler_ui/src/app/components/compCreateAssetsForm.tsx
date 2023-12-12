@@ -6,25 +6,32 @@ import { ActionIcon, useMantineColorScheme } from '@mantine/core';
 
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
-
-import {  getContract,  useContractWrite, usePrepareContractWrite, useWaitForTransaction, WagmiConfig } from './wrapperForWagmi'
+import { prepareWriteContract } from '@wagmi/core'
+//import {  getContract,  useContractWrite, usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
 import {
  
   CreateBondandAdminRole_CONTRACT_ABI,
   CreateBondandAdminRole_CONTRACT_ADDRESS,
 } from "../srcConstants";
-import { wagmiConfig } from './wrapperForWagmi';
+
 
 import { useState } from 'react';
-import { useContractEvent } from 'wagmi'
+import { useAccount, useContractEvent } from 'wagmi'
+import CompWagmiTestProvider from './CompWagmiTestProvider';
+import { WagmiConfigProvider } from './WagmiConfigProvider';
+import { getContract, writeContract } from 'wagmi/actions';
+import { Account } from 'viem';
 
-function CreateAssetsForm() {
+function CompCreateAssetsForm() {
 
+
+  const { address } = useAccount()
+  
   const contract = getContract({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,
   })
-
+  const [customerAccountAddress, setCustomerAccountAddress] = useState(address);
   const [submittedValues, setSubmittedValues] = useState('');
   const [assetName, setAssetName] = useState('');
   const [Amt, setAmount] = useState(0);
@@ -51,7 +58,7 @@ function CreateAssetsForm() {
     useContractEvent({
       address: CreateBondandAdminRole_CONTRACT_ADDRESS,
       abi: CreateBondandAdminRole_CONTRACT_ABI,
-      eventName: 'willCreated',
+      eventName: 'assetCreated',
       //listener(node, label, owner) {
         listener(log) {
         //console.log(node, label, owner)
@@ -71,40 +78,97 @@ function CreateAssetsForm() {
     })
   }
   function WillSettlementEvent() {
-    // useContractEvent({
-    //   address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    //   abi: CreateBondandAdminRole_CONTRACT_ABI,
-    //   eventName: 'willSettled',
-    //   listener(cryptoWillId, benefitor, willMaturityDate, willAmount) {
-    //     console.log(cryptoWillId, benefitor, willMaturityDate, willAmount)
-    //   },
-    // })
+    useContractEvent({
+      address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+      abi: CreateBondandAdminRole_CONTRACT_ABI,
+      eventName: 'willSettled',
+      listener(log) {
+        //console.log(cryptoWillId, benefitor, willMaturityDate, willAmount)
+      },
+    })
 
     
   }
   
-  
-  // const { 
-  //   config,
-  //   error: prepareError,
-  //   isError: isPrepareError, } = usePrepareContractWrite({
-  //   address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-  //   abi: CreateBondandAdminRole_CONTRACT_ABI,
-  //   functionName: 'createAsset',
-  //   args: [assetName, parseInt(Amt.toString())],
-  //   enabled: Boolean(Amt),
-  // })
-  // const { data, write , error, isError } = useContractWrite(config)
-  // const { isLoading, isSuccess } = useWaitForTransaction({
-  //   hash: data?.hash,
-  // })
-  // console.log('---createAsset----')
-  // console.log(isConnected)
-  //   console.log(address)
-  // console.log(data)
-  // console.log('--------')
-  return (
+  let CreateBondandAdminRole_CONTRACT_ADDRESSk:any = '0x9bB29A4336A891501595B2CA3ae22FF54652d78C'
+  console.log(CreateBondandAdminRole_CONTRACT_ADDRESS)
+// function PrepareCOntractWrite() {
 
+//   const { 
+//     config,
+//     error: prepareError,
+//     isError: isPrepareError, } = prepareWriteContract({
+//     address: CreateBondandAdminRole_CONTRACT_ADDRESSk,
+//     abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
+//     functionName: 'createAsset',
+//     args: [assetName, parseInt(Amt.toString())],
+//     enabled: Boolean(Amt),
+//   });
+  
+//   return config;
+
+
+// }
+
+
+async function WithoutHookPrepareCOntractWrite() {
+  console.log(`I am connected to account '${address}'`)
+  console.log(window)
+  if(window.ethereum)
+  {
+    const { ethereum } = window;
+      if (ethereum && ethereum.isMetaMask) {
+        alert('Ethereum successfully detected!');
+        // Access the decentralized web!
+      } else {
+        alert('Please install MetaMask!');
+      }
+  }
+  
+  let acct:Account = 0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a;
+
+  console.log(`connected Address '${customerAccountAddress}`)
+  
+  const { 
+    request,result } = await prepareWriteContract({
+    address: CreateBondandAdminRole_CONTRACT_ADDRESSk,
+    abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
+    functionName: 'a_createAssets',
+    args: [assetName, parseInt(Amt.toString())],
+    chainId: 80001,
+    account: customerAccountAddress
+    
+  });
+  
+  console.log(`result of contractprepare`)
+  console.log(result)
+
+  const { hash } = await writeContract(request)
+
+  console.log(hash)
+}
+
+function CreateAssetSubmit() {
+  // const { data, write , error, isError } = useContractWrite(PrepareCOntractWrite());
+  // const returnFromUseWaitTxn = useWaitForTransaction({
+  //   hash: data?.hash,
+  // });
+
+
+  console.log('---createAsset----')
+ // console.log(isConnected)
+  
+  //console.log(data)
+  console.log('--------')
+
+}
+ 
+  
+
+
+  return (
+    <div>
+   
     <Box sx={{ maxWidth: 400 }} mx="auto">
       <form
         onSubmit={form.onSubmit((values) => {
@@ -131,9 +195,10 @@ function CreateAssetsForm() {
         />
 
 
-        <Button type="submit" mt="md">
+        <Button type="submit" mt="md" onClick = {WithoutHookPrepareCOntractWrite}>
           Submit to create Asset
         </Button>
+        
         {/* {isSuccess && (
         <div>
           Successfully created Asset, check here!!
@@ -156,8 +221,8 @@ function CreateAssetsForm() {
 
 
     </Box>
-   
+    </div>
   );
 }
 
-export default CreateAssetsForm;
+export default CompCreateAssetsForm;
