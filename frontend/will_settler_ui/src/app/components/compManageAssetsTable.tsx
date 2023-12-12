@@ -32,7 +32,7 @@ function GetAssetStaus(assetId:string) {
     args: [assetId]
     
   })
-  return functionData;
+  return functionData as string;
 }
 function  GetAssetsByUsers():IAssets[] {
   
@@ -95,9 +95,9 @@ function ManageAssetsTable() {
             <tr key={element.assetId}>
               
               {/* <td ><a href="" target="_blank">{element.assetId}</a></td> */}
-              let assId = element.assetId.tostring();
+              
               <td>{element.assetId}</td>
-              <td>{GetAssetStaus(asId)}</td>
+              <td>{GetAssetStaus(element.assetId.toString())}</td>
        
               <td><button onClick={()=>handleProceed(element.assetId)}></button></td>
               {/* <td>{element.willManager}</td>

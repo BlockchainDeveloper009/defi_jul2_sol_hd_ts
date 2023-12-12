@@ -6,13 +6,14 @@ import {  getContract,
    usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
 
 import {
-  debugFlag,
+  
   CreateBondandAdminRole_CONTRACT_ABI,
   CreateBondandAdminRole_CONTRACT_ADDRESS,
 } from "../srcConstants";
 
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from 'react';
+import { useAccount } from 'wagmi';
 
 
 interface IWillsInfo{
@@ -27,73 +28,94 @@ interface IWillsInfo{
   
   
 }
-// function GetWillsByUsers(stttt:any) {
-//   const { data:functionData,status} = useContractRead({
-//     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-//     abi: CreateBondandAdminRole_CONTRACT_ABI,
-//     functionName: 'getUserCreatedBonds',
-//     args: [stttt]
+function GetWillsByUsers(stttt:any) {
+  const { data:functionData,status} = useContractRead({
+    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    functionName: 'getUserCreatedBonds',
+    args: [stttt]
     
-//   })
+  })
   
   
-//   console.log('---getUserCreatedBonds-----')
-//   console.log(functionData)
-//   console.log('---------------')
-//   let retData:WillsData[];
-//   retData = functionData as Array<WillsData>;
-//   console.log(retData)
-//   return retData 
+  console.log('---getUserCreatedBonds-----')
+  console.log(functionData)
+  console.log('---------------')
+  let retData:IWillsInfo[];
+  retData = functionData as Array<IWillsInfo>;
+  console.log(retData)
+  return retData 
 
-// }
+}
 
 
 function ManageWillsTable() {
-  const address = '0x'
-  const isConnected = 'false'
-  //const { address, connector, isConnected } = useAccount()
+  
+  
+  const { address, connector, isConnected } = useAccount()
   const [assetId, setAssetId] = useState('')
-  const [willsId, setWillsId] = useState('')
+  const [willId, setWillId] = useState('')
   let { asId } = useParams();
   // const navigate = useNavigate();
-  // const handleProceed = (assetId:string) => {
-  //   // console.log(id, "home");
-  //   setWillsId(assetId)
-  //   console.log('---handleProceed---')
-  //   console.log(assetId)
-  //   console.log('----------')
-  //   navigate("/WillsFormEdit",  
-  //   {
-  //     state: {
-  //       userId: assetId,
-  //     }
-  //   }
-  //   );
-  // };
+  const handleProceed = (willsId:string) => {
+    // console.log(id, "home");
+    setWillId(willId)
+    console.log('---handleProceed---')
+    console.log(willId)
+    console.log('----------')
+ //  navigate("/WillsFormEdit",  
+    // {
+    //   state: {
+    //     userId: willsId,
+    //   }
+    // }
+    // );
+  };
 
   try {
 
     console.log(`addresss -----> ${address}`)
-    let d:any = [] ; //GetWillsByUsers(address)
-    if(isConnected && d.length>=0)
+    let d:any = [
+      { willId: 0,
+      assetId: 'ca-0',
+      s_baseStatus: 'created',
+      willStartDate: 20231201,
+      willMaturityDate: 20231231,
+      Benefitors: 1234567890,
+      willOwner: '0x234243223423423',
+      willManager: '0x9999999'
+    },
+    { willId: 1,
+      assetId: 'ca-1',
+      s_baseStatus: 'unsettled',
+      willStartDate: 202310101,
+      willMaturityDate: 20231231,
+      Benefitors: 1234567890,
+      willOwner: '0x234243223423423',
+      willManager: '0x9999999'
+    }
+    ] ; //GetWillsByUsers(address)
+    if(d.length>=0)
     {
-          //   console.log(d[0].willId);
             
-          // const trows = d.map((element) => (
-          //   <tr key={element.assetId}>
+            console.log(d[0])
+          const trows = d.map((element:any) => (
+            <tr key={element.assetId}>
               
-          //     <td ><a href="" target="_blank">{element.willId.toString()}</a></td>
-          //     <td ><a href="" target="_blank">{element.assetId}</a></td>
-          //     <td>{element.s_baseStatus}</td>
-          //     <td>{element.willMaturityDate.toString()}</td>
-          //     <td>{element.willStartDate.toString()}</td>
-          //     <td>{element.Benefitors}</td>
-          //     <td><button onClick={()=>handleProceed(element.willId.toString())}></button></td>
-          //     {/* <td>{element.willManager}</td>
-          //     <td>{element.willOwner}</td> */}
+              <td ><a href="" target="_blank">{element.willId.toString()}</a></td>
+              <td ><a href="" target="_blank">{element.assetId}</a></td>
+              <td><button onClick={()=>handleProceed(element.willId.toString())}>edit</button></td>
+              <td>{element.s_baseStatus}</td>
+              <td>{element.willMaturityDate.toString()}</td>
+              <td>{element.willStartDate.toString()}</td>
+              <td>{element.Benefitors}</td>
+              <td>{element.willOwner}</td> 
               
-          //   </tr>
-          // ));
+              {/* <td>{element.willManager}</td>
+              <td>{element.willOwner}</td> */}
+              
+            </tr>
+          ));
       //ManageAssetsTable
  
           return (
@@ -105,17 +127,18 @@ function ManageWillsTable() {
                 <thead>
                     <tr>
                     <th>will_Id</th>
+                    <th>asset_Id</th>
                     <th>status</th>
                     <th>startDate</th>
                     <th>endDate</th>
                     <th>Benefitors</th>
                     <th>manager</th>
-                    {/* <th>owner</th>
-                    <th>manager</th>
-                    */}
+                     <th>owner</th>
+                    
+                    
                     </tr>
                 </thead>
-                {/* <tbody>{trows}</tbody> */}
+                <tbody>{trows}</tbody>
                 </Table>
 
                
@@ -128,22 +151,17 @@ function ManageWillsTable() {
      return (
        <div className="App">
          
-         
+         <h1>No Wills to show</h1>
      
        </div>
      );
     }
 
-
-
-    
   } catch (error) {
-    console.log(`Ex-1: GetWillsByUsers - ${error}`)
+    console.log(`Ex-10: GetWillsByUsers - ${error}`)
   }
   return null;
  
-    
-   
 }
 
 export default ManageWillsTable;
