@@ -42,7 +42,9 @@ function  GetAssetsByUsers():IAssets[] {
   return retData 
 
 }
-
+function ConvertDateToUnixTimeStamp(incomingDate:string):number{
+  return Math.floor(new Date(incomingDate).getTime() / 1000 );
+}
 
 function CreateWillsForm() {
 
@@ -50,10 +52,17 @@ function CreateWillsForm() {
   const { address, connector, isConnected } = useAccount()
   const [assetId, setAssetId] = useState<string|null>(null);
   const today = new Date();
+  
   const todayDateFmt =  today.getMonth() + '-' + today.getDate() + '-' +  today.getFullYear();
   const autoCalculated_willEndDate = today.getMonth() + '-' + (today.getDate() +1) + '-' +  today.getFullYear();
-  const [willStartDate, setWillStartDate] = useState(todayDateFmt);
-  const [willEndDate, setWillEndDate] = useState(autoCalculated_willEndDate);
+  
+  
+
+  
+  
+  
+  const [willStartDate, setWillStartDate] = useState('');
+  const [willEndDate, setWillEndDate] = useState('');
   const [benefitorAddr, setbenefitorAddr] = useState('');
 
   const [createWillFlag, setCreateWillFlag] = useState(false);
@@ -91,6 +100,8 @@ function CreateWillsForm() {
 
   const CreateWill = async () => {
     setCreateWillFlag(true);
+    console.log(`willStartDate-> '${willStartDate}'`)
+    console.log(`willEndDate-> '${willEndDate}'`)
     const { 
       request,result } = await prepareWriteContract({
       address: CreateBondandAdminRole_CONTRACT_ADDRESS,
@@ -143,8 +154,9 @@ function CreateWillsForm() {
         onSubmit={form.onSubmit((values) => {
           setSubmittedValues(JSON.stringify(values, null, 2))
           setAssetId(values.AssetId)
-          setWillStartDate(values.willStartDate)
-          setWillEndDate(autoCalculated_willEndDate) //values.willEndDate
+          
+          setWillStartDate(ConvertDateToUnixTimeStamp(values.willStartDate).toString())
+          setWillEndDate(ConvertDateToUnixTimeStamp(values.willEndDate).toString()) //values.willEndDate
           setbenefitorAddr(values.Benefitor)
         //  write?.();
 
