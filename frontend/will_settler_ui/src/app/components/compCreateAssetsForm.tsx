@@ -111,57 +111,57 @@ function CompCreateAssetsForm() {
 // }
 
 
-async function WithoutHookPrepareCOntractWrite() {
-  console.log(`I am connected to account '${address}'`)
-  console.log(window)
-  if(window.ethereum)
-  {
-    const { ethereum } = window;
-      if (ethereum && ethereum.isMetaMask) {
-        alert('Ethereum successfully detected!');
-        // Access the decentralized web!
-      } else {
-        alert('Please install MetaMask!');
+    async function WithoutHookPrepareCOntractWrite() {
+      console.log(`I am connected to account '${address}'`)
+      console.log(window)
+      if(window.ethereum)
+      {
+        const { ethereum } = window;
+          if (ethereum && ethereum.isMetaMask) {
+            alert('Ethereum successfully detected!');
+            // Access the decentralized web!
+          } else {
+            alert('Please install MetaMask!');
+          }
       }
-  }
-  
-  let acct:Account = 0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a;
+      
+      let acct:Account = 0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a;
 
-  console.log(`connected Address '${customerAccountAddress}`)
-  
-  const { 
-    request,result } = await prepareWriteContract({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESSk,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
-    functionName: 'a_createAssets',
-    args: [assetName, parseInt(Amt.toString())],
-    chainId: 80001,
-    account: customerAccountAddress
+      console.log(`connected Address '${customerAccountAddress}`)
+      
+      const { 
+        request,result } = await prepareWriteContract({
+        address: CreateBondandAdminRole_CONTRACT_ADDRESSk,
+        abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
+        functionName: 'a_createAssets',
+        args: [assetName, parseInt(Amt.toString())],
+        chainId: 80001,
+        account: customerAccountAddress
+        
+      });
+      
+      console.log(`result of contractprepare`)
+      console.log(result)
+
+      const { hash } = await writeContract(request)
+
+      console.log(hash)
+    }
+
+  function CreateAssetSubmit() {
+    // const { data, write , error, isError } = useContractWrite(PrepareCOntractWrite());
+    // const returnFromUseWaitTxn = useWaitForTransaction({
+    //   hash: data?.hash,
+    // });
+
+
+    console.log('---createAsset----')
+  // console.log(isConnected)
     
-  });
-  
-  console.log(`result of contractprepare`)
-  console.log(result)
+    //console.log(data)
+    console.log('--------')
 
-  const { hash } = await writeContract(request)
-
-  console.log(hash)
-}
-
-function CreateAssetSubmit() {
-  // const { data, write , error, isError } = useContractWrite(PrepareCOntractWrite());
-  // const returnFromUseWaitTxn = useWaitForTransaction({
-  //   hash: data?.hash,
-  // });
-
-
-  console.log('---createAsset----')
- // console.log(isConnected)
-  
-  //console.log(data)
-  console.log('--------')
-
-}
+  }
  
   
 

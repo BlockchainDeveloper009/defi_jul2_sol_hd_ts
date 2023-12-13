@@ -16,35 +16,47 @@ import {
   CreateBondandAdminRole_CONTRACT_ADDRESS,
 } from "../srcConstants";
 //import { contractConfig } from "../Config";
-
-// function GetAllAssets(stttt:any):Array<string> {
-//   const { data: functionData ,status} = useContractRead({
-//     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-//     abi: CreateBondandAdminRole_CONTRACT_ABI,
-//     functionName: 'getAllAsset',
-    
-//   })
+import { IAssets } from '../models/IAssets';
+import { prepareWriteContract, writeContract } from 'wagmi/actions';
+function  GetAssetsByUsers():IAssets[] {
   
-//   console.log('---------')
-//   console.log(functionData)
-//   console.log('----getAllAssets-----')
-//   console.log(functionData as Array<string>)
-//   let retData = functionData as Array<string>;
-//   console.log(retData)
-//   return retData
-// }
+  const { data:functionData,status} = useContractRead({
+    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    functionName: 'getAllAsset',
+    args: []
+    
+  })
+  const { address } = useAccount()
+  
+  console.log('---getUserCreatedBonds-----')
+  console.log(address)
+  console.log('--expect use address')
+  console.log('expect function data')
+  console.log(functionData)
+  console.log('---------')
+  
+  let retData = functionData as Array<IAssets>;
+  console.log('decode values')
+  // console.log(retData[0].assetName)
+  return retData 
+
+}
 
 
 function CreateWillsForm() {
 
   
-  //const { address, connector, isConnected } = useAccount()
+  const { address, connector, isConnected } = useAccount()
   const [assetId, setAssetId] = useState<string|null>(null);
-  const [willStartDate, setWillStartDate] = useState('');
-  const [willEndDate, setWillEndDate] = useState('');
+  const today = new Date();
+  const todayDateFmt =  today.getMonth() + '-' + today.getDate() + '-' +  today.getFullYear();
+  const autoCalculated_willEndDate = today.getMonth() + '-' + (today.getDate() +1) + '-' +  today.getFullYear();
+  const [willStartDate, setWillStartDate] = useState(todayDateFmt);
+  const [willEndDate, setWillEndDate] = useState(autoCalculated_willEndDate);
   const [benefitorAddr, setbenefitorAddr] = useState('');
 
-
+  const [createWillFlag, setCreateWillFlag] = useState(false);
   const [submittedValues, setSubmittedValues] = useState('');
 
 
@@ -70,38 +82,57 @@ function CreateWillsForm() {
       Benefitor: `${values.Benefitor}`,
     }),
   });
-  // const { data:Result, error:Error ,isError:boolean, status} = useContractRead({
-  //   address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-  //   abi: CreateBondandAdminRole_CONTRACT_ABI,
-  //   functionName: 'checkAssetisAvailable',
-  //   args: [assetId],
-  // })
+  const { data:Result, error:Error ,isError:boolean, status} = useContractRead({
+    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    functionName: 'checkAssetisAvailable',
+    args: [assetId],
+  })
 
-  //  const { 
-  //   config,
-  //   error: prepareError,
-  //   isError: isPrepareError, } = usePrepareContractWrite({
-  //   address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-  //   abi: CreateBondandAdminRole_CONTRACT_ABI,
-  //   functionName: 'a_createCryptoVault',
-  //   args: [assetId, willStartDate,willEndDate,benefitorAddr],
-  //   enabled: Boolean(assetId),
-  // })
-  // const { data, write , error, isError } = useContractWrite(config)
-  // const { isLoading, isSuccess } = useWaitForTransaction({
-  //   hash: data?.hash,
-  // })
-  let assets:string[] = [];
-  let wills;
-  // assets = GetAllAssets(address)
-  // if(assets?.length>=0 ){
-  //   console.log('---assets---')
-  //   console.log(assets)
-  //   console.log('--------------')
-  // } else { 
-  //   assets.push('testData')
+  const CreateWill = async () => {
+    setCreateWillFlag(true);
+    const { 
+      request,result } = await prepareWriteContract({
+      address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+      abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
+      functionName: 'a_createCryptoVault',
+      args: [assetId, willStartDate,willEndDate,benefitorAddr],
+      chainId: 80001,
+      account: address
+      
+    });
+
+    const { hash } = await writeContract(request)
+
+    
+  }
+  // this below code cannot work, because hook should be rendered always in same order, 
+  //since condition is used, we cannot use this flow
+  // if(createWillFlag){
+  //   const { 
+  //     config,
+  //     error: prepareError,
+  //     isError: isPrepareError, } = usePrepareContractWrite({
+  //     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+  //     abi: CreateBondandAdminRole_CONTRACT_ABI,
+  //     functionName: 'a_createCryptoVault',
+  //     args: [assetId, willStartDate,willEndDate,benefitorAddr],
+  //     enabled: Boolean(assetId),
+  //   })
+  //   const { data, write , error, isError } = useContractWrite(config)
+  //   const { isLoading, isSuccess } = useWaitForTransaction({
+  //     hash: data?.hash,
+  //   })
   // }
-  // //wills = GetWillsByUsers(address)
+  let assets:IAssets[] = GetAssetsByUsers()
+  if(assets?.length>=0 ){
+    console.log('---assets---')
+    console.log(assets)
+    console.log('--------------')
+  } else { 
+   // assets.push({ assetId: 'ca-0', assetName: 'testData'})
+  }
+
   
   const willDatas = Array(50).fill(0).map((_, index) => `Item ${index}`);
   return (
@@ -113,7 +144,7 @@ function CreateWillsForm() {
           setSubmittedValues(JSON.stringify(values, null, 2))
           setAssetId(values.AssetId)
           setWillStartDate(values.willStartDate)
-          setWillEndDate(values.willEndDate)
+          setWillEndDate(autoCalculated_willEndDate) //values.willEndDate
           setbenefitorAddr(values.Benefitor)
         //  write?.();
 
@@ -132,7 +163,7 @@ function CreateWillsForm() {
           // onBlur={(event) => ValidateUserAssetId(event.currentTarget.value)}
         //  onError=()=>{}
         />
-        <Select 
+        {/* <Select 
           label="Your fav"
           placeholder="ca-01"
           value={assetId}
@@ -141,7 +172,7 @@ function CreateWillsForm() {
           //{[{value:'testData'}]}
           //assets.length>=0 ? assets : [{value:'testData'}]   
           
-        />
+        /> */}
        
 
         <TextInput
@@ -165,7 +196,7 @@ function CreateWillsForm() {
           {...form.getInputProps('Benefitor')}
         />
 
-        <Button type="submit" mt="md">
+        <Button type="submit" mt="md" onClick = {CreateWill}>
           Submit
         </Button>
         {/* {isSuccess && (

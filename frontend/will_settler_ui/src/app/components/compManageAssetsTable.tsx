@@ -13,17 +13,9 @@ import { BrowserRouter, Routes, useNavigate, useParams } from "react-router-dom"
 import { formatEther } from 'viem'
 import CompWagmiTestProvider from './CompWagmiTestProvider';
 import { useAccount } from 'wagmi';
+import { IAssets } from '../models/IAssets';
 
-interface IAssets {
-  assetId:string,
-  
-  assetName: string,
-  asset_amount: BigInt,
-  asset_Category:BigNumberish,
-  isAvailable: number,
-  assetStatus:number,
-  
- }
+
 function GetAssetStaus(assetId:string) {
   const { data:functionData,status} = useContractRead({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
