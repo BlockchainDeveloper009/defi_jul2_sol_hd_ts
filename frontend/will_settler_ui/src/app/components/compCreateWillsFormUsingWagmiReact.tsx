@@ -50,28 +50,35 @@ function  GetAssetsByUsers(addr:any):IAssets[] {
   const todayDateFmt =  today.getMonth() + '-' + today.getDate() + '-' +  today.getFullYear();
   
   let retData = functionData as Array<IAssets>;
-  console.log('decode values')
-  // console.log(retData[0].assetName)
+  
   return retData 
 
 }
 function ConvertDateToUnixTimeStamp(incomingDate:string):number{
   return Math.floor(new Date(incomingDate).getTime() / 1000 );
 }
+function parseErrorMessage(errorMessage:string) {
+  try {
+    return JSON.parse(errorMessage);
+  } catch (error) {
+    console.error('Error parsing error message:', error);
+    return {};
+  }
+}
 /**
  * 
- * @returns component built using WagmiCore<vanilla JS>
+ * @returns return componeng using wagmiReact
  */
-function CreateWillsForm() {
+function CreateWillsFormUsingWagmiReact() {
 
   
   const { address, connector, isConnected } = useAccount()
   console.log(`address -> '${address}'`)
   const [assetId, setAssetId] = useState<string|null>(null);
   
-  const { isWillCreationSuccess, setisWillCreationSuccess} = useState<boolean>()
-  const { hash, setHash} = useState<Hash>()
-  const { receipt, setReceipt } = useState<TransactionReceipt>()
+  const [ isWillCreationSuccess, setisWillCreationSuccess] = useState<boolean>(false)
+  const [ willCreationPrepareError, setWillCreationPrepareError] = useState<Error | null | undefined>();
+  const [ willWriteError, setWillWriteError ] = useState<Error | null | undefined>()
   const [willStartDate, setWillStartDate] = useState('');
   const [willEndDate, setWillEndDate] = useState('');
   const [benefitorAddr, setbenefitorAddr] = useState('');
@@ -110,58 +117,88 @@ function CreateWillsForm() {
   })
 
   const CreateWill = async () => {
-    setCreateWillFlag(true);
+    
     
     console.log(`willStartDate-> '${willStartDate}'`)
     console.log(`willEndDate-> '${willEndDate}'`)
-    const { 
-      request } = await prepareWriteContract({
-      address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-      abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
-      functionName: 'a_createCryptoVault',
-      args: [assetId, willStartDate,willEndDate,benefitorAddr],
-      chainId: 80001,
-      account: address
-      
-    });
-
-    const { hash } = await writeContract(request)
-    console.log(`hash-->`)
-    setHash(hash)
-    console.log(hash)
-
-    
+    // const { 
+    //   request } = await prepareWriteContract({
+    //   address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+    //   abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
+    //   functionName: 'a_createCryptoVault',
+    //   args: [assetId, willStartDate,willEndDate,benefitorAddr],
+    //   chainId: 80001,
+    //   account: address
+    // });
+    // const { hash } = await writeContract(request)
+    // console.log(`hash-->`)
+    // setHash(hash)
+    // console.log(hash)    
   }
-  useEffect(() => 
-  { ;
-        (async () => {
-          if(hash){
-            const receipt = await publicClient.waitForTransactionReceipt(
-              { hash })
-              setReceipt(receipt)
-          }
+  // useEffect(() => 
+  // { ;
+  //       (async () => {
+  //         if(hash){
+  //           const receipt = await publicClient.waitForTransactionReceipt(
+  //             { hash })
+  //             setReceipt(receipt)
+  //         }
+  //       }
+  //       )
+  // })
+  
+  
 
-        }
-        )
+  const { 
+    config,
+    error: prepareError,
+    isError: isPrepareError, } = usePrepareContractWrite({
+    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    functionName: 'a_createCryptoVault',
+    args: [assetId, willStartDate,willEndDate,benefitorAddr],
+    enabled: Boolean(assetId),
   })
-  // this below code cannot work, because hook should be rendered always in same order, 
-  //since condition is used, we cannot use this flow
-  // if(createWillFlag){
-  //   const { 
-  //     config,
-  //     error: prepareError,
-  //     isError: isPrepareError, } = usePrepareContractWrite({
-  //     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-  //     abi: CreateBondandAdminRole_CONTRACT_ABI,
-  //     functionName: 'a_createCryptoVault',
-  //     args: [assetId, willStartDate,willEndDate,benefitorAddr],
-  //     enabled: Boolean(assetId),
-  //   })
-  //   const { data, write , error, isError } = useContractWrite(config)
-  //   const { isLoading, isSuccess } = useWaitForTransaction({
-  //     hash: data?.hash,
-  //   })
+  // if(isPrepareError){
+  //   console.log(`usePrepareContractWrite - error`)
+  //  // setWillCreationPrepareError(prepareError)
+  //   console.log(prepareError)
+  //   console.log(`usePrepareContractWrite - isError`)
+  //   console.log(isPrepareError)
+
   // }
+
+  useEffect(() => {
+
+    if(prepareError){
+      setWillWriteError(prepareError)
+    }
+
+  },[prepareError])
+
+  const { data, write , error: contractWriteError, isError: contractWriteErrorFlag } = useContractWrite(config)
+  useEffect(() => {
+
+    if(contractWriteError){
+      setWillWriteError(contractWriteError)
+    }
+
+  },[contractWriteError])
+  // if(isError){
+  //   console.log(`useContractWrite - error`)
+  // //  setWillWriteError(error)
+  //   console.log(error)
+  //   console.log(typeof(error))
+   
+  //   console.log(`useContractWrite - isError`)
+  //   console.log(isError)
+
+  // }
+  const { isLoading, isSuccess } = useWaitForTransaction({
+    hash: data?.hash,
+  })
+
+  //setisWillCreationSuccess(isSuccess)
   let assets:IAssets[] = GetAssetsByUsers(address)
   if(assets?.length>=0 ){
    
@@ -236,7 +273,7 @@ function CreateWillsForm() {
         <Button type="submit" mt="md" onClick = {CreateWill}>
           Submit
         </Button>
-       {isWillCreationSuccess && (
+       {/* {isSuccess && (
                 <div>
                   Successfully created Will, check here!!
                   <div>
@@ -248,14 +285,28 @@ function CreateWillsForm() {
                   
                 </div>
           )
-        } 
+        }  */}
+
+        
+
+{willCreationPrepareError && (
+          <div>
+            {parseErrorMessage(willCreationPrepareError.message)?.reason &&
+            ( <p>Reason: {parseErrorMessage(willCreationPrepareError.message).reason}</p>)}
+            Error while contract write: {willCreationPrepareError.message}
+          </div>
+        )}
+
+        {willWriteError && (
+          <div>Error while contract write: {willWriteError.message}</div>
+        )}
         
 
       {/* { {(isPrepareError || isError) && (
         <div>Error: {(prepareError || error)?.message}</div>
       )}
        */}
-      }
+      
 
       </form>
      
@@ -268,4 +319,4 @@ function CreateWillsForm() {
  
 }
 
-export default CreateWillsForm;
+export default CreateWillsFormUsingWagmiReact;

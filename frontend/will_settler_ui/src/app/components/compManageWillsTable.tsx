@@ -75,26 +75,27 @@ function ManageWillsTable() {
   try {
 
     console.log(`addresss -----> ${address}`)
-    let d:any = [
-      { willId: 0,
-      assetId: 'ca-0',
-      s_baseStatus: 'created',
-      willStartDate: 20231201,
-      willMaturityDate: 20231231,
-      Benefitors: 1234567890,
-      willOwner: '0x234243223423423',
-      willManager: '0x9999999'
-    },
-    { willId: 1,
-      assetId: 'ca-1',
-      s_baseStatus: 'unsettled',
-      willStartDate: 202310101,
-      willMaturityDate: 20231231,
-      Benefitors: 1234567890,
-      willOwner: '0x234243223423423',
-      willManager: '0x9999999'
-    }
-    ] ; //GetWillsByUsers(address)
+    // let d:any = [
+    //   { willId: 0,
+    //   assetId: 'ca-0',
+    //   s_baseStatus: 'created',
+    //   willStartDate: 20231201,
+    //   willMaturityDate: 20231231,
+    //   Benefitors: 1234567890,
+    //   willOwner: '0x234243223423423',
+    //   willManager: '0x9999999'
+    // },
+    // { willId: 1,
+    //   assetId: 'ca-1',
+    //   s_baseStatus: 'unsettled',
+    //   willStartDate: 202310101,
+    //   willMaturityDate: 20231231,
+    //   Benefitors: 1234567890,
+    //   willOwner: '0x234243223423423',
+    //   willManager: '0x9999999'
+    // }
+    // ] ;
+    let d:any = GetWillsByUsers(address)
     if(d.length>=0)
     {
             
