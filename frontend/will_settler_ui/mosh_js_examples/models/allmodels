@@ -1,0 +1,10 @@
+model Issue {
+    id Int @id @default{autoincrement()}
+    title String @debugger.VarChar(255)
+    createdAt DateTime @default(now())
+    updatedAt DateTIme @updatedAt(now())
+}
+
+#Data related
+install prisma, z, format, 
+

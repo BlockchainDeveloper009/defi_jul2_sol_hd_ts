@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("dev_MYSQL_DATABASE_URL")
+}
+
+model Assets {
+  asset_Id String @id
+  asset_Name String
+  asset_Amount Float
+  asset_Category Float
+  asset_isAvailable Int
+  asset_Status Int
+    
+}
+model Will_info {
+    will_Id Int @id
+    will_StartDate Int
+    will_EndDate Int
+    will_Owner Int
+    will_Manager BigInt
+    Benefitors Bytes
+    will_Status Int
+    will_asset_Id String
+    will_asset_Amount Float
+}

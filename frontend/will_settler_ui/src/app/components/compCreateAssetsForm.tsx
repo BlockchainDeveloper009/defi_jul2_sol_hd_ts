@@ -3,7 +3,7 @@
 import { ActionIcon, useMantineColorScheme } from '@mantine/core';
 //import { IconSun, IconMoonStars } from '@tabler/icons';
 
-
+import { Axios } from 'axios'
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
 import { prepareWriteContract } from '@wagmi/core'
@@ -15,16 +15,22 @@ import {
 } from "../srcConstants";
 
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAccount, useContractEvent } from 'wagmi'
 import CompWagmiTestProvider from './CompWagmiTestProvider';
 import { WagmiConfigProvider } from './WagmiConfigProvider';
 import { getContract, writeContract } from 'wagmi/actions';
 import { Account } from 'viem';
+import  { PrismaClient } from '@prisma/client'
+import { createAssetSchema } from '../api/createAsset/validateSchema';
+import { useRouter } from 'next/navigation';
+import { z } from 'zod';
 
+const prisma = new PrismaClient()
+type Assets = z.infer<typeof createAssetSchema >;
 function CompCreateAssetsForm() {
 
-
+  const router = useRouter();
   const { address } = useAccount()
   
   const contract = getContract({
@@ -35,6 +41,40 @@ function CompCreateAssetsForm() {
   const [submittedValues, setSubmittedValues] = useState('');
   const [assetName, setAssetName] = useState('');
   const [Amt, setAmount] = useState(0);
+  const [assetIdCreated, setAssetIdCreated] = useState('')
+  useContractEvent({
+    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    eventName: 'assetCreated',
+    //listener(node, label, owner) {
+      listener(log) {
+      //console.log(node, label, owner)
+      console.log('listening to event assetCreated')
+      
+      
+      console.log(log[0].args.assetId)
+      setAssetIdCreated(log[0].args.assetId)
+      
+      
+    },
+  })
+  useEffect(() => {
+
+    async function callCreateApi(){
+      let data:Assets = { 
+        asset_Id: assetIdCreated , 
+        asset_Name:assetName,
+        asset_Amount: Amt.toString()
+        }
+      try {
+        await Axios.post('/api/createAsset', data)
+
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    
+  })
 
   const form = useForm({
     initialValues: {
@@ -144,8 +184,10 @@ function CompCreateAssetsForm() {
       console.log(result)
 
       const { hash } = await writeContract(request)
-
+      console.log(`txn Hash`)
       console.log(hash)
+        // load the list of all assets created by this user
+        router.push('/pageAssetsManager')
     }
 
   function CreateAssetSubmit() {

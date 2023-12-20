@@ -17,6 +17,7 @@ import { polygonMumbai } from 'viem/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import ComProfile from '../components/CompProfile';
 
+
 const pageAssetsCreator = ({Component, pageProps}: AppProps) => {
 
   const { chains, publicClient, webSocketPublicClient } = configureChains(
