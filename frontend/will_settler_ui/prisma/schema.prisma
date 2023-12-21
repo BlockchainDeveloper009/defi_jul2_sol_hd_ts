@@ -19,14 +19,14 @@ model Assets {
   asset_Status Int
     
 }
-model Will_info {
+model will_info {
     will_Id Int @id
     will_StartDate Int
     will_EndDate Int
-    will_Owner Int
-    will_Manager BigInt
-    Benefitors Bytes
+    will_Owner String
+    will_Manager String
     will_Status Int
     will_asset_Id String
     will_asset_Amount Float
+    will_Benefitors String
 }

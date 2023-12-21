@@ -2,14 +2,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Assets, PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-import { createAssetSchema } from './validateSchema';
-//import { parseBody } from 'next/dist/server/api-utils'
+import { createAssetSchema } from '../validateSchema';
+
 const prisma = new PrismaClient();
 
-//npm i classname | to manage className for us
-//npm i zod
-//helps to  interact with data validation library like zod
-//npm i @hookform/resolvers@3.3.1
+
 
 export async function POST(req:NextRequest, res:NextResponse) {
   console.log(`api --> '${req.method}'`)

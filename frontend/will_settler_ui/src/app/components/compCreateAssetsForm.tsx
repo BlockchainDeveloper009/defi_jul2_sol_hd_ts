@@ -15,16 +15,18 @@ import {
 } from "../srcConstants";
 
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useAccount, useContractEvent } from 'wagmi'
 import CompWagmiTestProvider from './CompWagmiTestProvider';
 import { WagmiConfigProvider } from './WagmiConfigProvider';
 import { getContract, writeContract } from 'wagmi/actions';
 import { Account } from 'viem';
 import  { PrismaClient } from '@prisma/client'
-import { createAssetSchema } from '../api/createAsset/validateSchema';
+import { createAssetSchema } from '../api/validateSchema';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers';
+import  CompLoader  from './compLoader';
 
 const prisma = new PrismaClient()
 type Assets = z.infer<typeof createAssetSchema >;
@@ -42,24 +44,21 @@ function CompCreateAssetsForm() {
   const [assetName, setAssetName] = useState('');
   const [Amt, setAmount] = useState(0);
   const [assetIdCreated, setAssetIdCreated] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [apiToUpdateDBError, setApiToUpdateDbError] = useState()
   useContractEvent({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,
     eventName: 'assetCreated',
-    //listener(node, label, owner) {
-      listener(log) {
-      //console.log(node, label, owner)
+    listener(log) {
       console.log('listening to event assetCreated')
-      
-      
       console.log(log[0].args.assetId)
-      setAssetIdCreated(log[0].args.assetId)
-      
-      
+      setAssetIdCreated(log[0].args.assetId)  
     },
   })
   useEffect(() => {
-
+    // cannot make inline function as async when used with useEffect hook
+    //therefore created separate async function below
     async function callCreateApi(){
       let data:Assets = { 
         asset_Id: assetIdCreated , 
@@ -70,13 +69,15 @@ function CompCreateAssetsForm() {
         await Axios.post('/api/createAsset', data)
 
       } catch (error) {
+        console.log(``)
         console.log(error)
+        setApiToUpdateDbError(error)
       }
     }
     
   })
 
-  const form = useForm({
+  const form  = useForm({
     initialValues: {
       assetName: 'asset1',
       Amount: '0',
@@ -94,29 +95,8 @@ function CompCreateAssetsForm() {
       
     }),
   });
-  function AssetCreationEvent() {
-    useContractEvent({
-      address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-      abi: CreateBondandAdminRole_CONTRACT_ABI,
-      eventName: 'assetCreated',
-      //listener(node, label, owner) {
-        listener(log) {
-        //console.log(node, label, owner)
-        console.log(log)
-      },
-    })
-  }
-  function WillCreationEvent() {
-    useContractEvent({
-      address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-      abi: CreateBondandAdminRole_CONTRACT_ABI,
-      eventName: 'willCreated',
-      listener(log) {
-        // console.log(log.willofPropertyName, log.willStartDate, log.willMaturityDate,log.cryptoWillId)
-        console.log(log)
-      },
-    })
-  }
+
+
   function WillSettlementEvent() {
     useContractEvent({
       address: CreateBondandAdminRole_CONTRACT_ADDRESS,
@@ -153,22 +133,10 @@ function CompCreateAssetsForm() {
 
     async function WithoutHookPrepareCOntractWrite() {
       console.log(`I am connected to account '${address}'`)
-      console.log(window)
-      if(window.ethereum)
-      {
-        const { ethereum } = window;
-          if (ethereum && ethereum.isMetaMask) {
-            alert('Ethereum successfully detected!');
-            // Access the decentralized web!
-          } else {
-            alert('Please install MetaMask!');
-          }
-      }
       
-      let acct:Account = 0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a;
-
       console.log(`connected Address '${customerAccountAddress}`)
-      
+      //set IsSubmitting to true, will help spinner to load
+      setIsSubmitting(true);
       const { 
         request,result } = await prepareWriteContract({
         address: CreateBondandAdminRole_CONTRACT_ADDRESSk,
@@ -186,27 +154,10 @@ function CompCreateAssetsForm() {
       const { hash } = await writeContract(request)
       console.log(`txn Hash`)
       console.log(hash)
+      setIsSubmitting(false);
         // load the list of all assets created by this user
-        router.push('/pageAssetsManager')
+      //  router.push('/pageAssetsManager')
     }
-
-  function CreateAssetSubmit() {
-    // const { data, write , error, isError } = useContractWrite(PrepareCOntractWrite());
-    // const returnFromUseWaitTxn = useWaitForTransaction({
-    //   hash: data?.hash,
-    // });
-
-
-    console.log('---createAsset----')
-  // console.log(isConnected)
-    
-    //console.log(data)
-    console.log('--------')
-
-  }
- 
-  
-
 
   return (
     <div>
@@ -218,7 +169,7 @@ function CompCreateAssetsForm() {
           setSubmittedValues(JSON.stringify(values, null, 2))
           setAssetName(values.AssetName)
           setAmount(values.Amount)
-          // write?.();
+          
           
         })}
       >
@@ -237,8 +188,8 @@ function CompCreateAssetsForm() {
         />
 
 
-        <Button type="submit" mt="md" onClick = {WithoutHookPrepareCOntractWrite}>
-          Submit to create Asset
+        <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {WithoutHookPrepareCOntractWrite}>
+          Submit to create Asset {isSubmitting && <CompLoader/>}
         </Button>
         
         {/* {isSuccess && (
@@ -254,11 +205,15 @@ function CompCreateAssetsForm() {
         </div>
       )} */}
 
+      {assetIdCreated && <p>Successfully created - {assetIdCreated}</p>}
       {/* {(isPrepareError || isError) && (
         <div>Error: {(prepareError || error)?.message}</div>
       )} */}
+
+
       </form>
 
+      {apiToUpdateDBError && <div><p>{apiToUpdateDBError}</p></div>}
       {submittedValues && <Code block>{submittedValues}</Code>}
 
 

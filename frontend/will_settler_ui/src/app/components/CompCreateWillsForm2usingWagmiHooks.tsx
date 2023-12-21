@@ -1,3 +1,6 @@
+
+
+
 import { ActionIcon, Loader, Select, useMantineColorScheme } from '@mantine/core';
 //import { IconSun, IconMoonStars } from '@tabler/icons';
 
@@ -14,11 +17,11 @@ import { http,
   custom,
   stringify, } from 'viem'
 
-import { publicClient, useContractRead, useContractWrite, 
+import { publicClient, useContractRead,  
   usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
-import { useAccount } from 'wagmi'
+import { useAccount, useContractWrite } from 'wagmi'
 import {
- 
+
   CreateBondandAdminRole_CONTRACT_ABI,
   CreateBondandAdminRole_CONTRACT_ADDRESS,
 } from "../srcConstants";
@@ -26,7 +29,7 @@ import {
 import { IAssets } from '../models/IAssets';
 import { prepareWriteContract, writeContract } from 'wagmi/actions';
 function  GetAssetsByUsers(addr:any):IAssets[] {
-  
+
   if(addr == null){
     console.log("address is null");
   }
@@ -35,43 +38,50 @@ function  GetAssetsByUsers(addr:any):IAssets[] {
     abi: CreateBondandAdminRole_CONTRACT_ABI,
     functionName: 'getUserCreatedBonds',
     args: [addr]
-    
+
   })
   const { address } = useAccount()
-  
+
   console.log('---getUserCreatedBonds-----')
   console.log(address)
   console.log('--expect use address')
   console.log('expect function data')
   console.log(functionData)
   console.log('---------')
-  
+
   const today = new Date();
   const todayDateFmt =  today.getMonth() + '-' + today.getDate() + '-' +  today.getFullYear();
-  
+
   let retData = functionData as Array<IAssets>;
-  console.log('decode values')
-  // console.log(retData[0].assetName)
-  return retData ;
+
+  return retData 
 
 }
 function ConvertDateToUnixTimeStamp(incomingDate:string):number{
   return Math.floor(new Date(incomingDate).getTime() / 1000 );
 }
+function parseErrorMessage(errorMessage:string) {
+  try {
+    return JSON.parse(errorMessage);
+  } catch (error) {
+    console.error('Error parsing error message:', error);
+    return {};
+  }
+}
 /**
  * 
- * @returns component built using WagmiCore<vanilla JS>
+ * @returns return componeng using wagmiReact
  */
-function CreateWillsForm() {
+function CompCreateWillsForm2usingWagmiHooks() {
 
-  
+
   const { address, connector, isConnected } = useAccount()
   console.log(`address -> '${address}'`)
   const [assetId, setAssetId] = useState<string|null>(null);
-  
-  const { isWillCreationSuccess, setisWillCreationSuccess} = useState<boolean>()
-  const { hash, setHash} = useState<Hash>()
-  const { receipt, setReceipt } = useState<TransactionReceipt>()
+
+  const [ isWillCreationSuccess, setisWillCreationSuccess] = useState<boolean>(false)
+  const [ willCreationPrepareError, setWillCreationPrepareError] = useState<Error | null | undefined>();
+  const [ willWriteError, setWillWriteError ] = useState<Error | null | undefined>()
   const [willStartDate, setWillStartDate] = useState('');
   const [willEndDate, setWillEndDate] = useState('');
   const [benefitorAddr, setbenefitorAddr] = useState('');
@@ -108,81 +118,111 @@ function CreateWillsForm() {
     functionName: 'checkAssetisAvailable',
     args: [assetId],
   })
+  const { 
+    config,
+    error: prepareError,
+    isError: isPrepareError, } = usePrepareContractWrite({
+    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    functionName: 'a_createCryptoVault',
+    args: [assetId, willStartDate,willEndDate,benefitorAddr],
+    enabled: Boolean(assetId),
+  })
+  /**extension of usePrepareCOntractWrite
+  // if(isPrepareError){
+  //   console.log(`usePrepareContractWrite - error`)
+  //  // setWillCreationPrepareError(prepareError)
+  //   console.log(prepareError)
+  //   console.log(`usePrepareContractWrite - isError`)
+  //   console.log(isPrepareError)
 
+  // }
+
+//   useEffect(() => {
+//     if(prepareError){
+//       setWillWriteError(prepareError)
+//     }
+//   },[prepareError])
+*/
+
+const { data, write , 
+    error: useContractWriteError, 
+    isError: useContractWriteErrorFlag } = useContractWrite(config)
+
+ 
+                                        if(useContractWriteError){
+                                            setWillWriteError(useContractWriteError)
+                                        }
+
+
+                                        console.log(`write`)
+                                        console.log(write)
   const CreateWill = async () => {
-    setCreateWillFlag(true);
-    
+
     console.log(`willStartDate-> '${willStartDate}'`)
     console.log(`willEndDate-> '${willEndDate}'`)
-    console.log(`assetId-> '${assetId}'`)
-    console.log(`benefitorAddr-> '${benefitorAddr}'`)
-    const { 
-      request } = await prepareWriteContract({
-      address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-      abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
-      functionName: 'a_createCryptoVault',
-      args: [assetId, willStartDate,willEndDate,benefitorAddr],
-      chainId: 80001,
-      account: address
-      
-    });
-
-    const { hash } = await writeContract(request)
-    console.log(`hash-->`)
-    setHash(hash)
-    console.log(hash)
-
-    
+    setCreateWillFlag(true);
+                    // const { 
+                    //   request } = await prepareWriteContract({
+                    //   address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+                    //   abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
+                    //   functionName: 'a_createCryptoVault',
+                    //   args: [assetId, willStartDate,willEndDate,benefitorAddr],
+                    //   chainId: 80001,
+                    //   account: address
+                    // });
+                    // const { hash } = await writeContract(request)
+                    // console.log(`hash-->`)
+                    // setHash(hash)
+                    // console.log(hash)  
+    //const { data, error: } = await write();  
   }
-  useEffect(() => 
-  { ;
-        (async () => {
-          if(hash){
-            const receipt = await publicClient.waitForTransactionReceipt(
-              { hash })
-              setReceipt(receipt)
-          }
+  // useEffect(() => 
+  // { ;
+  //       (async () => {
+  //         if(hash){
+  //           const receipt = await publicClient.waitForTransactionReceipt(
+  //             { hash })
+  //             setReceipt(receipt)
+  //         }
+  //       }
+  //       )
+  // })
 
-        }
-        )
-  })
-  // this below code cannot work, because hook should be rendered always in same order, 
-  //since condition is used, we cannot use this flow
-  // if(createWillFlag){
-  //   const { 
-  //     config,
-  //     error: prepareError,
-  //     isError: isPrepareError, } = usePrepareContractWrite({
-  //     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-  //     abi: CreateBondandAdminRole_CONTRACT_ABI,
-  //     functionName: 'a_createCryptoVault',
-  //     args: [assetId, willStartDate,willEndDate,benefitorAddr],
-  //     enabled: Boolean(assetId),
-  //   })
-  //   const { data, write , error, isError } = useContractWrite(config)
-  //   const { isLoading, isSuccess } = useWaitForTransaction({
-  //     hash: data?.hash,
-  //   })
+
+
+
+  // if(isError){
+  //   console.log(`useContractWrite - error`)
+  // //  setWillWriteError(error)
+  //   console.log(error)
+  //   console.log(typeof(error))
+
+  //   console.log(`useContractWrite - isError`)
+  //   console.log(isError)
+
   // }
+  const { isLoading, isSuccess } = useWaitForTransaction({
+    hash: data?.hash,
+  })
+  console.log(data?.hash)
+  //setisWillCreationSuccess(isSuccess)
   let assets:IAssets[] = GetAssetsByUsers(address)
   if(assets?.length>=0 ){
-    console.log('assets')
-   console.log(assets)
+        console.log(assets)
   } else { 
    // assets.push({ assetId: 'ca-0', assetName: 'testData'})
   }
 
-  
+
   const willDatas = Array(50).fill(0).map((_, index) => `Item ${index}`);
   return (
     <Box sx={{ maxWidth: 400 }} mx="auto">
-      
-    
         <form
         onSubmit={form.onSubmit((values) => {
           setSubmittedValues(JSON.stringify(values, null, 2))
           setAssetId(values.AssetId)
-          
+
           setWillStartDate(ConvertDateToUnixTimeStamp(values.willStartDate).toString())
           setWillEndDate(ConvertDateToUnixTimeStamp(values.willEndDate).toString()) //values.willEndDate
           setbenefitorAddr(values.Benefitor)
@@ -192,17 +232,19 @@ function CreateWillsForm() {
       >
 
         <TextInput
-          
+
           label="AssetId"
           placeholder="AssetId"
           mt="md"
           withAsterisk
           {...form.getInputProps('AssetId')}
+
           // rightSection={<Loader size="xs" />}
-          
+
           // onBlur={(event) => ValidateUserAssetId(event.currentTarget.value)}
         //  onError=()=>{}
         />
+        <p>
         {/* <Select 
           label="Your fav"
           placeholder="ca-01"
@@ -213,7 +255,7 @@ function CreateWillsForm() {
           //assets.length>=0 ? assets : [{value:'testData'}]   
           
         /> */}
-       
+        </p>
 
         <TextInput
           label="Will Start Date"
@@ -228,7 +270,7 @@ function CreateWillsForm() {
           {...form.getInputProps('willEndDate')}
         />
         <TextInput
-          
+
           label="Benefitor"
           placeholder="0x Address"
           mt="md"
@@ -237,38 +279,48 @@ function CreateWillsForm() {
         />
 
         <Button type="submit" mt="md" onClick = {CreateWill}>
-          Submit
+          Create Will
         </Button>
-       {isWillCreationSuccess && (
-                <div>
-                  Successfully created Will, check here!!
-                  <div>
-                    <a href={`https://mumbai.polygonscan.com/tx/${data?.hash}`}>Polygon Scan</a>
-                  </div>
-                  <div>
-                    <a href={`https://etherscan.io/tx/${data?.hash}`}>Etherscan</a>
-                  </div>
-                  
-                </div>
-          )
-        } 
-        
+        <p>
+            {/* {isSuccess && (
+                        <div>
+                        Successfully created Will, check here!!
+                        <div>
+                            <a href={`https://mumbai.polygonscan.com/tx/${data?.hash}`}>Polygon Scan</a>
+                        </div>
+                        <div>
+                            <a href={`https://etherscan.io/tx/${data?.hash}`}>Etherscan</a>
+                        </div>
+                        
+                        </div>
+                )
+                }  */}
+        </p>
+{willCreationPrepareError && (
+          <div>
+            {parseErrorMessage(willCreationPrepareError.message)?.reason &&
+            ( <p>Reason: {parseErrorMessage(willCreationPrepareError.message).reason}</p>)}
+            Error while contract write: {willCreationPrepareError.message}
+          </div>
+        )}
 
-      {/* { {(isPrepareError || isError) && (
-        <div>Error: {(prepareError || error)?.message}</div>
-      )}
-       */}
-      }
+        {willWriteError && (
+          <div>Error while contract write: {willWriteError.message}</div>
+        )}
 
+            {/* { {(isPrepareError || isError) && (
+                <div>Error: {(prepareError || error)?.message}</div>
+            )}
+            */}
       </form>
-     
+
       {submittedValues && <Code block>{submittedValues}</Code>}
 
 
     </Box>
   );
 
- 
+
 }
 
-export default CreateWillsForm;
+export default CompCreateWillsForm2usingWagmiHooks;

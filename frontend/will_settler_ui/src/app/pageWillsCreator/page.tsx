@@ -1,21 +1,19 @@
-"use client"
+'use client'
 import React from 'react'
-import SignUp from '../ProjectTemplate/TemplateProjectComponents/SignUp'
-import ManageAssetsTable from '../components/compManageAssetsTable'
+import CreateWillsForm from '../components/compCreateWillsForm'
+// import { WagmiConfigProvider } from '../components/WagmiConfigProvider'
+// import CompWagmiTestProvider from '../components/CompWagmiTestProvider'
+import { AppProps } from 'next/app'
+import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 
-import CompCreateAssetsForm from '../components/CompCreateAssetsForm';
+
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { polygonMumbai } from 'viem/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import ComProfile from '../components/CompProfile';
 
-import { WagmiConfig, configureChains, useAccount } from 'wagmi'
-import { createConfig, Config } from 'wagmi'
-import Link from 'next/link';
-
-const ProjectName = 'Manage Your Assets on this page'
-const ProjectIndex_template = () => {
- 
+const pageHeader = `pageWillsCreatorUsingWagmiReact`
+const WillsCreator = ( {Component, pageProps}: AppProps) => {
   const { chains, publicClient, webSocketPublicClient } = configureChains(
     [
       // mainnet,
@@ -45,16 +43,18 @@ const ProjectIndex_template = () => {
 
   return (
     <div>
-        <title>`${ProjectName}`</title>
-        <header>`${ProjectName}`</header>
-        <Link href="/">Home</Link>
-        <WagmiConfig config = {wagmiConfig}>  
-          <ComProfile/>
-          
-          <ManageAssetsTable></ManageAssetsTable>
+      {/* <WagmiConfigProvider>
+          <Component {...pageProps} />
+          {/* <CompWagmiTestProvider/> */}
+         
+      {/* </WagmiConfigProvider> */}
+      { pageHeader }
+      <WagmiConfig config = {wagmiConfig}>  
+          <ComProfile></ComProfile>
+          <CreateWillsForm></CreateWillsForm>
         </WagmiConfig>
     </div>
   )
 }
 
-export default ProjectIndex_template
+export default WillsCreator;
