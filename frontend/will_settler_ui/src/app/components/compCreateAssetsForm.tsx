@@ -22,7 +22,7 @@ import { WagmiConfigProvider } from './WagmiConfigProvider';
 import { getContract, writeContract } from 'wagmi/actions';
 import { Account } from 'viem';
 import  { PrismaClient } from '@prisma/client'
-import { createAssetSchema } from '../api/validateSchema';
+import { createAssetSchema } from '../validateSchema';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers';

@@ -17,7 +17,7 @@ import {
 import { IAssets } from '../models/IAssets';
 
 import { z } from 'zod';
-import { createWillsSchema } from '../api/validateSchema';
+import { createWillsSchema } from '../validateSchema';
 import Axios from 'axios'
 type Will_info = z.infer<typeof createWillsSchema >;
 

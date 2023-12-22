@@ -2,7 +2,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { Assets, PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-import { createAssetSchema } from '../validateSchema';
+import { createAssetSchema } from '../../validateSchema';
 
 const prisma = new PrismaClient();
 

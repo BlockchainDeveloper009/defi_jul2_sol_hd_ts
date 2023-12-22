@@ -2,7 +2,7 @@
 
 import { PrismaClient } from '@prisma/client';
 import { NextRequest, NextResponse } from 'next/server';
-import { createWillsSchema } from '../validateSchema';
+import { createWillsSchema } from '../../validateSchema';
 
 const prisma = new PrismaClient();
 
