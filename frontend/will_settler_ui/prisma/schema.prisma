@@ -7,9 +7,15 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("dev_MYSQL_DATABASE_URL")
+  url      = env("test_MYSQL_DATABASE_URL")
 }
-
+model AppConfig{
+  id Int @id @default(autoincrement())
+  contract_info_id Int 
+  application_name String
+  environment String 
+  updatedAt DateTime  @updatedAt @map(name: "updated_at")
+}
 model Assets {
   asset_Id String @id
   asset_Name String
@@ -17,6 +23,9 @@ model Assets {
   asset_Category Float
   asset_isAvailable Int
   asset_Status Int
+  contract_Addr String
+  createdAt DateTime  @default(now()) @map(name: "created_at")
+  updatedAt DateTime  @updatedAt @map(name: "updated_at")
     
 }
 model will_info {
@@ -29,4 +38,42 @@ model will_info {
     will_asset_Id String
     will_asset_Amount Float
     will_Benefitors String
+    contract_Addr String
+    createdAt DateTime  @default(now()) @map(name: "created_at")
+    updatedAt DateTime  @updatedAt @map(name: "updated_at")
+}
+
+model contract_info {
+  id Int @id @default(autoincrement())
+  contract_Addr String
+  contract_Name String
+  contract_Version String
+  contract_Owner_Addr String
+  contract_deployedAt DateTime @default(now()) @map(name: "deployed_at")
+  createdAt DateTime  @default(now()) @map(name: "created_at")
+  contract_Abi String
+}
+
+model asset_ccy {
+  id Int @id @default(autoincrement())
+  asset_ccy_Symbol String @unique
+  asset_ccy_Name String
+  asset_ccy_Decimals Float
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @updatedAt @map(name: "updated_at")
+}
+
+model User {
+ id            Int       @id @default(autoincrement())
+ name          String?
+ email         String?   @unique
+ emailVerified DateTime? @map("email_verified")
+ image         String?
+ createdAt     DateTime  @default(now()) @map(name: "created_at")
+ updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+ //posts         Post[]
+ //accounts      Account[]
+ //sessions      Session[]
+
+ @@map(name: "users")
 }

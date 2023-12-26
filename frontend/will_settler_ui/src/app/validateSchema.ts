@@ -17,3 +17,10 @@ export const createWillsSchema = z.object({
   will_asset_Amount: z.number().min(1,"will_asset_Amount Amount is required"),
   will_Benefitors: z.string().min(1,"will_Benefitors  is required")
 });
+
+export const AssetCCY = z.object({
+  asset_ccy_Symbol: z.string().min(1, "Asset CCY is required").max(255),
+  asset_ccy_Name: z.string().min(1, "Asset CCY Name is required").max(255),
+  asset_ccy_Decimals: z.string().min(1,"Asset CCY Decimal is required")
+ 
+});

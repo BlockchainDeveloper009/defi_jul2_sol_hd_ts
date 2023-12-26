@@ -16,6 +16,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected';
 import { polygonMumbai } from 'viem/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import ComProfile from '../components/CompProfile';
+import CompSelectAssets from '../components/CompSelectAssets';
 
 
 const pageAssetsCreator = ({Component, pageProps}: AppProps) => {
@@ -48,10 +49,11 @@ const pageAssetsCreator = ({Component, pageProps}: AppProps) => {
 })
   return (
     <div>
-        <h1>test pageAssetsCreator - AssetsCreator - CreateAssetsForm</h1>
+        <h1>Step 1: Create Asset</h1>
 
         <WagmiConfig config = {wagmiConfig}>  
           <ComProfile></ComProfile>
+          
           <CompCreateAssetsForm></CompCreateAssetsForm>
         </WagmiConfig>
         {/* <QueryClientProvider client={queryClient}> */}

@@ -1,9 +1,9 @@
 'use client'
 
-import { ActionIcon, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, Select, useMantineColorScheme } from '@mantine/core';
 //import { IconSun, IconMoonStars } from '@tabler/icons';
 
-import { Axios } from 'axios'
+import axios  from 'axios'
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
 import { prepareWriteContract } from '@wagmi/core'
@@ -24,12 +24,19 @@ import { Account } from 'viem';
 import  { PrismaClient } from '@prisma/client'
 import { createAssetSchema } from '../validateSchema';
 import { useRouter } from 'next/navigation';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers';
+import { any, z } from 'zod';
+import  zodResolver from '@hookform/resolvers';
 import  CompLoader  from './compLoader';
+import CompSelectAssets from './CompSelectAssets';
+import { SelectItems } from '@mantine/core/lib/Select/SelectItems/SelectItems';
 
 const prisma = new PrismaClient()
 type Assets = z.infer<typeof createAssetSchema >;
+interface AssetCCy {
+  ccy:string,
+  ccyName: string
+
+}
 function CompCreateAssetsForm() {
 
   const router = useRouter();
@@ -41,11 +48,28 @@ function CompCreateAssetsForm() {
   })
   const [customerAccountAddress, setCustomerAccountAddress] = useState(address);
   const [submittedValues, setSubmittedValues] = useState('');
+  const [assetCCY, setAssetCCY] = useState<string | null>('');
   const [assetName, setAssetName] = useState('');
   const [Amt, setAmount] = useState(0);
   const [assetIdCreated, setAssetIdCreated] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [apiToUpdateDBError, setApiToUpdateDbError] = useState()
+  const [apiToUpdateDBError, setApiToUpdateDbError] = useState('')
+  const [transactionExecutionError, settransactionExecutionError] = useState('')
+  const [selectedOption, setSelectedOption] = useState(null);
+  const handleSelectChange = (value) => {
+    setSelectedOption(value);
+  };
+  const handleButtonClick = () => {
+    // Do something with the selected option
+    console.log('Selected option:', selectedOption);
+  };
+  //change this later
+  const ccyOptions = [
+    { label: 'ETH CCY', value: 'ETH' },
+    { label: 'BTC CCY', value: 'BTC' },
+    { label: 'AVAX CCY', value: 'AVAX' },
+  ];
+  const [ccy, setCCY] = useState<AssetCCy[]>([]);
   useContractEvent({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,
@@ -57,6 +81,14 @@ function CompCreateAssetsForm() {
     },
   })
   useEffect(() => {
+    const fetchCCY = async() => {
+      const { data } = await axios.get<AssetCCy[]>('/api/assetCCY');
+      setCCY(data);
+    }
+    fetchCCY();
+
+  })
+  useEffect(() => {
     // cannot make inline function as async when used with useEffect hook
     //therefore created separate async function below
     async function callCreateApi(){
@@ -66,7 +98,8 @@ function CompCreateAssetsForm() {
         asset_Amount: Amt.toString()
         }
       try {
-        await Axios.post('/api/createAsset', data)
+        console.log('create API call')
+        await axios.post('/api/createAsset', data)
 
       } catch (error) {
         console.log(``)
@@ -79,82 +112,65 @@ function CompCreateAssetsForm() {
 
   const form  = useForm({
     initialValues: {
-      assetName: 'asset1',
+      assetName: '',
       Amount: '0',
-      a: '-1',
-      a1: '-2'
+      assetCCY: ''
+      
     },
 
     transformValues: (values) => ({
       AssetName: `${values.assetName}`,
       Amount: Number(values.Amount) || 0,
       Addr: CreateBondandAdminRole_CONTRACT_ADDRESS,
-      a: assetName,
-      a1: Amt
-      
+      assetCCY: assetCCY
+           
       
     }),
   });
 
-
-  function WillSettlementEvent() {
-    useContractEvent({
-      address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-      abi: CreateBondandAdminRole_CONTRACT_ABI,
-      eventName: 'willSettled',
-      listener(log) {
-        //console.log(cryptoWillId, benefitor, willMaturityDate, willAmount)
-      },
-    })
-
-    
-  }
+  console.log(`Accessing contract: '${CreateBondandAdminRole_CONTRACT_ADDRESS}' `)
   
-  let CreateBondandAdminRole_CONTRACT_ADDRESSk:any = '0x9bB29A4336A891501595B2CA3ae22FF54652d78C'
-  console.log(CreateBondandAdminRole_CONTRACT_ADDRESS)
-// function PrepareCOntractWrite() {
 
-//   const { 
-//     config,
-//     error: prepareError,
-//     isError: isPrepareError, } = prepareWriteContract({
-//     address: CreateBondandAdminRole_CONTRACT_ADDRESSk,
-//     abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
-//     functionName: 'createAsset',
-//     args: [assetName, parseInt(Amt.toString())],
-//     enabled: Boolean(Amt),
-//   });
-  
-//   return config;
-
-
-// }
 
 
     async function WithoutHookPrepareCOntractWrite() {
+      setAssetIdCreated('');
+      setApiToUpdateDbError('');
+      settransactionExecutionError('');
+
       console.log(`I am connected to account '${address}'`)
       
       console.log(`connected Address '${customerAccountAddress}`)
+      console.log(`assetCCY - '${assetCCY}'`)
       //set IsSubmitting to true, will help spinner to load
       setIsSubmitting(true);
-      const { 
-        request,result } = await prepareWriteContract({
-        address: CreateBondandAdminRole_CONTRACT_ADDRESSk,
-        abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
-        functionName: 'a_createAssets',
-        args: [assetName, parseInt(Amt.toString())],
-        chainId: 80001,
-        account: customerAccountAddress
-        
-      });
-      
-      console.log(`result of contractprepare`)
-      console.log(result)
+      try {      
+            const { 
+              request,result } = await prepareWriteContract({
+              address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+              abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
+              functionName: 'a_createAssets',
+              args: [assetName, parseInt(Amt.toString())],
+              chainId: 80001,
+              account: customerAccountAddress
+              
+            });
+            
+            console.log(`result of contractprepare=> %% ${result} %%`)
+            const { hash } = await writeContract(request)
+            console.log(`txn Hash`)
+            console.log(hash)
+          } catch (error) {
+            console.log(`error during Prepare or Write Contract`);
+            console.log(error)
+            settransactionExecutionError(error.TransactionExecutionError);
 
-      const { hash } = await writeContract(request)
-      console.log(`txn Hash`)
-      console.log(hash)
-      setIsSubmitting(false);
+            
+          }finally{
+            setIsSubmitting(false);
+          }
+    
+
         // load the list of all assets created by this user
       //  router.push('/pageAssetsManager')
     }
@@ -164,21 +180,34 @@ function CompCreateAssetsForm() {
    
     <Box sx={{ maxWidth: 400 }} mx="auto">
       <form
-        onSubmit={form.onSubmit((values) => {
+        onSubmit=
+        {
+          form.onSubmit((values) => 
+                  {
 
-          setSubmittedValues(JSON.stringify(values, null, 2))
-          setAssetName(values.AssetName)
-          setAmount(values.Amount)
-          
-          
-        })}
+                          setSubmittedValues(JSON.stringify(values, null, 2))
+                          setAssetName(values.AssetName)
+                          setAmount(values.Amount)
+                  
+                  }
+          )
+        } 
       >
         <TextInput
           label="Asset name"
           placeholder="Asset name"
           {...form.getInputProps('assetName')}
         />
-       
+       <Select 
+            label="in built Select Asset Currency"
+            placeholder="Pick value"
+           data={ccyOptions} 
+           value={assetCCY} 
+           onChange={setAssetCCY}
+           searchable
+           //nothingFoundMessage="Nothing found..."
+           />
+
         <TextInput
           type="number"
           label="Amount"
@@ -186,7 +215,6 @@ function CompCreateAssetsForm() {
           mt="md"
           {...form.getInputProps('Amount')}
         />
-
 
         <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {WithoutHookPrepareCOntractWrite}>
           Submit to create Asset {isSubmitting && <CompLoader/>}
@@ -210,10 +238,10 @@ function CompCreateAssetsForm() {
         <div>Error: {(prepareError || error)?.message}</div>
       )} */}
 
-
+      {transactionExecutionError && <div><p>TransactionExecutionError: {transactionExecutionError}</p></div>}
+      {apiToUpdateDBError && <div><p>ApiError: {apiToUpdateDBError}</p></div>}
       </form>
-
-      {apiToUpdateDBError && <div><p>{apiToUpdateDBError}</p></div>}
+      
       {submittedValues && <Code block>{submittedValues}</Code>}
 
 

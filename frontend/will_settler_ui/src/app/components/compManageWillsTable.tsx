@@ -14,6 +14,8 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from 'react';
 import { useAccount } from 'wagmi';
+import { useRouter as navUseRouter} from 'next/navigation';
+import { useRouter as routUseRouter} from 'next/router';
 
 
 interface IWillsInfo{
@@ -51,7 +53,11 @@ function GetWillsByUsers(stttt:any) {
 
 function ManageWillsTable() {
   
-  
+ // const router = useNavigate();
+ //const router = routUseRouter();
+ const router = navUseRouter();
+ 
+
   const { address, connector, isConnected } = useAccount()
   const [assetId, setAssetId] = useState('')
   const [willId, setWillId] = useState('')
@@ -59,19 +65,20 @@ function ManageWillsTable() {
   // const navigate = useNavigate();
   const handleProceed = (willsId:string) => {
     // console.log(id, "home");
-    setWillId(willId)
+    setWillId(willsId)
     console.log('---handleProceed---')
-    console.log(willId)
+    console.log(willsId)
     console.log('----------')
- //  navigate("/WillsFormEdit",  
-    // {
-    //   state: {
-    //     userId: willsId,
-    //   }
-    // }
-    // );
-  };
-
+    router.push(`/pageWillsManagerDetails?willId=${willsId}`)
+  // navigate("/WillsFormEdit",  
+  //   {
+  //     state: {
+  //       userId: willsId,
+  //     }
+  //   }
+  //   );
+  // };
+  }
   try {
 
     console.log(`addresss -----> ${address}`)

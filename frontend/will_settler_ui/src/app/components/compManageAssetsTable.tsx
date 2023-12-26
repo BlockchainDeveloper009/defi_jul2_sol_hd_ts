@@ -50,7 +50,9 @@ function  GetAssetsByUsers():IAssets[] {
   return retData 
 
 }
+/**next/link should be able to cover most of your routing needs, but you can also do client-side navigations without it, take a look at the documentation for next/router.
 
+The following example shows how to do basic page navigations with useRouter: */
 
 function ManageAssetsTable() {
   
