@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 
-import CompManageWillsDetails from '../components/CompManageWillsDetails'
+import CompManageWillsEdit from '../components/CompManageWillsEdit'
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { polygonMumbai } from 'viem/chains'
@@ -44,7 +44,7 @@ const pageWillsManagerDetails = () => {
         
         <WagmiConfig config = {wagmiConfig}>  
               <ComProfile/>
-              <CompManageWillsDetails></CompManageWillsDetails>
+              <CompManageWillsEdit></CompManageWillsEdit>
         </WagmiConfig>
  
     </div>

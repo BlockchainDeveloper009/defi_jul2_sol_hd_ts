@@ -70,6 +70,14 @@ function CompCreateAssetsForm() {
     { label: 'AVAX CCY', value: 'AVAX' },
   ];
   const [ccy, setCCY] = useState<AssetCCy[]>([]);
+  /**
+  event willSettled(
+    uint indexed cryptoWillId,
+    address indexed benefitor,
+    uint256 willMaturityDate,
+    uint256 willAmount
+);
+  */
   useContractEvent({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,

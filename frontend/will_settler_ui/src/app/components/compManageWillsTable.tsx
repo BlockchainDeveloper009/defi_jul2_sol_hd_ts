@@ -1,4 +1,4 @@
-import { Table } from '@mantine/core';
+import { Box, Table } from '@mantine/core';
 import { BigNumberish } from 'ethers';
 
 import {  getContract, 
@@ -16,8 +16,15 @@ import { useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useRouter as navUseRouter} from 'next/navigation';
 import { useRouter as routUseRouter} from 'next/router';
+import { CodeSandboxLogoIcon } from '@radix-ui/react-icons';
 
-
+enum baseWillStatus {
+  Created, //0
+  Started, //1
+  Matured, //2
+  ManuallySettled, //3
+  Cancelled //4
+}
 interface IWillsInfo{
   willId:BigNumberish,
   assetId:string,
@@ -25,8 +32,8 @@ interface IWillsInfo{
   willStartDate: BigNumberish,
   willMaturityDate:BigNumberish,
   Benefitors: number,
-  willOwner:BigInteger,
-  willManager:BigInteger,
+  willOwner: string, //BigInteger
+  willManager: string, //BigInteger
   
   
 }
@@ -56,20 +63,37 @@ function ManageWillsTable() {
  // const router = useNavigate();
  //const router = routUseRouter();
  const router = navUseRouter();
- 
+ const [willInfoData, setWillInfoData] = useState(null)
 
   const { address, connector, isConnected } = useAccount()
   const [assetId, setAssetId] = useState('')
   const [willId, setWillId] = useState('')
   let { asId } = useParams();
+  const createQueryStringToSettle 
+  = (willId:string, value:string) => {
+    const params = new URLSearchParams();
+    params.set(willId, value);
+
+    return params.toString();
+  };
+  const createQueryString = (willId:string, value:string) => {
+    const params = new URLSearchParams();
+    params.set(willId, value);
+
+    return params.toString();
+  };
+//
+const handleSettleProcess = (willsId:string) => {
+  router.push(`/pageWillsSettle?${createQueryStringToSettle('willId',willsId)}`)
+}
   // const navigate = useNavigate();
-  const handleProceed = (willsId:string) => {
+  const handleProceed = (willInfo:string) => {
     // console.log(id, "home");
-    setWillId(willsId)
+    //setWillId(willsId)
     console.log('---handleProceed---')
-    console.log(willsId)
-    console.log('----------')
-    router.push(`/pageWillsManagerDetails?willId=${willsId}`)
+    console.log(willInfo)
+    console.log('-----refactor below code after handling settle-----')
+    router.push(`/pageWillsManagerEdit?${createQueryString('willInfo',willInfo)}`)
   // navigate("/WillsFormEdit",  
   //   {
   //     state: {
@@ -102,20 +126,33 @@ function ManageWillsTable() {
     //   willManager: '0x9999999'
     // }
     // ] ;
+    
     let d:any = GetWillsByUsers(address)
     if(d.length>=0)
     {
             
             console.log(d[0])
           const trows = d.map((element:any) => (
+            
             <tr key={element.assetId}>
               
               <td ><a href="" target="_blank">{element.willId.toString()}</a></td>
-              <td ><a href="" target="_blank">{element.assetId}</a></td>
-              <td><button onClick={()=>handleProceed(element.willId.toString())}>edit</button></td>
+              <td >{element.assetId}</td>
               <td>{element.s_baseStatus}</td>
-              <td>{element.willMaturityDate.toString()}</td>
+              <td><button onClick={()=>handleProceed(
+                JSON.stringify({
+                  willId: element.willId.toString(),
+                  willMaturity: element.willMaturityDate.toString()
+                })
+                
+                )}>edit</button></td>
+              <td><button 
+              onClick={() => handleSettleProcess(
+                  element.willId.toString())}
+              >Settle</button></td>
+              
               <td>{element.willStartDate.toString()}</td>
+              <td>{element.willMaturityDate.toString()}</td>
               <td>{element.Benefitors}</td>
               <td>{element.willOwner}</td> 
               
@@ -137,6 +174,8 @@ function ManageWillsTable() {
                     <th>will_Id</th>
                     <th>asset_Id</th>
                     <th>status</th>
+                    <th>Edit</th>
+                    <th>Settle</th>
                     <th>startDate</th>
                     <th>endDate</th>
                     <th>Benefitors</th>
@@ -148,10 +187,6 @@ function ManageWillsTable() {
                 </thead>
                 <tbody>{trows}</tbody>
                 </Table>
-
-               
-
-
                 
             </div>
           );
