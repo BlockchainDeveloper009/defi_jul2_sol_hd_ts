@@ -69,13 +69,14 @@ function ManageWillsTable() {
   const [assetId, setAssetId] = useState('')
   const [willId, setWillId] = useState('')
   let { asId } = useParams();
-  const createQueryStringToSettle 
+  const createQueryStringToSendWillId 
   = (willId:string, value:string) => {
     const params = new URLSearchParams();
     params.set(willId, value);
 
     return params.toString();
   };
+
   const createQueryString = (willId:string, value:string) => {
     const params = new URLSearchParams();
     params.set(willId, value);
@@ -84,7 +85,10 @@ function ManageWillsTable() {
   };
 //
 const handleSettleProcess = (willsId:string) => {
-  router.push(`/pageWillsSettle?${createQueryStringToSettle('willId',willsId)}`)
+  router.push(`/pageWillsSettle?${createQueryStringToSendWillId('willId',willsId)}`)
+}
+const handleCancelProcess=(willsId:string)=> {
+  router.push(`/pageWillsManagerCancel?${createQueryStringToSendWillId('willId',willsId)}`)
 }
   // const navigate = useNavigate();
   const handleProceed = (willInfo:string) => {
@@ -146,6 +150,10 @@ const handleSettleProcess = (willsId:string) => {
                 })
                 
                 )}>edit</button></td>
+                     <td><button 
+              onClick={() => handleCancelProcess(
+                  element.willId.toString())}
+              >Cancel</button></td>
               <td><button 
               onClick={() => handleSettleProcess(
                   element.willId.toString())}
@@ -175,6 +183,7 @@ const handleSettleProcess = (willsId:string) => {
                     <th>asset_Id</th>
                     <th>status</th>
                     <th>Edit</th>
+                    <th>Cancel</th>
                     <th>Settle</th>
                     <th>startDate</th>
                     <th>endDate</th>

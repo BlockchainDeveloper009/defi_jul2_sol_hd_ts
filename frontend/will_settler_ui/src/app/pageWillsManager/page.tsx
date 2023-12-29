@@ -7,6 +7,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected'
 import { polygonMumbai } from 'viem/chains'
 import { publicProvider } from 'wagmi/providers/public'
 import ComProfile from '../components/CompProfile'
+import CompFindStatus_Assets_Wills from '../components/CompFindStatus_Assets_Wills'
 
 
 
@@ -45,6 +46,7 @@ const WillsManager = () => {
         <WagmiConfig config = {wagmiConfig}>  
               <ComProfile/>
               <ManageWillsTable></ManageWillsTable>
+              <CompFindStatus_Assets_Wills></CompFindStatus_Assets_Wills>
         </WagmiConfig>
  
     </div>
