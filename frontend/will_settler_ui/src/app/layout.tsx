@@ -1,3 +1,4 @@
+
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -17,6 +18,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected';
 import { createConfig, Config } from 'wagmi'
 import { WagmiConfigProvider } from './components/WagmiConfigProvider';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+import NavBar from './NavBar'
 
 
 export default function RootLayout({
@@ -55,7 +57,18 @@ export default function RootLayout({
         {/* <WagmiConfig config = {wagmiConfig1}>  
               <ComProfile/>
         </WagmiConfig> */}
-        {children}</body>
+        <NavBar></NavBar>
+          <main>
+          {/* <WagmiConfig config = {wagmiConfig1}>  
+              <ComProfile/>
+              {children}  
+          </WagmiConfig> */}
+          
+            {children} 
+         
+
+          </main>
+        </body>
     </html>
   )
 }

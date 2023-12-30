@@ -53,7 +53,7 @@ const pageWillsSettle = ({Component, pageProps}: AppProps) => {
         <h1>Step 3: Settle Will Manually</h1>
 
         <WagmiConfig config = {wagmiConfig}>  
-          <ComProfile></ComProfile>
+          
           
           <CompManageWillsSettle></CompManageWillsSettle>
         </WagmiConfig>

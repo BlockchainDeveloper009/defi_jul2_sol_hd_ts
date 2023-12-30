@@ -19,7 +19,7 @@ import { use, useEffect, useState } from 'react';
 import { useAccount, useContractEvent } from 'wagmi'
 import CompWagmiTestProvider from './CompWagmiTestProvider';
 import { WagmiConfigProvider } from './WagmiConfigProvider';
-import { getContract, writeContract } from 'wagmi/actions';
+import { connect, getContract, writeContract } from 'wagmi/actions';
 import { Account } from 'viem';
 import  { PrismaClient } from '@prisma/client'
 import { createAssetSchema } from '../validateSchema';
@@ -185,75 +185,78 @@ function CompCreateAssetsForm() {
 
   return (
     <div>
-   
-    <Box sx={{ maxWidth: 400 }} mx="auto">
-      <form
-        onSubmit=
-        {
-          form.onSubmit((values) => 
-                  {
-
-                          setSubmittedValues(JSON.stringify(values, null, 2))
-                          setAssetName(values.AssetName)
-                          setAmount(values.Amount)
-                  
-                  }
-          )
-        } 
-      >
-        <TextInput
-          label="Asset name"
-          placeholder="Asset name"
-          {...form.getInputProps('assetName')}
-        />
-       <Select 
-            label="in built Select Asset Currency"
-            placeholder="Pick value"
-           data={ccyOptions} 
-           value={assetCCY} 
-           onChange={setAssetCCY}
-           searchable
-           //nothingFoundMessage="Nothing found..."
-           />
-
-        <TextInput
-          type="number"
-          label="Amount"
-          placeholder="Amt"
-          mt="md"
-          {...form.getInputProps('Amount')}
-        />
-
-        <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {WithoutHookPrepareCOntractWrite}>
-          Submit to create Asset {isSubmitting && <CompLoader/>}
-        </Button>
-        
-        {/* {isSuccess && (
-        <div>
-          Successfully created Asset, check here!!
-          <div>
-            <a href={`https://mumbai.polygonscan.com/tx/${data?.hash}`}>Polygon Scan</a>
-          </div>
-          <div>
-            <a href={`https://etherscan.io/tx/${data?.hash}`}>Etherscan</a>
-          </div>
+    { !address && <button onClick={() => connect()}>Click here to Connect Wallet</button>}
+    { address && 
+        <Box sx={{ maxWidth: 400 }} mx="auto">
+        <form
+          onSubmit=
+          {
+            form.onSubmit((values) => 
+                    {
+  
+                            setSubmittedValues(JSON.stringify(values, null, 2))
+                            setAssetName(values.AssetName)
+                            setAmount(values.Amount)
+                    
+                    }
+            )
+          } 
+        >
+          <TextInput
+            label="Asset name"
+            placeholder="Asset name"
+            {...form.getInputProps('assetName')}
+          />
+         <Select 
+              label="in built Select Asset Currency"
+              placeholder="Pick value"
+             data={ccyOptions} 
+             value={assetCCY} 
+             onChange={setAssetCCY}
+             searchable
+             //nothingFoundMessage="Nothing found..."
+             />
+  
+          <TextInput
+            type="number"
+            label="Amount"
+            placeholder="Amt"
+            mt="md"
+            {...form.getInputProps('Amount')}
+          />
+  
+          <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {WithoutHookPrepareCOntractWrite}>
+            Submit to create Asset {isSubmitting && <CompLoader/>}
+          </Button>
           
-        </div>
-      )} */}
+          {/* {isSuccess && (
+          <div>
+            Successfully created Asset, check here!!
+            <div>
+              <a href={`https://mumbai.polygonscan.com/tx/${data?.hash}`}>Polygon Scan</a>
+            </div>
+            <div>
+              <a href={`https://etherscan.io/tx/${data?.hash}`}>Etherscan</a>
+            </div>
+            
+          </div>
+        )} */}
+  
+        {assetIdCreated && <p>Successfully created - {assetIdCreated}</p>}
+        {/* {(isPrepareError || isError) && (
+          <div>Error: {(prepareError || error)?.message}</div>
+        )} */}
+  
+        {transactionExecutionError && <div><p>TransactionExecutionError: {transactionExecutionError}</p></div>}
+        {apiToUpdateDBError && <div><p>ApiError: {apiToUpdateDBError}</p></div>}
+        </form>
+        
+        {submittedValues && <Code block>{submittedValues}</Code>}
+  
+  
+      </Box>
+      }
 
-      {assetIdCreated && <p>Successfully created - {assetIdCreated}</p>}
-      {/* {(isPrepareError || isError) && (
-        <div>Error: {(prepareError || error)?.message}</div>
-      )} */}
-
-      {transactionExecutionError && <div><p>TransactionExecutionError: {transactionExecutionError}</p></div>}
-      {apiToUpdateDBError && <div><p>ApiError: {apiToUpdateDBError}</p></div>}
-      </form>
-      
-      {submittedValues && <Code block>{submittedValues}</Code>}
-
-
-    </Box>
     </div>
   );
 }

@@ -44,7 +44,7 @@ const WillsManager = () => {
     <div>
         
         <WagmiConfig config = {wagmiConfig}>  
-              <ComProfile/>
+              
               <ManageWillsTable></ManageWillsTable>
               <CompFindStatus_Assets_Wills></CompFindStatus_Assets_Wills>
         </WagmiConfig>

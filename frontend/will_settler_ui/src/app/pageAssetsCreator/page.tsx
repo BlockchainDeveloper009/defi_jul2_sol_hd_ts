@@ -52,10 +52,11 @@ const pageAssetsCreator = ({Component, pageProps}: AppProps) => {
         <h1>Step 1: Create Asset</h1>
 
         <WagmiConfig config = {wagmiConfig}>  
-          <ComProfile></ComProfile>
+          {/* <ComProfile></ComProfile> */}
+          <CompCreateAssetsForm></CompCreateAssetsForm>  
           
-          <CompCreateAssetsForm></CompCreateAssetsForm>
         </WagmiConfig>
+        
         {/* <QueryClientProvider client={queryClient}> */}
           {/* <WagmiConfig config = {wagmiConfig}> */}
             

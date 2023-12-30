@@ -50,7 +50,7 @@ const WillsCreator = ( {Component, pageProps}: AppProps) => {
       {/* </WagmiConfigProvider> */}
       { pageHeader }
       <WagmiConfig config = {wagmiConfig}>  
-          <ComProfile></ComProfile>
+          
           <CreateWillsForm></CreateWillsForm>
         </WagmiConfig>
     </div>

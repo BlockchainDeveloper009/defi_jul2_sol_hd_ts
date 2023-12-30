@@ -14,7 +14,7 @@ import {
   CreateBondandAdminRole_CONTRACT_ABI,
   CreateBondandAdminRole_CONTRACT_ADDRESS,
 } from "../srcConstants";
-import { Box, Button, TextInput } from "@mantine/core";
+import { Box, Button, Flex, Header, TextInput } from "@mantine/core";
 import { prepareWriteContract, writeContract } from "wagmi/actions";
 import { useForm } from "@mantine/form";
 import CompLoader from "./compLoader";
@@ -40,6 +40,8 @@ function CompFindStatus_Assets_Wills() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [CompWillId, setCompWillId] = useState<string | null>('');
+  const [CompAssetId, setCompAssetId] = useState<string | null>('');
+  const [CompAssetStatus, setCompAssetStatus] = useState<string | null>('');
   const [CompWillStatus, setCompWillStatus] = useState<string | null>('');
   const [TransactionError, setTransactionError] = useState("");
 
@@ -47,6 +49,23 @@ function CompFindStatus_Assets_Wills() {
     setIsSubmitting(true)
    // setCompWillStatus(GetWillStatus(CompWillId));
   }
+  
+
+  async function GetAssetStatusUsingCoreWagmi(){
+    console.log(`Receiving-Asset`)
+  
+    console.log(CompAssetId)
+    const data = await readContract({
+      address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+      abi: CreateBondandAdminRole_CONTRACT_ABI,
+      functionName: 'getAssetStatus',
+      args: [CompAssetId]
+    })
+    console.log(`data from CoreWagmi`)
+    console.log(data)
+     setCompAssetStatus(data);
+  }
+
   async function GetWillStatusUsingCoreWagmi(){
     console.log(`Receiving-willid`)
   
@@ -59,7 +78,7 @@ function CompFindStatus_Assets_Wills() {
     })
     console.log(`data from CoreWagmi`)
     console.log(data)
-    // setCompWillStatus(data);
+     setCompWillStatus(data);
   }
 
   useEffect(() => {
@@ -67,18 +86,38 @@ function CompFindStatus_Assets_Wills() {
       console.log(`trackChanges of willId`)
       console.log(`will id - ${CompWillId}- `);
   },[CompWillId])
+
+  useEffect(() => {
+    //track changes of will id
+    console.log(`trackChanges of CompAssetId`)
+    console.log(`CompAssetId id - ${CompAssetId}- `);
+},[CompAssetId])
+useEffect(() => {
+  //track changes of will id
+  console.log(`trackChanges of CompAssetStatus`)
+  console.log(`CompAssetStatus  - ${CompAssetStatus}- `);
+},[CompAssetStatus])
+useEffect(() => {
+  //track changes of will id
+  console.log(`trackChanges of CompWillStatus`)
+  console.log(`CompWillStatus  - ${CompWillStatus}- `);
+},[CompWillStatus])
+
   const form = useForm({
     initialValues: {
       WillId: "0",
+      AssetId: "0",
     },
 
     transformValues: (values) => ({
       WillId: `${values.WillId}`,
+      AssetId: `${values.AssetId}`,
+
     }),
   });
 
 
-  
+
 
 
   return (
@@ -93,6 +132,7 @@ function CompFindStatus_Assets_Wills() {
              console.log('setting willid')
              console.log(values.WillId)
              setCompWillId(values.WillId);
+             setCompAssetId(values.AssetId)
           })}
         >
           <TextInput
@@ -102,14 +142,49 @@ function CompFindStatus_Assets_Wills() {
           />
           {/**disabled={isSubmitting}  */}
           <Button type="submit" mt="md"  onClick = {GetWillStatusUsingCoreWagmi}>
-            Find
+            Find Will
            {/* Find WillStatus {isSubmitting && <CompLoader/>} */}
         </Button>
+        <h1>Get Status for Asset</h1>
+        <TextInput
+            label="Asset Id"
+            placeholder="Asset Id"
+            {...form.getInputProps("AssetId")}
+          />
+             <Button type="submit" mt="md"  onClick = {GetAssetStatusUsingCoreWagmi}>
+                Find Asset
+              {/* Find WillStatus {isSubmitting && <CompLoader/>} */}
+              </Button>
         </form>
 
       </Box>
       
       <h2>`will Status = {CompWillStatus} --`</h2>
+      <h2>`Asset Status = {CompAssetStatus} --`</h2>
+      
+      <Box>
+          <Flex gap={2}>
+          <Header height={3}>Will Status Legions</Header>
+              <ul>
+                <li></li>
+                <li>Created</li>
+                <li>Assigned</li>
+                <li></li>
+                <li></li>
+              </ul>
+          </Flex>
+          <Flex>
+          <Header height={3}>Will Status Legions</Header>
+            <ul>
+              
+              <li>Created</li>
+              <li>Matured</li>
+              <li>ManualySettled</li>
+              <li>Cancelled</li>
+            </ul>
+          </Flex>
+      </Box>  
+      
     </div>
   );
 }

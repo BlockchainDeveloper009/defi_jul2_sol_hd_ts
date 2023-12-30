@@ -44,7 +44,7 @@ const pageWillsManagerDetails = () => {
     <div>
         
         <WagmiConfig config = {wagmiConfig}>  
-              <ComProfile/>
+              
               {/* <CompManageWillsEdit></CompManageWillsEdit> */}
               <CompManageWillsCancel></CompManageWillsCancel>
         </WagmiConfig>
