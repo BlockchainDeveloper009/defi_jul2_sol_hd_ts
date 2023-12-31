@@ -18,7 +18,12 @@ import { errAssetByUsers } from '../Errors';
 import { AnyAaaaRecord } from 'dns';
 
 interface IAss {
-  assid:string
+  AssetAmount:string,
+  AssetCreator:string,
+  AssetId: string,
+  AssetName: string,
+  assetStatus: number,
+  isAvailable: boolean
 }
 function GetAssetStaus(assetId:string) {
   const { data:functionData,status} = useContractRead({
@@ -86,11 +91,11 @@ function ManageAssetsTable() {
             
           const trows = d.map((element:any) => (
      
-            <tr key={element.assid}>
+            <tr key={element.AssetId}>
               
               {/* <td ><a href="" target="_blank">{element.assetId}</a></td> */}
               
-              <td>{element}</td>
+              <td>{element.AssetId}</td>
               {/* <td>{GetAssetStaus(element.assid)}</td> */}
        
               <td><button onClick={()=>handleProceed(element.assid)}></button></td>

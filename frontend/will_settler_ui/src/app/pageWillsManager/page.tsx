@@ -8,6 +8,7 @@ import { polygonMumbai } from 'viem/chains'
 import { publicProvider } from 'wagmi/providers/public'
 import ComProfile from '../components/CompProfile'
 import CompFindStatus_Assets_Wills from '../components/CompFindStatus_Assets_Wills'
+import { Container } from '@mantine/core'
 
 
 
@@ -45,8 +46,12 @@ const WillsManager = () => {
         
         <WagmiConfig config = {wagmiConfig}>  
               
-              <ManageWillsTable></ManageWillsTable>
-              <CompFindStatus_Assets_Wills></CompFindStatus_Assets_Wills>
+              <div >
+                  <ManageWillsTable></ManageWillsTable>
+              </div>
+              <Container>
+                  <CompFindStatus_Assets_Wills></CompFindStatus_Assets_Wills>
+              </Container>
         </WagmiConfig>
  
     </div>

@@ -17,6 +17,8 @@ import { useAccount } from 'wagmi';
 import { useRouter as navUseRouter} from 'next/navigation';
 import { useRouter as routUseRouter} from 'next/router';
 import { CodeSandboxLogoIcon } from '@radix-ui/react-icons';
+import CSVDownloadButton from './CSVDownloadButton';
+import { IUseWillsInfo } from '../models/IWillInfo';
 
 enum baseWillStatus {
   Created, //0
@@ -25,18 +27,7 @@ enum baseWillStatus {
   ManuallySettled, //3
   Cancelled //4
 }
-interface IWillsInfo{
-  willId:BigNumberish,
-  assetId:string,
-  s_baseStatus: string,
-  willStartDate: BigNumberish,
-  willMaturityDate:BigNumberish,
-  Benefitors: number,
-  willOwner: string, //BigInteger
-  willManager: string, //BigInteger
-  
-  
-}
+
 function GetWillsByUsers(stttt:any) {
   const { data:functionData,status} = useContractRead({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
@@ -50,8 +41,8 @@ function GetWillsByUsers(stttt:any) {
   console.log('---getUserCreatedBonds-----')
   console.log(functionData)
   console.log('---------------')
-  let retData:IWillsInfo[];
-  retData = functionData as Array<IWillsInfo>;
+  let retData:IUseWillsInfo[];
+  retData = functionData as Array<IUseWillsInfo>;
   console.log(retData)
   return retData 
 
@@ -134,7 +125,7 @@ const handleCancelProcess=(willsId:string)=> {
     let d:any = GetWillsByUsers(address)
     if(d.length>=0)
     {
-            
+      
             console.log(d[0])
           const trows = d.map((element:any) => (
             
@@ -194,9 +185,10 @@ const handleCancelProcess=(willsId:string)=> {
                     
                     </tr>
                 </thead>
+                
                 <tbody>{trows}</tbody>
                 </Table>
-                
+                {trows && <CSVDownloadButton data={d} filename="my_data" />}
             </div>
           );
     } else{
