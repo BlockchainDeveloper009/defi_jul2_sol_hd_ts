@@ -25,6 +25,12 @@ import {
 //import { contractConfig } from "../Config";
 import { IAssets } from '../models/IAssets';
 import { prepareWriteContract, writeContract } from 'wagmi/actions';
+
+import React from 'react'
+
+
+
+
 function  GetAssetsByUsers(addr:any):IAssets[] {
   
   if(addr == null){

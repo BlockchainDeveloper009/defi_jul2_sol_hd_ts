@@ -14,3 +14,16 @@ export interface IWillInfo {
     assetAmount: BigNumberish
     
    }
+
+   export interface IUseWillsInfo{
+    willId:BigNumberish,
+    assetId:string,
+    s_baseStatus: string,
+    willStartDate: BigNumberish,
+    willMaturityDate:BigNumberish,
+    Benefitors: number,
+    willOwner: string, //BigInteger
+    willManager: string, //BigInteger
+    
+    
+  }

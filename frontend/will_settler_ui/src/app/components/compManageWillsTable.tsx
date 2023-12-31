@@ -81,6 +81,15 @@ const handleSettleProcess = (willsId:string) => {
 const handleCancelProcess=(willsId:string)=> {
   router.push(`/pageWillsManagerCancel?${createQueryStringToSendWillId('willId',willsId)}`)
 }
+function convertUnixTimestampToDateString(unixTimestamp: any): import("react").ReactNode {
+  const date = new Date(unixTimestamp * 1000); // Convert seconds to milliseconds
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  console.log(`unixTimestamp=> ${unixTimestamp}`)
+  let t = date.toLocaleDateString(undefined, options);
+  console.log(`convertedTime -> ${t}`)
+  return t;
+  //throw new Error('Function not implemented.');
+}
   // const navigate = useNavigate();
   const handleProceed = (willInfo:string) => {
     // console.log(id, "home");
@@ -150,8 +159,10 @@ const handleCancelProcess=(willsId:string)=> {
                   element.willId.toString())}
               >Settle</button></td>
               
-              <td>{element.willStartDate.toString()}</td>
-              <td>{element.willMaturityDate.toString()}</td>
+              
+              <td >{convertUnixTimestampToDateString(element.willStartDate.toString())}</td>
+              {/* <td onClick={()=>convertUnixTimestampToDateString(element.willMaturityDate.toString())}>{element.willMaturityDate.toString()}</td> */}
+              <td >{convertUnixTimestampToDateString(element.willMaturityDate.toString())}</td>
               <td>{element.Benefitors}</td>
               <td>{element.willOwner}</td> 
               
@@ -209,3 +220,5 @@ const handleCancelProcess=(willsId:string)=> {
 }
 
 export default ManageWillsTable;
+
+
