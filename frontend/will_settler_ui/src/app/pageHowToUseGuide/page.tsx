@@ -6,7 +6,7 @@ const pageHowToUseGuide = () => {
   return (
     <div>
         
-        <title>Project Templatee page for pge1</title>
+        <title>Guide on How to Use</title>
         <a href='./TemplateProjectComponents/ProjectTemplateSignUp'>Sign Up here</a>
         <Image
           className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
@@ -20,7 +20,7 @@ const pageHowToUseGuide = () => {
         <Box>
           <Title order={1}> Why & What </Title>
          <Text truncate="end">
-              Using WIll creator Application, person "A" would be able setup a 
+              Using WIll creator Application, person `"`A`"`" would be able setup a 
                 contract which will liquidate money into Benefitor account automatically
                 on Will end date.
           
@@ -41,7 +41,7 @@ const pageHowToUseGuide = () => {
         <ul>
           <li>Step1: Create Asset(requires metamask confirmation), 
             after you confirm, contract will create asset & give you asset id [ca-0]</li>
-          <li>Step2:  Use the asset created in step1(assetd_Id:[ca-0],
+          <li>Step2:  Use the asset created in step1 assetd_Id:[ca-0],
             this will give you will_id </li>
           <li>Step3: From home page, click [Wills Manager] tab, to look the wills created by the user</li>
 

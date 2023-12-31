@@ -14,8 +14,12 @@ import { formatEther } from 'viem'
 import CompWagmiTestProvider from './CompWagmiTestProvider';
 import { useAccount } from 'wagmi';
 import { IAssets } from '../models/IAssets';
+import { errAssetByUsers } from '../Errors';
+import { AnyAaaaRecord } from 'dns';
 
-
+interface IAss {
+  assid:string
+}
 function GetAssetStaus(assetId:string) {
   const { data:functionData,status} = useContractRead({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
@@ -26,27 +30,27 @@ function GetAssetStaus(assetId:string) {
   })
   return functionData as string;
 }
-function  GetAssetsByUsers():IAssets[] {
+function  GetAssetsByUsers(customerAddr:any):IAss[] {
   
   const { data:functionData,status} = useContractRead({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,
-    functionName: 'getAllAsset',
-    args: []
+    functionName: 'getUserCreatedAssets',
+    args: [customerAddr]
     
   })
-  const { address } = useAccount()
+  
   
   console.log('---getUserCreatedBonds-----')
-  console.log(address)
+  console.log(customerAddr)
   console.log('--expect use address')
   console.log('expect function data')
   console.log(functionData)
   console.log('---------')
   
-  let retData = functionData as Array<IAssets>;
+  let retData = functionData as Array<IAss>;
   console.log('decode values')
-  console.log(retData[0].assetName)
+  console.log(retData)
   return retData 
 
 }
@@ -58,42 +62,38 @@ function ManageAssetsTable() {
   
   const [assetId, setAssetId] = useState('')
   const [willsId, setWillsId] = useState()
-  const { isConnected } = useAccount()
+  const { address,isConnected } = useAccount()
   let { asId } = useParams();
-  // const navigate = useNavigate();
+ 
   const handleProceed = (assetId:string) => {
-    // console.log(id, "home");
+  
     setAssetId(assetId)
     console.log('---handleProceed---')
     console.log(assetId)
     console.log('----------')
-    // navigate("/WillsFormEdit",  
-    // {
-    //   state: {
-    //     userId: assetId,
-    //   }
-    // }
-    // );
+
   };
 
   try {
 
 //[{ assetId:'0',assetName='test0' },{ assetId:'1',assetName='test1' }]
-    let d :IAssets[] =  GetAssetsByUsers() //[ { willId: '0'}, {willId: '1'}] 
+    let d:any =  GetAssetsByUsers(address) //[ { willId: '0'}, {willId: '1'}] 
     if(d.length>=0)
     {
       console.log('values')
-            console.log(d[0].assetId);
+            
             console.log(d)
-          const trows = d.map((element) => (
-            <tr key={element.assetId}>
+            
+          const trows = d.map((element:any) => (
+     
+            <tr key={element.assid}>
               
               {/* <td ><a href="" target="_blank">{element.assetId}</a></td> */}
               
-              <td>{element.assetId}</td>
-              <td>{GetAssetStaus(element.assetId.toString())}</td>
+              <td>{element}</td>
+              {/* <td>{GetAssetStaus(element.assid)}</td> */}
        
-              <td><button onClick={()=>handleProceed(element.assetId)}></button></td>
+              <td><button onClick={()=>handleProceed(element.assid)}></button></td>
               {/* <td>{element.willManager}</td>
               <td>{element.willOwner}</td> */}
               
@@ -104,9 +104,10 @@ function ManageAssetsTable() {
  
           return (
             <div className="App">
-          
-            
-                ---------
+                
+            {!address && <div><p>Account not connected</p></div>}
+
+
                 <Table  highlightOnHover withColumnBorders>
                       <thead>
                           <tr>
@@ -114,11 +115,7 @@ function ManageAssetsTable() {
                             <th>assetName</th>
                           </tr>
                       </thead>
-                      {/* <BrowserRouter> 
-                        <Routes>
-                          
-                        </Routes>
-                      </BrowserRouter> */}
+
                       <tbody>{trows}</tbody>
                 </Table>
             </div>
@@ -132,35 +129,11 @@ function ManageAssetsTable() {
        </div>
      );
     }
-    // return (
-    //   <div className="App">
-    //     <CompWagmiTestProvider/>
-      
-    //       ---------
-    //       <Table  highlightOnHover withColumnBorders>
-    //           <thead>
-    //               <tr>
-    //               <th>assetId</th>
-    //               <th>status</th>
-    //               <th>startDate</th>
-    //               <th>endDate</th>
-    //               <th>Benefitors</th>
-    //               <th>manager</th>
-    //               {/* <th>owner</th>
-    //               <th>manager</th>
-    //               */}
-    //               </tr>
-    //           </thead>
-         
-    //       </Table>
-
-    //   </div>
-    // );
-
+    
 
     
   } catch (error) {
-    console.log(`ER-1: GetAssetsByUsers page`)
+    console.log(errAssetByUsers)
     console.log(`${error}`)
   }
   return null;

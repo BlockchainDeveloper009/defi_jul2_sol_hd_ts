@@ -13,7 +13,7 @@ import { WagmiConfig, configureChains, useAccount } from 'wagmi'
 import { createConfig, Config } from 'wagmi'
 import Link from 'next/link';
 
-const ProjectName = 'Manage Your Assets on this page'
+const ProjectName = 'Request a Feature'
 const ProjectIndex_template = () => {
  
   const { chains, publicClient, webSocketPublicClient } = configureChains(
@@ -49,7 +49,7 @@ const ProjectIndex_template = () => {
         <header>`${ProjectName}`</header>
         <Link href="/">Home</Link>
         <WagmiConfig config = {wagmiConfig}>  
-          
+          <ComProfile/>
           
           <ManageAssetsTable></ManageAssetsTable>
         </WagmiConfig>

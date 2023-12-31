@@ -58,10 +58,11 @@ abstract contract WWethBase20 is ERC20{ //WWeth20 {
     }
     struct cryptoAssetInfo {
         string AssetId;
-        string Name;
-        uint256 amount;
+        string AssetName;
+        uint256 AssetAmount;
         bool isAvailable;
         cryptoAssetStatus assetStatus;
+        address AssetCreator;
     }
     /**
      * @dev this status to be assigned only Assets

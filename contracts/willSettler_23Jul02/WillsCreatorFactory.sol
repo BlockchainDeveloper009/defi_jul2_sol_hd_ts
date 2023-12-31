@@ -67,8 +67,10 @@ contract WillsCreatorFactory is WWethBase20 {
 
     //this line is to create an array to keep track of the bonds
     willlInfo[] private s_willsinExistence;
-
-    mapping(address => willlInfo[]) private userCreatedWills;
+    //added this new variables to track the assets created by a user
+    mapping(address => cryptoAssetInfo[]) private s_userCreatedAssets;
+    //added this new variables to track the wills created by a user
+    mapping(address => willlInfo[]) private s_userCreatedWills;
     /* contains maturity date and contract ids mature on a certain day*/
     mapping(uint256 => uint256[]) private s_WillsByMaturityDate;
 
@@ -121,6 +123,7 @@ contract WillsCreatorFactory is WWethBase20 {
     */
     event willSettled(
         uint indexed cryptoWillId,
+        baseWillStatus indexed baseWillStatus,
         address indexed benefitor,
         uint256 willMaturityDate,
         uint256 willAmount
@@ -274,11 +277,13 @@ contract WillsCreatorFactory is WWethBase20 {
         }
 
         cryptoAssets[locId].AssetId = locId;
-        cryptoAssets[locId].Name = assetName;
-        cryptoAssets[locId].amount = assetAmount;
+        cryptoAssets[locId].AssetName = assetName;
+        cryptoAssets[locId].AssetAmount = assetAmount;
         cryptoAssets[locId].isAvailable = true;
         cryptoAssets[locId].assetStatus = cryptoAssetStatus.Created;
+        cryptoAssets[locId].AssetCreator = address(this);
 
+s_userCreatedAssets[msg.sender].push(cryptoAssets[locId]);
         s_assetsCurrentId++;
         console.log(
         "assert created locId %s assetName-- %s --assetAmount-- %s assetAmount -- nexts_assetsCurrentId %s --",
@@ -301,7 +306,7 @@ contract WillsCreatorFactory is WWethBase20 {
             cryptoAssetStatus.Created);
     }
 
-    function getAllAsset() external view returns (string[] memory) {
+    function getAllAssetIds() external view returns (string[] memory) {
         return s_arr_cryptoAssetIds;
     }
 
@@ -375,10 +380,10 @@ contract WillsCreatorFactory is WWethBase20 {
         _mint(
             address(this),
             //s_currentBondId,
-            cryptoAssets[_assetId].amount
+            cryptoAssets[_assetId].AssetAmount
         );
         console.log("msg sender %s", msg.sender);
-        userCreatedWills[msg.sender].push(s_willlInfo[s_currentBondId]);
+        s_userCreatedWills[msg.sender].push(s_willlInfo[s_currentBondId]);
         uint dateHash = generateHash(willMaturityDate);
         s_WillsByMaturityDate[willMaturityDate].push(s_currentBondId);
 
@@ -418,7 +423,7 @@ contract WillsCreatorFactory is WWethBase20 {
         address payable Benefitors;
         baseStatus s_baseStatus;
         */
-        payable(msg.sender).transfer(cryptoAssets[_assetId].amount);
+        payable(msg.sender).transfer(cryptoAssets[_assetId].AssetAmount);
         // transferFrom(msg.sender, address(this), cryptoAssets[_assetId].amount);
 
         unchecked {
@@ -463,7 +468,14 @@ contract WillsCreatorFactory is WWethBase20 {
     function getUserCreatedBonds(
         address addr
     ) external view returns (willlInfo[] memory) {
-        return userCreatedWills[addr];
+        return s_userCreatedWills[addr];
+    }
+//s_userCreatedAssets
+
+    function getUserCreatedAssets(
+        address addr
+    ) external view returns (cryptoAssetInfo[] memory) {
+        return s_userCreatedAssets[addr];
     }
 
     //returns all Bonds in existence
@@ -497,7 +509,8 @@ contract WillsCreatorFactory is WWethBase20 {
         string memory asst = s_willlInfo[willId].assetId;
         require(
             s_willlInfo[willId].s_baseStatus == baseWillStatus.Started,
-            "Will is not in Start Status"
+            string.concat("Will's status should be in start status(1) ","to manually settle")
+            
         );
         //require for maturity date comparisoin
         //add only owner can call
@@ -506,14 +519,15 @@ contract WillsCreatorFactory is WWethBase20 {
 
         //safeTransferFrom(address(this),s_willlInfo[willId].Benefitors, willId, cryptoAssets[asst].amount, "0x0");
         payable(s_willlInfo[willId].Benefitors).transfer(
-            cryptoAssets[asst].amount
+            cryptoAssets[asst].AssetAmount
         );
         s_willlInfo[willId].s_baseStatus = baseWillStatus.ManuallySettled;
         emit willSettled(
             willId,
+            s_willlInfo[willId].s_baseStatus,
             s_willlInfo[willId].Benefitors,
             s_willlInfo[willId].willMaturityDate,
-            cryptoAssets[asst].amount
+            cryptoAssets[asst].AssetAmount
         );
     }
 
@@ -545,14 +559,14 @@ contract WillsCreatorFactory is WWethBase20 {
 
         //safeTransferFrom(address(this),s_willlInfo[willId].Benefitors, willId, cryptoAssets[asst].amount, "0x0");
         payable( s_willlInfo[willId].willOwner).transfer(
-            cryptoAssets[asst].amount
+            cryptoAssets[asst].AssetAmount
         );
         s_willlInfo[willId].s_baseStatus = baseWillStatus.Cancelled;
         emit willCancelled(
             willId,
             s_willlInfo[willId].willOwner,
             s_willlInfo[willId].willMaturityDate,
-            cryptoAssets[asst].amount
+            cryptoAssets[asst].AssetAmount
         );
     }
 

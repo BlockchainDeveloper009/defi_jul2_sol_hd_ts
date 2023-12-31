@@ -1,0 +1,110 @@
+0.36 - custom raddi theme
+0.32 - handling form submission - react hook form - useForm
+0.49 - Error handling, error message compponent
+0.59 - show the issues; talks about mobile,laptop browser rendering,size compatibility
+1.00 - Badge component, to show issue rows based on status value
+1.02 - Record datastructure in typescript Record<Key,Value>
+1.05- Loading issues page with skeleton <npm i delay react-loading-skeleton@3.3.1>
+1.09 - load issue details page
+1.17 - tailwind typography + text editor styling & package <npm i markdown@8.0.7>
+1.20 - cusom tailwind class for link
+1.24 - nextlink,radi
+1.39 - Implemen single responsibility by creating individual components
+1.41 - create IssueForm to share between new issue/edit issue | props|params|adding to table.root
+1.46 - passing param,edit a page by passing product it or issue id
+1.46 - update IssueForm - PATCH method in API -  
+1.50 - caching 
+1.55 - Improving loading experience, router.refresh(),add skeleton,
+1.59 - dynamic loading of page
+2.00 - add delete button to delete issue
+2.12 - tailwind css Alert dialgo box
+2.14 - Improve user experience - add spinner during page transitions
+2.19 - NextAuth/Auth.js based authentication
+2.20 - openssl rand -base64 32 ] to generate random key using base64 algorithm
+2.52 - sECURING THE Application(by Next) by throwing 401 in api
+2.53 - Assignee Select Component
+3.59 - Building LatestIssue Component - avatar, card, prisma[includeAssigner, technic]
+4.00 - Building IssueSummary Component | 
+4.05 - BarCharts | Recharts.org 
+4.09 - Laying out | generate metadata
+4.13 - adding cache to improve db read performance //QueryClientProvider 
+4.17 - git-filler-repo package to remove .env references
+4.18 - setting up Error Tracking - Sentry.io
+4.21 - production setup - Planetscale
+4.30 - end of course
+10.20
+caching:
+1. Data cache - to store result of fetch()
+
+fetch api stores in file system. will stay Permanent, until we redeploy our application
+to_disable_cache: fetch('...',{cache: 'no-store'})
+t_set_revalidate: fetch('...',{next: {revalidate: 3600})
+
+2. Full route cache (cache on server) - store output of static routes
+				
+Rendering
+a)Static(at build time)
+b)dynamic (at request time
+			
+3. Router cache(Client-side Cache)
+stores by client session
+- To store payload of pages in browser
+
+
+
+//npm i classname | to manage className for us
+//npm i zod
+//helps to  interact with data validation library like zod
+//npm i @hookform/resolvers@3.3.1
+
+2023/12/02: was trying to make wagmi work in Will_s	ettler_ui, 
+hooks had problem
+
+2023/12/04: ==================
+contract has be to redeployed
+has issues with abi generation, deployment,
+verification of contract was failing(as abi.json) wasnt there, manually created the
+file by copying existing file
+2023/12/18: ==================
+prisma setup, 
+model creation
+2023/12/19: =====asset creation page=============
+added mysql table, assets table
+created rest api routes to update using 'prisma' & 'axios' library
+NextResponse
+challenges: converting NextRequest req.body to json to fetch the arguments passed from client was difficult
+used safeparse from mosh code 
+
+learnt about packages zod, hook resolvers
+
+2023/12/20: ==================
+added loader/spinner to submit to create asset button
+debugged for long time, on how to useReact hooks with in a function. its only possible to use react hooks on top
+level of componenty body function
+open bugs: no clear logging messages,
+after create asset button is submit, it should be disabled. useState/useEffect() vars to handle this scenario
+api call to update db to be added
+2 types of createWillsForm component is available.
+look for errors in browser page, browser inspect source page, server log in console
+
+2023/12/21
+
+wagmi wills edit - locking
+update the status in the db
+
+settle function of will
+
+money transfer whole new topic
+
+2023/12/23
+
+creaetd new models in prisma, like users,ccy,willinfo,contract_details
+2023/12/24
+
+2023/12/25
+adding card,flex, avatar
+
+add css styling
+add layout (always check if an account is connected else make use to connect wallet;)
+connect button should be used in only one place
+

@@ -46,7 +46,7 @@ const NavBar = () => {
       <ul>
         <Flex align={'flex-start'} direction="row" gap="md">
             <li><Link href="/"><Title order={2}>Logo</Title></Link></li>
-            <li><Link href="/"><Title order={2}>Dashboard</Title></Link></li>  
+            <li><Link href="/RequestFeature"><Title order={2}>Dashboard</Title></Link></li>  
             <li><Link href="/pageHowToUseGuide"><Title order={2}>Guide</Title></Link></li>
              <WagmiConfig config = {wagmiConfig}>  
               <ComProfile/>
