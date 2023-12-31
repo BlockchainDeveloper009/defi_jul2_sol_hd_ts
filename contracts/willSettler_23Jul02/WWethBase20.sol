@@ -37,6 +37,7 @@ abstract contract WWethBase20 is ERC20{ //WWeth20 {
      * @dev this status to be assigned to Will itself.
      */
     enum baseWillStatus {
+        willDoesntExist,
         Created,
         Started,
         Matured,
@@ -68,6 +69,7 @@ abstract contract WWethBase20 is ERC20{ //WWeth20 {
      * @dev this status to be assigned only Assets
      */
     enum cryptoAssetStatus {
+        assetDoesntExist,
         Created,
         Assigned
     }
