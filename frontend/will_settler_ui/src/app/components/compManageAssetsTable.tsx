@@ -83,6 +83,7 @@ function ManageAssetsTable() {
 
 //[{ assetId:'0',assetName='test0' },{ assetId:'1',assetName='test1' }]
     let d:any =  GetAssetsByUsers(address) //[ { willId: '0'}, {willId: '1'}] 
+    
     if(d.length>=0)
     {
       console.log('values')

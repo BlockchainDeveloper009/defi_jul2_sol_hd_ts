@@ -104,6 +104,8 @@ creaetd new models in prisma, like users,ccy,willinfo,contract_details
 2023/12/25
 adding card,flex, avatar
 
+
+
 add css styling
 add layout (always check if an account is connected else make use to connect wallet;)
 connect button should be used in only one place

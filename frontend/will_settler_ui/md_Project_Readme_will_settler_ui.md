@@ -27,3 +27,8 @@ NextRestAPi -
     response error, status error
     console.log in each section
     tried to make sense of error and try to link that in the code; if i cant find solution, i will page error in google or chatgpt to refine my search
+
+
+    docker build command
+
+    docker build -t willSettler-beta-v1 .

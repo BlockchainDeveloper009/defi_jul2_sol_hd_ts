@@ -117,13 +117,28 @@ adding cancel the will feature,
 12-28-error: 
 app-index.js:32 TypeError: Cannot convert null to a BigInt {useParams cannot handle BigInt)
 
+2023/12/30-
+added date converstion from unix to next
 
- 
-1 of 3 unhandled errors
-Next.js (13.5.4) is outdated (learn more)
 
-Unhandled Runtime Error
-Error: Hydration failed because the initial UI does not match what was rendered on the server.
+Failures:
+
+Design: unable to switch to new or other version of contracts,
+will have to redeploy the application whenever there is change of contract version.
+
+solution:
+have a config table at mongodb,
+with contract deployment unique datetime stamp, hash it after deployment.
+
+store version in mongodb.
+
+deployment timestamp of contract, environment, application name, dockerid, contract address, network, abi
+
+
+modify mysql table structure of have this unique timestamp as one of the field in asset table, wills table
+redeploy mysql
+
+have nextjs app name, for eg. docker id
 
 to improve: cancel page, better error handling mechanism
 

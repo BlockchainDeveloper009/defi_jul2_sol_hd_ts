@@ -1,4 +1,4 @@
-import { Flex, Title } from '@mantine/core'
+import { Button, Flex, Title } from '@mantine/core'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { Router } from 'react-router-dom'
@@ -19,7 +19,7 @@ const ComProfile = () => {
     return (
         <div className='text-center'>
             <p>Connected to {address} </p>
-            <button onClick={disconnect}>Disconnect</button>
+            <Button onClick={disconnect}>Disconnect</Button>
         </div>
       )
   }

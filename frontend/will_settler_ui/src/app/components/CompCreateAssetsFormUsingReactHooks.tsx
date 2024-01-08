@@ -6,7 +6,8 @@ import { ActionIcon, Select, useMantineColorScheme } from '@mantine/core';
 import axios  from 'axios'
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
-import { prepareWriteContract } from '@wagmi/core'
+
+import { abi } from './abi'
 //import {  getContract,  useContractWrite, usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
 import {
  
@@ -16,10 +17,10 @@ import {
 
 
 import { use, useEffect, useState } from 'react';
-import { useAccount, useContractEvent } from 'wagmi'
+import { useAccount, useWatchContractEvent } from 'wagmi'
 import CompWagmiTestProvider from './CompWagmiTestProvider';
 import { WagmiConfigProvider } from './WagmiConfigProvider';
-import { connect, getContract, writeContract } from 'wagmi/actions';
+import { connect } from 'wagmi/actions';
 import { Account } from 'viem';
 import  { PrismaClient } from '@prisma/client'
 import { createAssetSchema } from '../validateSchema';
@@ -29,6 +30,8 @@ import  zodResolver from '@hookform/resolvers';
 import  CompLoader  from './compLoader';
 import CompSelectAssets from './CompSelectAssets';
 import { SelectItems } from '@mantine/core/lib/Select/SelectItems/SelectItems';
+import { useWriteContract } from 'wagmi'
+
 
 const prisma = new PrismaClient()
 type Assets = z.infer<typeof createAssetSchema >;
@@ -37,7 +40,7 @@ interface AssetCCy {
   ccyName: string
 
 }
-function CompCreateAssetsForm() {
+function CompCreateAssetsFormUsingReactHooks() {
 
   const router = useRouter();
   const { address } = useAccount()
@@ -62,6 +65,8 @@ function CompCreateAssetsForm() {
   const handleSelectChange = (value) => {
     setSelectedOption(value);
   };
+
+  const { writeContract } = useWriteContract()
   const [abi,setAbi] = useState();
   useEffect(()=>{
     let readContractFromMongoDb;
@@ -94,19 +99,29 @@ function CompCreateAssetsForm() {
     uint256 willAmount
 );
   */
-  useContractEvent({
+useWatchContractEvent ({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,
     eventName: 'assetCreated',
-    listener(log) {
+    onLogs(logs) {
+      console.log('New logs!', logs)
       console.log('listening to event assetCreated')
-      console.log(log[0].args.assetId)
-      console.log(log[0].args.assetName)
-      console.log(log[0].args.assetAmount)
-      setEventAssetName(log[0].args.assetName)
-      setEventAssetAmt(log[0].args.assetAmount)
-      setAssetIdCreated(log[0].args.assetId)  
-    },
+      console.log(logs[0].args.assetId)
+      console.log(logs[0].args.assetName)
+      console.log(logs[0].args.assetAmount)
+      setEventAssetName(logs[0].args.assetName)
+      setEventAssetAmt(logs[0].args.assetAmount)
+      setAssetIdCreated(logs[0].args.assetId)  
+    }
+    // listener(log) {
+    //   console.log('listening to event assetCreated')
+    //   console.log(log[0].args.assetId)
+    //   console.log(log[0].args.assetName)
+    //   console.log(log[0].args.assetAmount)
+    //   setEventAssetName(log[0].args.assetName)
+    //   setEventAssetAmt(log[0].args.assetAmount)
+    //   setAssetIdCreated(log[0].args.assetId)  
+    // },
   })
   useEffect(() => {
     const fetchCCY = async() => {
@@ -158,7 +173,18 @@ function CompCreateAssetsForm() {
 
   console.log(`Accessing contract: '${CreateBondandAdminRole_CONTRACT_ADDRESS}' `)
   
+    function HookDirectUseWrite(){
 
+      console.log(`I am connected to account '${address}'`)
+      return { 
+        abi,
+        address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+        functionName: 'a_createAssets',
+        args: [
+          assetName, parseInt(Amt.toString())
+        ],
+     };
+    }
 
 
     async function WithoutHookPrepareCOntractWrite() {
@@ -205,6 +231,7 @@ function CompCreateAssetsForm() {
 
   return (
     <div>
+    <p>CompCreateAssetsFormUsingReactHooks</p>
     { !address && <button onClick={() => connect()}>Click here to Connect Wallet</button>}
     { address && 
         <Box sx={{ maxWidth: 400 }} mx="auto">
@@ -248,6 +275,12 @@ function CompCreateAssetsForm() {
           <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {WithoutHookPrepareCOntractWrite}>
             Submit to create Asset {isSubmitting && <CompLoader/>}
           </Button>
+
+          <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {
+            ()=> writeContract(HookDirectUseWrite())
+          }>
+            useHook submit 
+          </Button>
           
           {/* {isSuccess && (
           <div>
@@ -281,4 +314,4 @@ function CompCreateAssetsForm() {
   );
 }
 
-export default CompCreateAssetsForm;
+export default CompCreateAssetsFormUsingReactHooks;

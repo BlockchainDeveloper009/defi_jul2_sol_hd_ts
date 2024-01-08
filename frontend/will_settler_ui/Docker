@@ -1,0 +1,16 @@
+# Stage 1: Build the application
+FROM node:18.12-alpine3.17 AS build
+WORKDIR /src/app
+COPY package*.json ./
+RUN npm install
+COPY . .
+
+# Stage 2: Create the final image
+FROM node:18.12-alpine3.17
+WORKDIR /src/app
+COPY --from=build /src/app .
+RUN addgroup app && adduser -S -G app app
+EXPOSE 3000
+ENV API_URL=http://api.myapp.com/
+USER app
+CMD ["npm", "start"]

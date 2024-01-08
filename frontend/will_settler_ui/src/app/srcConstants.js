@@ -4,7 +4,8 @@ export const CreateBondandAdminRole_CONTRACT_ADDRESS = '0x6635BaCd122cfc8e8D7266
 //'0x9bB29A4336A891501595B2CA3ae22FF54652d78C';
 //'0x03C5958b53233dd659EBAECFD5d42fEFdc4D1fDf';
   //'0xA9e7A34F06B54aabBDcdF47747eb590c93e400d9';
-export const CreateBondandAdminRole_CONTRACT_ABI = [
+export const CreateBondandAdminRole_CONTRACT_ABI = 
+[
   {
     "inputs": [
       {
