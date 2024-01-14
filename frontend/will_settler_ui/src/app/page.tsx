@@ -10,59 +10,18 @@ import { QueryClientProvider, queryClient } from './components/queryClient';
 import { useAccount } from 'wagmi'
 import ComProfile from './components/CompProfile';
 
-import { InjectedConnector } from 'wagmi/connectors/injected';
+
 
 import { createConfig, Config } from 'wagmi'
 
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+
 // import { ReactQueryDevtools } from 'react-query/devtools';
 // import { Hydrate } from 'react-query/hydration';
-import { publicProvider } from 'wagmi/providers/public'
+
 import { polygon, polygonMumbai, hardhat, localhost , goerli} from 'wagmi/chains'
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
 
-const { chains , publicClient, webSocketPublicClient } = configureChains(
-  [
-    // mainnet,
-    // polygon,
-    polygonMumbai,
-    // goerli,
 
-
-  ],
-  [publicProvider()]
-)
-
-const wagmiConfig = createConfig({
-  autoConnect: true,
-  publicClient,
-  connectors: [
-    new MetaMaskConnector({ chains }),
-    new CoinbaseWalletConnector({
-      chains,
-      options: {
-        appName: 'wagmi',
-      },
-    }),
-    new WalletConnectConnector({
-      chains,
-      options: {
-        projectId: '...',
-      },
-    }),
-
-      new InjectedConnector({
-          chains,//injecting the chains you would like the wallet to connect
-          options: {
-              name: 'Injected',  
-              shimDisconnect: true,
-          }
-      })
-  ],
-  webSocketPublicClient,
-})
 
 export default function Home() {
 
@@ -71,14 +30,9 @@ export default function Home() {
   let willsManagerDescription = 'Look at Wills created & Manage with&nbsp;Assets!';
   let assetsCreatorDescription = 'Create New Assets, that to be used part of Will';
   let assetsManagerDescription = 'Manage Assets that are not tied to any wills';
-
-  
-  
-
-
   
   return (
-    <WagmiConfig config = {wagmiConfig}>  
+
   
      
 
@@ -150,7 +104,7 @@ export default function Home() {
         </Link>
 
         <Link
-          href="./pageAssetsCreator"
+          href="./pageAssetsCreatorWagmiReactHook"
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
           
           rel="noopener noreferrer"
@@ -220,7 +174,7 @@ export default function Home() {
       </div>
       
     </main>
-    </WagmiConfig>
+
   )
 }
 

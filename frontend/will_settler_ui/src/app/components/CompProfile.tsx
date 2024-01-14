@@ -1,17 +1,17 @@
 import { Button, Flex, Title } from '@mantine/core'
+
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { Router } from 'react-router-dom'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { InjectedConnector } from 'wagmi/connectors/injected'
 
-const ComProfile = () => {
+
+const CompProfile = () => {
     const router = useRouter()
     const { address } = useAccount()
-    const { disconnect } = useDisconnect()
-    const { connect, isLoading } = useConnect({
-        connector: new InjectedConnector(),
-    })
+    const { connectors, connect, status, error } = useConnect()
+   // const { disconnect } = useDisconnect()
+     
   function NavigateToHomePage(){
     router.push("/");
   }
@@ -19,51 +19,57 @@ const ComProfile = () => {
     return (
         <div className='text-center'>
             <p>Connected to {address} </p>
-            <Button onClick={disconnect}>Disconnect</Button>
+            {/* <Button onClick={disconnect}>Disconnect</Button> */}
         </div>
       )
   }
 
-  if(isLoading){
-    return (
-        <div>
-            <p>Connecting...</p>
-        </div>
-    )
-  }
+  // if(isLoading){
+  //   return (
+  //       <div>
+  //           <p>Connecting...</p>
+  //       </div>
+  //   )
+  // }
 
   return (
     <div>
        <Flex 
-       rowGap={2} 
-       direction={"row"} 
-       justify="flex-start"
-        align="flex-start"
-        gap="md"
-        >
+        rowGap={2} 
+        direction={"row"} 
+        justify="flex-start"
+          align="flex-start"
+          gap="md"
+          >
           
          <Title order={2}>
          
       
-          <button onClick={NavigateToHomePage}>Home</button>
+          <button onClick={NavigateToHomePage}>Prof_Home</button>
          </Title>
 
           {/* <li><Link href="/"><Title order={2}>Logo</Title></Link></li>
             <li><Link href="/"><Title order={2}>Dashboard</Title></Link></li>   */}
        </Flex>
        <Flex 
-       rowGap={2} 
-       direction={"row"} 
-       justify="flex-end"
-        align="flex-end"
-        gap="md"
-        >
+          rowGap={2} 
+          direction={"row"} 
+          justify="flex-end"
+            align="flex-end"
+            gap="md"
+            >
           
-         <Title order={2}>
-         <button onClick={() => connect()}>Connect Wallet</button>
-          {' '}
+        
           
-         </Title>
+          {connectors.map((connector) => (
+          <Button
+            key={connector.uid}
+            onClick={() => connect({ connector })}
+            type="button"
+          >
+            {connector.name}
+          </Button>
+        ))}
 
           {/* <li><Link href="/"><Title order={2}>Logo</Title></Link></li>
             <li><Link href="/"><Title order={2}>Dashboard</Title></Link></li>   */}
@@ -72,4 +78,4 @@ const ComProfile = () => {
   )
 }
 
-export default ComProfile
+export default CompProfile

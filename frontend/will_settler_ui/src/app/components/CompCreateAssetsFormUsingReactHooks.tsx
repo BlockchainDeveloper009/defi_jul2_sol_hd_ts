@@ -25,7 +25,7 @@ import { Account } from 'viem';
 import  { PrismaClient } from '@prisma/client'
 import { createAssetSchema } from '../validateSchema';
 import { useRouter } from 'next/navigation';
-import { any, z } from 'zod';
+import { ZodBigInt, any, bigint, z } from 'zod';
 import  zodResolver from '@hookform/resolvers';
 import  CompLoader  from './compLoader';
 import CompSelectAssets from './CompSelectAssets';
@@ -33,7 +33,7 @@ import { SelectItems } from '@mantine/core/lib/Select/SelectItems/SelectItems';
 import { useWriteContract } from 'wagmi'
 
 
-const prisma = new PrismaClient()
+//const prisma = new PrismaClient()
 type Assets = z.infer<typeof createAssetSchema >;
 interface AssetCCy {
   ccy:string,
@@ -43,7 +43,8 @@ interface AssetCCy {
 function CompCreateAssetsFormUsingReactHooks() {
 
   const router = useRouter();
-  const { address } = useAccount()
+  //const { address } = useAccount()
+  const address = 0xccA0b47ab3fe942E5B5DC499762202c3222FF067
   
   // const contract = getContract({
   //   address: CreateBondandAdminRole_CONTRACT_ADDRESS,
@@ -56,7 +57,7 @@ function CompCreateAssetsFormUsingReactHooks() {
   const [eventAssetName, setEventAssetName] = useState('');
   const [eventAssetAmt, setEventAssetAmt] = useState('');
   
-  const [Amt, setAmount] = useState(0);
+  const [assetAmountForm, setAssetAmountForm] = useState<any>();
   const [assetIdCreated, setAssetIdCreated] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [apiToUpdateDBError, setApiToUpdateDbError] = useState('')
@@ -67,10 +68,10 @@ function CompCreateAssetsFormUsingReactHooks() {
   };
 
   const { writeContract } = useWriteContract()
-  const [abi,setAbi] = useState();
+  const [abiFromMongoDb,setabiFromMongoDb] = useState();
   useEffect(()=>{
     let readContractFromMongoDb;
-    if(abi==null){
+    if(abiFromMongoDb==null){
       readContractFromMongoDb = async()=>{
         const { data } = await axios.get('/api/getContractInfo');
         console.log(`abi from db -> ${data} `)
@@ -79,7 +80,7 @@ function CompCreateAssetsFormUsingReactHooks() {
       }
      readContractFromMongoDb();
     }
-  },[abi])
+  },[abiFromMongoDb])
   const handleButtonClick = () => {
     // Do something with the selected option
     console.log('Selected option:', selectedOption);
@@ -99,6 +100,7 @@ function CompCreateAssetsFormUsingReactHooks() {
     uint256 willAmount
 );
   */
+ //https://wagmi.sh/react/api/hooks/useWatchContractEvent
 useWatchContractEvent ({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,
@@ -128,7 +130,11 @@ useWatchContractEvent ({
       const { data } = await axios.get<AssetCCy[]>('/api/assetCCY');
       setCCY(data);
     }
-    fetchCCY();
+    try {
+      fetchCCY();
+    } catch (error) {
+      console.log(`log to console ${error}`)
+    }
 
   })
   useEffect(() => {
@@ -138,7 +144,7 @@ useWatchContractEvent ({
       let data:Assets = { 
         asset_Id: assetIdCreated , 
         asset_Name:assetName,
-        asset_Amount: Amt.toString()
+        asset_Amount: (assetAmountForm!== undefined) ? assetAmountForm : "0"
         }
       try {
         console.log('create API call')
@@ -181,58 +187,19 @@ useWatchContractEvent ({
         address: CreateBondandAdminRole_CONTRACT_ADDRESS,
         functionName: 'a_createAssets',
         args: [
-          assetName, parseInt(Amt.toString())
+          assetName, 
+          (assetAmountForm!== undefined) ? parseInt(assetAmountForm.toString()) : 0
         ],
      };
     }
 
+let dd:any = z.bigint();
 
-    async function WithoutHookPrepareCOntractWrite() {
-      setAssetIdCreated('');
-      setApiToUpdateDbError('');
-      settransactionExecutionError('');
-
-      console.log(`I am connected to account '${address}'`)
-      
-      console.log(`connected Address '${customerAccountAddress}`)
-      console.log(`assetCCY - '${assetCCY}'`)
-      //set IsSubmitting to true, will help spinner to load
-      setIsSubmitting(true);
-      try {      
-            const { 
-              request,result } = await prepareWriteContract({
-              address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-              abi: CreateBondandAdminRole_CONTRACT_ABI,//CreateBondandAdminRole_CONTRACT_ABI
-              functionName: 'a_createAssets',
-              args: [assetName, parseInt(Amt.toString())],
-              chainId: 80001,
-              account: customerAccountAddress
-              
-            });
-            
-            console.log(`result of contractprepare=> %% ${result} %%`)
-            const { hash } = await writeContract(request)
-            console.log(`txn Hash`)
-            console.log(hash)
-          } catch (error) {
-            console.log(`error during Prepare or Write Contract`);
-            console.log(error)
-            settransactionExecutionError(error.TransactionExecutionError);
-
-            
-          }finally{
-            setIsSubmitting(false);
-          }
-    
-
-        // load the list of all assets created by this user
-      //  router.push('/pageAssetsManager')
-    }
 
   return (
     <div>
     <p>CompCreateAssetsFormUsingReactHooks</p>
-    { !address && <button onClick={() => connect()}>Click here to Connect Wallet</button>}
+    
     { address && 
         <Box sx={{ maxWidth: 400 }} mx="auto">
         <form
@@ -243,7 +210,7 @@ useWatchContractEvent ({
   
                             setSubmittedValues(JSON.stringify(values, null, 2))
                             setAssetName(values.AssetName)
-                            setAmount(values.Amount)
+                            setAssetAmountForm(values.Amount)
                     
                     }
             )
@@ -272,12 +239,19 @@ useWatchContractEvent ({
             {...form.getInputProps('Amount')}
           />
   
-          <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {WithoutHookPrepareCOntractWrite}>
-            Submit to create Asset {isSubmitting && <CompLoader/>}
-          </Button>
+
 
           <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {
-            ()=> writeContract(HookDirectUseWrite())
+            ()=> writeContract
+            ({
+              abi,
+              address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+              functionName: 'a_createAssets',
+              args: [
+                assetName, dd.parse(BigInt(assetAmountForm))
+              ],
+
+             })
           }>
             useHook submit 
           </Button>
@@ -312,6 +286,6 @@ useWatchContractEvent ({
 
     </div>
   );
-}
+} 
 
 export default CompCreateAssetsFormUsingReactHooks;

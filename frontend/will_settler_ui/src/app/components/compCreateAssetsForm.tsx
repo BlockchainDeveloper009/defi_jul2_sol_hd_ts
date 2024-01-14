@@ -16,7 +16,7 @@ import {
 
 
 import { use, useEffect, useState } from 'react';
-import { useAccount, useContractEvent } from 'wagmi'
+import { useAccount, useContractEvent, useWatchContractEvent } from 'wagmi'
 import CompWagmiTestProvider from './CompWagmiTestProvider';
 import { WagmiConfigProvider } from './WagmiConfigProvider';
 import { connect, getContract, writeContract } from 'wagmi/actions';
@@ -94,18 +94,19 @@ function CompCreateAssetsForm() {
     uint256 willAmount
 );
   */
-  useContractEvent({
+useWatchContractEvent({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,
     eventName: 'assetCreated',
-    listener(log) {
+    onLogs(logs) {
+      console.log('New logs!', logs)
       console.log('listening to event assetCreated')
-      console.log(log[0].args.assetId)
-      console.log(log[0].args.assetName)
-      console.log(log[0].args.assetAmount)
-      setEventAssetName(log[0].args.assetName)
-      setEventAssetAmt(log[0].args.assetAmount)
-      setAssetIdCreated(log[0].args.assetId)  
+      console.log(logs[0].args.assetId)
+      console.log(logs[0].args.assetName)
+      console.log(logs[0].args.assetAmount)
+      setEventAssetName(logs[0].args.assetName)
+      setEventAssetAmt(logs[0].args.assetAmount)
+      setAssetIdCreated(logs[0].args.assetId)  
     },
   })
   useEffect(() => {

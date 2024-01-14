@@ -1,7 +1,7 @@
  
 'use client'
 
-import { WagmiConfig, configureChains } from 'wagmi'
+
 //  import CompCreateAssetsForm from '../components/CompCreateAssetsForm'
 
 // import { QueryClientProvider, queryClient } from '../components/queryClient'
@@ -11,25 +11,25 @@ import { WagmiConfig, configureChains } from 'wagmi'
 //  import { chains, publicClient, webSocketPublicClient } from '../components/wrapperForWagmi';
 
 import { AppProps } from 'next/app'
-import CompCreateAssetsForm from '../components/CompCreateAssetsForm';
+import CompCreateAssetsFormUsingReactHooks from '../components/CompCreateAssetsFormUsingReactHooks';
+
 
 
 import ComProfile from '../components/CompProfile';
 import CompSelectAssets from '../components/CompSelectAssets';
 
 
-const pageAssetsCreator = ({Component, pageProps}: AppProps) => {
+const pageAssetsCreatorWagmiReactHook = ({Component, pageProps}: AppProps) => {
 
-  
   return (
     <div>
         <h1>Step 1: Create Asset</h1>
 
-        
+        {/* <WagmiConfig config = {wagmiConfig}>   */}
           {/* <ComProfile></ComProfile> */}
-          <CompCreateAssetsForm></CompCreateAssetsForm>  
+          <CompCreateAssetsFormUsingReactHooks></CompCreateAssetsFormUsingReactHooks>  
           
-        
+        {/* </WagmiConfig> */}
         
         {/* <QueryClientProvider client={queryClient}> */}
           {/* <WagmiConfig config = {wagmiConfig}> */}
@@ -45,4 +45,4 @@ const pageAssetsCreator = ({Component, pageProps}: AppProps) => {
   )
 }
 
-export default pageAssetsCreator
+export default pageAssetsCreatorWagmiReactHook
