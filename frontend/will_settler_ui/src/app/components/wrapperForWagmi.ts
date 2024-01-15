@@ -1,42 +1,41 @@
-'use cilent';
-import { useAccount, useContractEvent, useContractRead, 
-    useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
+// 'use cilent';
+// import { useAccount, useContractEvent, useContractRead, 
+//     useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 
-import { configureChains, mainnet, } from '@wagmi/core'
-import { getContract } from 'wagmi/actions'
-import { InjectedConnector } from 'wagmi/connectors/injected'
-import {   WagmiConfig  } from 'wagmi'
+// import { configureChains, mainnet, } from '@wagmi/core'
 
-import { publicProvider } from 'wagmi/providers/public'
-import { polygon, polygonMumbai, hardhat, localhost , goerli} from 'wagmi/chains'
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-// import {
-//     getDefaultWallets,
-//     RainbowKitProvider,
-//   } from '@rainbow-me/rainbowkit';  
+// import { InjectedConnector } from 'wagmi/connectors/injected'
+// import {   WagmiConfig  } from 'wagmi'
 
-const { chains, publicClient, webSocketPublicClient } = configureChains(
-    [
-      // mainnet,
-      // polygon,
-      polygonMumbai,
-      // goerli,
+// import { publicProvider } from 'wagmi/providers/public'
+// import { polygon, polygonMumbai, hardhat, localhost , goerli} from 'wagmi/chains'
+
+// // import {
+// //     getDefaultWallets,
+// //     RainbowKitProvider,
+// //   } from '@rainbow-me/rainbowkit';  
+
+// const { chains, publicClient, webSocketPublicClient } = configureChains(
+//     [
+//       // mainnet,
+//       // polygon,
+//       polygonMumbai,
+//       // goerli,
 
 
-    ],
-    [publicProvider()]
-)
+//     ],
+//     [publicProvider()]
+// )
 
-// const { connectors } = getDefaultWallets({
-//     appName: 'test',
-//     // projectId: 'b67c616c2f896b215dff2499d07587ed',
-//     chains,
-// })
+// // const { connectors } = getDefaultWallets({
+// //     appName: 'test',
+// //     // projectId: 'b67c616c2f896b215dff2499d07587ed',
+// //     chains,
+// // })
   
 
 
-export { chains, publicClient, webSocketPublicClient }
-export {  configureChains, mainnet , publicProvider } 
-export { polygon, polygonMumbai, hardhat, localhost, goerli }
-export {  getContract, useContractEvent, useContractRead,
-     useContractWrite, usePrepareContractWrite, useWaitForTransaction } 
+// export { chains, publicClient, webSocketPublicClient }
+// export {  configureChains, mainnet , publicProvider } 
+// export { polygon, polygonMumbai, hardhat, localhost, goerli }
+// export {  getContract, useWaitForTransaction } 

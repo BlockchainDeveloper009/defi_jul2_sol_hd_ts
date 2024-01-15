@@ -40,7 +40,7 @@ interface AssetCCy {
   ccyName: string
 
 }
-function CompCreateAssetsFormUsingReactHooks() {
+function CompCreateAssetsFormUsingReactHooksWagmi2() {
 
   const router = useRouter();
   //const { address } = useAccount()
@@ -288,4 +288,4 @@ let dd:any = z.bigint();
   );
 } 
 
-export default CompCreateAssetsFormUsingReactHooks;
+export default CompCreateAssetsFormUsingReactHooksWagmi2;

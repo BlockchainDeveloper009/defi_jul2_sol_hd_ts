@@ -11,7 +11,7 @@
 //  import { chains, publicClient, webSocketPublicClient } from '../components/wrapperForWagmi';
 
 import { AppProps } from 'next/app'
-import CompCreateAssetsFormUsingReactHooks from '../components/CompCreateAssetsFormUsingReactHooks';
+import CompCreateAssetsFormUsingReactHooksWagmi2 from '../components/CompCreateAssetsFormUsingReactHooksWagmi2';
 
 
 
@@ -27,7 +27,7 @@ const pageAssetsCreatorWagmiReactHook = ({Component, pageProps}: AppProps) => {
 
         {/* <WagmiConfig config = {wagmiConfig}>   */}
           {/* <ComProfile></ComProfile> */}
-          <CompCreateAssetsFormUsingReactHooks></CompCreateAssetsFormUsingReactHooks>  
+          <CompCreateAssetsFormUsingReactHooksWagmi2></CompCreateAssetsFormUsingReactHooksWagmi2>  
           
         {/* </WagmiConfig> */}
         
