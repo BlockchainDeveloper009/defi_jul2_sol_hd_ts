@@ -16,6 +16,8 @@ import { Box, Button, Flex, Header, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import CompLoader from "./compLoader";
 import CompFIndStatus_Asset from "./CompFIndStatus_Asset";
+import CompFIndStatus_Will from "./CompFIndStatus_Will";
+import { Container } from "postcss";
 
 let willStatus =''
 //readContract 
@@ -71,29 +73,23 @@ const CompFindStatus_Assets_Wills: React.FC = ()=> {
 
   async function GetWillStatusUsingCoreWagmi(){
     console.log(`Receiving-willid`)
-  
-    console.log(CompWillId)
-    const result = await useReadContract({
-      address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-      abi: CreateBondandAdminRole_CONTRACT_ABI,
-      functionName: 'getWillStatus',
-      args: [CompWillId]
-    })
-    console.log(`data from CoreWagmi`)
-  //  console.log(data)
-    // setCompWillStatus(data);
+    setwillStatusButtonClicked(true);
+   
+ 
   }
 
   useEffect(() => {
       //track changes of will id
       console.log(`trackChanges of willId`)
       console.log(`will id - ${CompWillId}- `);
+      setwillStatusButtonClicked(false);
   },[CompWillId])
 
   useEffect(() => {
     //track changes of will id
     //setCompAssetId(value)
     console.log(`trackChanges of CompAssetId`)
+    setassetStatusButtonClicked(false);
     //setCompAssetId();
     console.log(`CompAssetId id - ${CompAssetId}- `);
 },[CompAssetId])
@@ -164,13 +160,21 @@ useEffect(() => {
 
       </Box>
       
-      <h2>`will Status = {CompWillStatus} --`</h2>
-      <h2>`Asset Status = {CompAssetStatus} --`</h2>
+    
 
-      
+<div>
+<Box>
+
+
+
+      { assetStatusButtonClicked && <CompFIndStatus_Asset _assetId={CompAssetId}/>}
+
+      { willStatusButtonClicked && <CompFIndStatus_Will _willId={CompWillId}/>}
+      </Box>
+</div>
       <Box>
           <Flex gap={2}>
-          { assetStatusButtonClicked && <CompFIndStatus_Asset _assetId={CompAssetId}/>}
+         
           <Header height={3}>Asset Status Legions</Header>
               <ul>
                 <li></li>
