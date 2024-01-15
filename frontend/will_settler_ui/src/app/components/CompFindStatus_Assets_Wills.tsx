@@ -5,42 +5,40 @@ import { useRouter as navUseRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import {
   useAccount,
-  useContractEvent,
-  useContractRead,
-  useContractWrite,
-  usePrepareContractWrite,
+  useReadContract,
 } from "wagmi";
 import {
   CreateBondandAdminRole_CONTRACT_ABI,
   CreateBondandAdminRole_CONTRACT_ADDRESS,
 } from "../srcConstants";
 import { Box, Button, Flex, Header, TextInput } from "@mantine/core";
-import { prepareWriteContract, writeContract } from "wagmi/actions";
+
 import { useForm } from "@mantine/form";
 import CompLoader from "./compLoader";
-import { readContract } from '@wagmi/core'
+import CompFIndStatus_Asset from "./CompFIndStatus_Asset";
+
 let willStatus =''
 //readContract 
 
-function GetWillStatusUsingReactHook(willId:any):string {
-  const { data:functionData,status} = useContractRead({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
-    functionName: 'getWillStatus',
-     args: [willId]    
-  })
-  return functionData as string;
+// async function GetWillStatusUsingReactHook(willId:any):string {
+//   const { data:functionData,status} = await useReadContract({
+//     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+//     abi: CreateBondandAdminRole_CONTRACT_ABI,
+//     functionName: 'getWillStatus',
+//      args: [willId]    
+//   })
+//   return functionData as string;
 
-} 
+// } 
 
-function CompFindStatus_Assets_Wills() {
+const CompFindStatus_Assets_Wills: React.FC = ()=> {
   const { address, connector, isConnected } = useAccount();
   const router = navUseRouter();
   const searchParams = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [CompWillId, setCompWillId] = useState<string | null>('');
-  const [CompAssetId, setCompAssetId] = useState<string | null>('');
+  const [CompAssetId, setCompAssetId] = useState('');
   const [CompAssetStatus, setCompAssetStatus] = useState<string | null>('');
   const [CompWillStatus, setCompWillStatus] = useState<string | null>('');
   const [TransactionError, setTransactionError] = useState("");
@@ -50,35 +48,40 @@ function CompFindStatus_Assets_Wills() {
    // setCompWillStatus(GetWillStatus(CompWillId));
   }
   
+  const [assetStatusButtonClicked, setassetStatusButtonClicked] = useState<boolean>(false);
+  const [willStatusButtonClicked, setwillStatusButtonClicked] = useState<boolean>(false);
+
+
+
 
   async function GetAssetStatusUsingCoreWagmi(){
     console.log(`Receiving-Asset`)
-  
+  setassetStatusButtonClicked(true);
     console.log(CompAssetId)
-    const data = await readContract({
-      address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-      abi: CreateBondandAdminRole_CONTRACT_ABI,
-      functionName: 'getAssetStatus',
-      args: [CompAssetId]
-    })
-    console.log(`data from CoreWagmi`)
-    console.log(data)
-     setCompAssetStatus(data);
+    // const data = await useReadContract({
+    //   address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+    //   abi: CreateBondandAdminRole_CONTRACT_ABI,
+    //   functionName: 'getAssetStatus',
+    //   args: [CompAssetId]
+    // })
+    // console.log(`data from CoreWagmi`)
+    // console.log(data)
+     //setCompAssetStatus(data);
   }
 
   async function GetWillStatusUsingCoreWagmi(){
     console.log(`Receiving-willid`)
   
     console.log(CompWillId)
-    const data = await readContract({
+    const result = await useReadContract({
       address: CreateBondandAdminRole_CONTRACT_ADDRESS,
       abi: CreateBondandAdminRole_CONTRACT_ABI,
       functionName: 'getWillStatus',
       args: [CompWillId]
     })
     console.log(`data from CoreWagmi`)
-    console.log(data)
-     setCompWillStatus(data);
+  //  console.log(data)
+    // setCompWillStatus(data);
   }
 
   useEffect(() => {
@@ -89,7 +92,9 @@ function CompFindStatus_Assets_Wills() {
 
   useEffect(() => {
     //track changes of will id
+    //setCompAssetId(value)
     console.log(`trackChanges of CompAssetId`)
+    //setCompAssetId();
     console.log(`CompAssetId id - ${CompAssetId}- `);
 },[CompAssetId])
 useEffect(() => {
@@ -161,10 +166,12 @@ useEffect(() => {
       
       <h2>`will Status = {CompWillStatus} --`</h2>
       <h2>`Asset Status = {CompAssetStatus} --`</h2>
+
       
       <Box>
           <Flex gap={2}>
-          <Header height={3}>Will Status Legions</Header>
+          { assetStatusButtonClicked && <CompFIndStatus_Asset _assetId={CompAssetId}/>}
+          <Header height={3}>Asset Status Legions</Header>
               <ul>
                 <li></li>
                 <li>Created</li>

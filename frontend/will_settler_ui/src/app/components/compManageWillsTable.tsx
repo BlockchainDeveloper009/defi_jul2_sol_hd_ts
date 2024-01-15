@@ -13,7 +13,7 @@ import {
 
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
 import { useRouter as navUseRouter} from 'next/navigation';
 import { useRouter as routUseRouter} from 'next/router';
 import { CodeSandboxLogoIcon } from '@radix-ui/react-icons';
@@ -29,7 +29,7 @@ enum baseWillStatus {
 }
 
 function GetWillsByUsers(stttt:any) {
-  const { data:functionData,status} = useContractRead({
+  const result = useReadContract({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,
     functionName: 'getUserCreatedBonds',
@@ -39,12 +39,12 @@ function GetWillsByUsers(stttt:any) {
   
   
   console.log('---getUserCreatedBonds-----')
-  console.log(functionData)
+  console.log(result)
   console.log('---------------')
   let retData:IUseWillsInfo[];
-  retData = functionData as Array<IUseWillsInfo>;
-  console.log(retData)
-  return retData 
+  //retData = result as Array<IUseWillsInfo>;
+  //console.log(retData)
+  return result 
 
 }
 

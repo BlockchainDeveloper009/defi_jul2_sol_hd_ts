@@ -12,7 +12,7 @@ import {
 import { BrowserRouter, Routes, useNavigate, useParams } from "react-router-dom";
 import { formatEther } from 'viem'
 import CompWagmiTestProvider from './CompWagmiTestProvider';
-import { useAccount } from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
 import { IAssets } from '../models/IAssets';
 import { errAssetByUsers } from '../Errors';
 import { AnyAaaaRecord } from 'dns';
@@ -26,7 +26,7 @@ interface IAss {
   isAvailable: boolean
 }
 function GetAssetStaus(assetId:string) {
-  const { data:functionData,status} = useContractRead({
+  const { data:functionData,status} = useReadContract({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,
     functionName: 'getAssetStatus',
@@ -37,7 +37,7 @@ function GetAssetStaus(assetId:string) {
 }
 function  GetAssetsByUsers(customerAddr:any):IAss[] {
   
-  const { data:functionData,status} = useContractRead({
+  const { data:functionData,status} = useReadContract({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,
     functionName: 'getUserCreatedAssets',
@@ -80,6 +80,7 @@ function ManageAssetsTable() {
   };
 
   try {
+    console.log(`customer address -> ${address}`)
 
 //[{ assetId:'0',assetName='test0' },{ assetId:'1',assetName='test1' }]
     let d:any =  GetAssetsByUsers(address) //[ { willId: '0'}, {willId: '1'}] 
