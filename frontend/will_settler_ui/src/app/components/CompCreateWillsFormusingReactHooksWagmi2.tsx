@@ -17,9 +17,8 @@ import { http,
   custom,
   stringify, } from 'viem'
 
-import { publicClient, useContractRead,  
-  usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
-import { useAccount, useReadContract, useSimulateContract, useWriteContract } from 'wagmi'
+
+import { useAccount, useContractRead, useReadContract, useSimulateContract, useWriteContract } from 'wagmi'
 import {
 
   CreateBondandAdminRole_CONTRACT_ABI,
@@ -85,7 +84,7 @@ function CompCreateWillsFormusingReactHooksWagmi2() {
   const [ willWriteError, setWillWriteError ] = useState<Error | null | undefined>()
   const [willStartDate, setWillStartDate] = useState('');
   const [willEndDate, setWillEndDate] = useState('');
-  const [benefitorAddr, setbenefitorAddr] = useState('');
+  const [benefitorAddr, setbenefitorAddr] = useState<`0x${string}` | undefined>();
 
   const [createWillFlag, setCreateWillFlag] = useState(false);
   const [submittedValues, setSubmittedValues] = useState('');
@@ -120,17 +119,17 @@ function CompCreateWillsFormusingReactHooksWagmi2() {
     functionName: 'checkAssetisAvailable',
     args: [assetId],
   })
-  const simulateResult = useSimulateContract
-  ({
-    abi,
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    functionName: 'a_createCryptoVault',
-    args: [
-      assetId, BigInt(willStartDate),BigInt(willEndDate),'0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1'
-    ],
+  // const simulateResult = useSimulateContract
+  // ({
+  //   abi,
+  //   address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+  //   functionName: 'a_createCryptoVault',
+  //   args: [
+  //     assetId, BigInt(willStartDate),BigInt(willEndDate),'0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1'
+  //   ],
 
-   })
-   console.log(`simulare`)
+  //  })
+  //  console.log(`simulare`)
   /**extension of usePrepareCOntractWrite
   // if(isPrepareError){
   //   console.log(`usePrepareContractWrite - error`)
@@ -162,119 +161,97 @@ const { writeContract } = useWriteContract()
   let dd:any = z.bigint();
   const willDatas = Array(50).fill(0).map((_, index) => `Item ${index}`);
   return (
-//     <Box sx={{ maxWidth: 400 }} mx="auto">
-//         <form
-//         onSubmit={form.onSubmit((values) => {
-//           setSubmittedValues(JSON.stringify(values, null, 2))
-//           setAssetId(values.AssetId)
+    <Box sx={{ maxWidth: 400 }} mx="auto">
+    <form
+        onSubmit={form.onSubmit((values) => {
+          setSubmittedValues(JSON.stringify(values, null, 2))
+          setAssetId(values.AssetId)
 
-//           setWillStartDate(ConvertDateToUnixTimeStamp(values.willStartDate).toString())
-//           setWillEndDate(ConvertDateToUnixTimeStamp(values.willEndDate).toString()) //values.willEndDate
-//           setbenefitorAddr(values.Benefitor)
-//         //  write?.();
+          setWillStartDate(ConvertDateToUnixTimeStamp(values.willStartDate).toString())
+          setWillEndDate(ConvertDateToUnixTimeStamp(values.willEndDate).toString()) //values.willEndDate
+         // Example of updating the state with a new value
+  const newBenefitorValue: string | undefined = values.Benefitor;
 
-//         })}
-//       >
+ // Check if the new value starts with '0x'
+ const updatedBenefitor: `0x${string}` | undefined = newBenefitorValue.startsWith('0x')
+ ? newBenefitorValue as `0x${string}`  // If it already has '0x', use it as is
+ : `0x${newBenefitorValue}` as `0x${string}` | undefined;  // If not, add the '0x' prefix
 
-//         <TextInput
-
-//           label="AssetId"
-//           placeholder="AssetId"
-//           mt="md"
-//           withAsterisk
-//           {...form.getInputProps('AssetId')}
-
-//           // rightSection={<Loader size="xs" />}
-
-//           // onBlur={(event) => ValidateUserAssetId(event.currentTarget.value)}
-//         //  onError=()=>{}
-//         />
-//         <p>
-//         {/* <Select 
-//           label="Your fav"
-//           placeholder="ca-01"
-//           value={assetId}
-//           onChange={setAssetId}
-//           data = {assets}
-//           //{[{value:'testData'}]}
-//           //assets.length>=0 ? assets : [{value:'testData'}]   
-          
-//         /> */}
-//         </p>
-
-//         <TextInput
-//           label="Will Start Date"
-//           placeholder="MM-DD-YYYY"
-//           withAsterisk
-//           {...form.getInputProps('willStartDate')}
-//         />
-//         <TextInput
-//           label="Will End Date"
-//           placeholder="MM-DD-YYYY"
-//           withAsterisk
-//           {...form.getInputProps('willEndDate')}
-//         />
-//         <TextInput
-
-//           label="Benefitor"
-//           placeholder="0x Address"
-//           mt="md"
-//           withAsterisk
-//           {...form.getInputProps('Benefitor')}
-//         />
-
- 
-
-
-
-
-//         {/* <Button type="submit" mt="md" onClick = {
-//           ()=>
          
           
-//           }>
-//           Create Will
-//         </Button> */}
+          console.log(`incoming benefitor before seeting ${updatedBenefitor}`)
+
+          setbenefitorAddr(updatedBenefitor)
+        
+
+        })}
+      >
+
+ <TextInput
+          label="AssetId"
+          placeholder="AssetId"
+          mt="md"
+          withAsterisk
+          {...form.getInputProps('AssetId')}
+
+          // rightSection={<Loader size="xs" />}
+
+          // onBlur={(event) => ValidateUserAssetId(event.currentTarget.value)}
+        //  onError=()=>{}
+        />
+        <p>
+                       {/* <Select 
+                          label="Your fav"
+                          placeholder="ca-01"
+                          value={assetId}
+                          onChange={setAssetId}
+                       //   data = {assets}
+                          //{[{value:'testData'}]}
+                          //assets.length>=0 ? assets : [{value:'testData'}]   
+                      
+                        /> */}
+         </p>
+
+         <TextInput
+          label="Will Start Date"
+          placeholder="MM-DD-YYYY"
+          withAsterisk
+          {...form.getInputProps('willStartDate')}
+        />
+         <TextInput
+          label="Will End Date"
+          placeholder="MM-DD-YYYY"
+          withAsterisk
+          {...form.getInputProps('willEndDate')}
+        />
+        <TextInput
+          label="Benefitor"
+          placeholder="0x Address"
+          mt="md"
+          withAsterisk
+          {...form.getInputProps('Benefitor')}
+        />
+
+         <Button type="submit" mt="md" onClick = {
+          ()=>  writeContract
+          ({
+            abi,
+            address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+            functionName: 'a_createCryptoVault',
+            args: [assetId, BigInt(willStartDate),BigInt(willEndDate),
+              benefitorAddr],
+           })   
+          }>
+           Create Will
+         </Button> 
 
 
-//         <p>
-//             {/* {isSuccess && (
-//                         <div>
-//                         Successfully created Will, check here!!
-//                         <div>
-//                             <a href={`https://mumbai.polygonscan.com/tx/${data?.hash}`}>Polygon Scan</a>
-//                         </div>
-//                         <div>
-//                             <a href={`https://etherscan.io/tx/${data?.hash}`}>Etherscan</a>
-//                         </div>
-                        
-//                         </div>
-//                 )
-//                 }  */}
-//         </p>
-// {willCreationPrepareError && (
-//           <div>
-//             {parseErrorMessage(willCreationPrepareError.message)?.reason &&
-//             ( <p>Reason: {parseErrorMessage(willCreationPrepareError.message).reason}</p>)}
-//             Error while contract write: {willCreationPrepareError.message}
-//           </div>
-//         )}
 
-//         {willWriteError && (
-//           <div>Error while contract write: {willWriteError.message}</div>
-//         )}
+   </form>
 
-//             {/* { {(isPrepareError || isError) && (
-//                 <div>Error: {(prepareError || error)?.message}</div>
-//             )}
-//             */}
-//       </form>
+ {submittedValues && <Code block>{submittedValues}</Code>}
+ </Box>
 
-//       {submittedValues && <Code block>{submittedValues}</Code>}
-
-
-//     </Box>
-<div>Temp down</div>
   );
 
 
