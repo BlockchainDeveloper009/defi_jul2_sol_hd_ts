@@ -8,18 +8,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
 
-import { http,
-  Address,
-  Hash,
-  TransactionReceipt,
-  createPublicClient,
-  createWalletClient,
-  custom,
-  stringify, } from 'viem'
-
-import { publicClient, useContractRead,  
-  usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
-import { useAccount, useContractWrite } from 'wagmi'
+import { useAccount, useReadContract } from 'wagmi'
 import {
 
   CreateBondandAdminRole_CONTRACT_ABI,
@@ -27,13 +16,16 @@ import {
 } from "../srcConstants";
 //import { contractConfig } from "../Config";
 import { IAssets } from '../models/IAssets';
-import { prepareWriteContract, writeContract } from 'wagmi/actions';
+import { writeContract } from '@wagmi/core';
+import { config } from '../wagmiConfig'
+
 function  GetAssetsByUsers(addr:any):IAssets[] {
 
   if(addr == null){
     console.log("address is null");
   }
-  const { data:functionData,status} = useContractRead({
+  //const { data:functionData,status} 
+  const result = useReadContract({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,
     functionName: 'getUserCreatedBonds',
@@ -46,15 +38,16 @@ function  GetAssetsByUsers(addr:any):IAssets[] {
   console.log(address)
   console.log('--expect use address')
   console.log('expect function data')
-  console.log(functionData)
+  //console.log(functionData)
+  console.log(result)
   console.log('---------')
 
   const today = new Date();
   const todayDateFmt =  today.getMonth() + '-' + today.getDate() + '-' +  today.getFullYear();
 
-  let retData = functionData as Array<IAssets>;
+  //let retData = result as Array<IAssets>;
 
-  return retData 
+  return result 
 
 }
 function ConvertDateToUnixTimeStamp(incomingDate:string):number{
@@ -112,22 +105,27 @@ function CompCreateWillsForm2usingWagmiHooks() {
       Benefitor: `${values.Benefitor}`,
     }),
   });
-  const { data:Result, error:Error ,isError:boolean, status} = useContractRead({
+  //const { data:Result, error:Error ,isError:boolean, status}
+  const result = useReadContract({
     address: CreateBondandAdminRole_CONTRACT_ADDRESS,
     abi: CreateBondandAdminRole_CONTRACT_ABI,
     functionName: 'checkAssetisAvailable',
     args: [assetId],
   })
-  const { 
-    config,
-    error: prepareError,
-    isError: isPrepareError, } = usePrepareContractWrite({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+async function coreWriteCreateWill(){
+  console.log(`print the config details`)
+  console.log(config)
+  const result  = await writeContract(config,
+    {
+    address: '0x6635BaCd122cfc8e8D726633f224746Bd2578872',
     abi: CreateBondandAdminRole_CONTRACT_ABI,
     functionName: 'a_createCryptoVault',
     args: [assetId, willStartDate,willEndDate,benefitorAddr],
-    enabled: Boolean(assetId),
-  })
+    value: BigInt(0)
+    
+  }).then(()=> {console.log('successfull write contract')})
+  .catch(er => alert(er.message));
+}
   /**extension of usePrepareCOntractWrite
   // if(isPrepareError){
   //   console.log(`usePrepareContractWrite - error`)
@@ -145,23 +143,14 @@ function CompCreateWillsForm2usingWagmiHooks() {
 //   },[prepareError])
 */
 
-const { data, write , 
-    error: useContractWriteError, 
-    isError: useContractWriteErrorFlag } = useContractWrite(config)
 
- 
-                                        if(useContractWriteError){
-                                            setWillWriteError(useContractWriteError)
-                                        }
-
-
-                                        console.log(`write`)
-                                        console.log(write)
   const CreateWill = async () => {
 
     console.log(`willStartDate-> '${willStartDate}'`)
     console.log(`willEndDate-> '${willEndDate}'`)
     setCreateWillFlag(true);
+
+    await coreWriteCreateWill();
                     // const { 
                     //   request } = await prepareWriteContract({
                     //   address: CreateBondandAdminRole_CONTRACT_ADDRESS,
@@ -202,10 +191,7 @@ const { data, write ,
   //   console.log(isError)
 
   // }
-  const { isLoading, isSuccess } = useWaitForTransaction({
-    hash: data?.hash,
-  })
-  console.log(data?.hash)
+
   //setisWillCreationSuccess(isSuccess)
   let assets:IAssets[] = GetAssetsByUsers(address)
   if(assets?.length>=0 ){

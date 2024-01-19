@@ -18,16 +18,18 @@ import { http,
   stringify, } from 'viem'
 
 
-import { useAccount, useContractRead, useReadContract, useSimulateContract, useWriteContract } from 'wagmi'
+import { useAccount, useContractRead, useReadContract, useSimulateContract, useWriteContract, useWatchContractEvent  } from 'wagmi'
 import {
 
   CreateBondandAdminRole_CONTRACT_ABI,
   CreateBondandAdminRole_CONTRACT_ADDRESS,
 } from "../srcConstants";
-//import { contractConfig } from "../Config";
+import { config } from "../../wagmi";
 import { IAssets } from '../models/IAssets';
 
 import { abi } from './abi';
+import Link from 'next/link';
+const src_contract_addr = '0x6635BaCd122cfc8e8D726633f224746Bd2578872'
 function  GetAssetsByUsers(addr:any):IAssets[] {
 
   if(addr == null){
@@ -119,6 +121,15 @@ function CompCreateWillsFormusingReactHooksWagmi2() {
     functionName: 'checkAssetisAvailable',
     args: [assetId],
   })
+
+  useWatchContractEvent({
+    address: '0x6635BaCd122cfc8e8D726633f224746Bd2578872',
+    abi,
+    eventName: 'willCreated',
+    onLogs(logs) {
+      console.log('New logs!', logs)
+    },
+  })
   // const simulateResult = useSimulateContract
   // ({
   //   abi,
@@ -155,9 +166,7 @@ const { writeContract } = useWriteContract()
     setCreateWillFlag(true);
 
   }
-  function createWill(){
 
-  }
   let dd:any = z.bigint();
   const willDatas = Array(50).fill(0).map((_, index) => `Item ${index}`);
   return (
@@ -177,7 +186,7 @@ const { writeContract } = useWriteContract()
  ? newBenefitorValue as `0x${string}`  // If it already has '0x', use it as is
  : `0x${newBenefitorValue}` as `0x${string}` | undefined;  // If not, add the '0x' prefix
 
-         
+         console.log(`---src contract=> ${CreateBondandAdminRole_CONTRACT_ADDRESS}`)
           
           console.log(`incoming benefitor before seeting ${updatedBenefitor}`)
 
@@ -233,14 +242,25 @@ const { writeContract } = useWriteContract()
         />
 
          <Button type="submit" mt="md" onClick = {
-          ()=>  writeContract
-          ({
-            abi,
-            address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-            functionName: 'a_createCryptoVault',
-            args: [assetId, BigInt(willStartDate),BigInt(willEndDate),
-              benefitorAddr],
-           })   
+              ()=>  {
+                      try {
+                        
+                        
+                                writeContract
+                                ({
+                                  abi,
+                                  address: '0x6635BaCd122cfc8e8D726633f224746Bd2578872',//'0x6635BaCd122cfc8e8D726633f224746Bd2578872',//,CreateBondandAdminRole_CONTRACT_ADDRESS
+                                  functionName: 'a_createCryptoVault',
+                                  args: [assetId, BigInt(willStartDate),BigInt(willEndDate),
+                                  '0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a'],//benefitorAddr],//0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a
+                                  value: BigInt(0),
+                                  })
+
+                            } catch (error) {
+                              console.log(`error during createing will button click`)   
+                              console.log(error)
+                            }
+                      }
           }>
            Create Will
          </Button> 
@@ -248,7 +268,7 @@ const { writeContract } = useWriteContract()
 
 
    </form>
-
+ <Link href="/pageWillsCreatorUsingWagmiReact">use wagmi core</Link>
  {submittedValues && <Code block>{submittedValues}</Code>}
  </Box>
 

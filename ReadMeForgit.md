@@ -1,2 +1,2 @@
 git branch -a 
-git switch <brancName>
+git switch <brancName>ls

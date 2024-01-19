@@ -6,7 +6,7 @@ import { ActionIcon, Select, useMantineColorScheme } from '@mantine/core';
 import axios  from 'axios'
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
-
+import { watchContractEvent } from '@wagmi/core'
 import { abi } from './abi'
 //import {  getContract,  useContractWrite, usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
 import {
@@ -21,7 +21,7 @@ import { useAccount, useWatchContractEvent } from 'wagmi'
 import CompWagmiTestProvider from './CompWagmiTestProvider';
 import { WagmiConfigProvider } from './WagmiConfigProvider';
 import { connect } from 'wagmi/actions';
-import { Account } from 'viem';
+import { Account, parseEther } from 'viem';
 import  { PrismaClient } from '@prisma/client'
 import { createAssetSchema } from '../validateSchema';
 import { useRouter } from 'next/navigation';
@@ -85,6 +85,17 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
     // Do something with the selected option
     console.log('Selected option:', selectedOption);
   };
+
+  const unwatch = watchContractEvent(config, {
+    address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+    abi,
+    eventName: 'Transfer',
+    onLogs(logs) {
+      console.log('New logs!', logs)
+    },
+  })
+  unwatch()
+  
   //change this later
   const ccyOptions = [
     { label: 'ETH CCY', value: 'ETH' },
@@ -250,7 +261,7 @@ let dd:any = z.bigint();
               args: [
                 assetName, dd.parse(BigInt(assetAmountForm))
               ],
-
+              value: parseEther('0.01'), 
              })
           }>
             useHook submit 
