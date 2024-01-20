@@ -6,7 +6,7 @@ import { ActionIcon, Select, useMantineColorScheme } from '@mantine/core';
 import axios  from 'axios'
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
-import { prepareWriteContract } from '@wagmi/core'
+
 //import {  getContract,  useContractWrite, usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
 import {
  
@@ -16,10 +16,10 @@ import {
 
 
 import { use, useEffect, useState } from 'react';
-import { useAccount, useContractEvent, useWatchContractEvent } from 'wagmi'
+import { useAccount, useWatchContractEvent } from 'wagmi'
 import CompWagmiTestProvider from './CompWagmiTestProvider';
 import { WagmiConfigProvider } from './WagmiConfigProvider';
-import { connect, getContract, writeContract } from 'wagmi/actions';
+import { connect, writeContract } from 'wagmi/actions';
 import { Account } from 'viem';
 import  { PrismaClient } from '@prisma/client'
 import { createAssetSchema } from '../validateSchema';

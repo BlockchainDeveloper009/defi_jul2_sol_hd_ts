@@ -31,6 +31,7 @@ import  CompLoader  from './compLoader';
 import CompSelectAssets from './CompSelectAssets';
 import { SelectItems } from '@mantine/core/lib/Select/SelectItems/SelectItems';
 import { useWriteContract } from 'wagmi'
+import { config } from '@/wagmi'
 
 
 //const prisma = new PrismaClient()
