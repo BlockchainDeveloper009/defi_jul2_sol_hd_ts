@@ -3,8 +3,8 @@
 ## Important Files
 
 ### Branch Name: dev_NewWagmiIplementation = Migrating to Wagmi version 2 Work in progress(updated on Jan/18/2024)
-[FrontEnd](https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts/tree/dev_NewWagmiIplementation/frontend/will_settler_ui)
-[Backend | Contract Implementation](https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts/tree/dev_NewWagmiIplementation)
+[FrontEnd - NextjsApp repo](https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts/tree/dev_NewWagmiIplementation/frontend/will_settler_ui)
+[Backend | Contract Implementation repo](https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts/tree/dev_NewWagmiIplementation)
 
 ## Summary of the Project:
 
@@ -14,9 +14,11 @@ Status:
 
 P1: Core features suches as Asset Creation, Will Creation, Manual Settlement, Cancellation are implemented
 
-P2: [will start working on P2][FF]
+P2: [P2 - Next in queue to work on][P2]
 
 P3: [P3 items][P3]
+
+P4: [p4 Items][P4]
 
 
 How does it work? CORE | ADVANCED
@@ -86,7 +88,7 @@ Fees:
 
 >> ## Yet to Implement
 
-[FF]: #P2:
+[P2]: #p2
 
 - collect Asset amount entered by asset creator during asset creation, at the momment its hardcoded.
 - Oracle, Chainlink automation to settle wills
@@ -97,7 +99,7 @@ Fees:
 - create api, to create reports on wills settled for this month
 - create api, to create reports on wills about to settle for this week.
 
-[FF]: #P4:
+[P4]: #P4
 - MultiSig for making changes to Wills in future
 - Multi chain
 - Interoperability for funds transfer
@@ -188,6 +190,10 @@ module.exports = {
 ```
 
  #1. HardhatError: HH700: Artifact for contract [is missing or contract path not set correcntly]
+
+
+
+
 
 
 
