@@ -3,9 +3,20 @@
 ## Important Files
 
 ### Branch Name: dev_NewWagmiIplementation = Migrating to Wagmi version 2 Work in progress(updated on Jan/18/2024)
-[https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts/tree/dev_NewWagmiIplementation/frontend/will_settler_ui](FrontEnd)
-[https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts/tree/dev_NewWagmiIplementation](BackEnd Project)
+[FrontEnd](https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts/tree/dev_NewWagmiIplementation/frontend/will_settler_ui)
+[Backend | Contract Implementation](https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts/tree/dev_NewWagmiIplementation)
 
+## Summary of the Project:
+
+Note: As of Jan 20,2024, currently project is undergoing migrating to Wagmi2
+
+Status: 
+
+P1: Core features suches as Asset Creation, Will Creation, Manual Settlement, Cancellation are implemented
+
+P2: [will start working on P2][FF]
+
+P3: [P3 items][P3]
 
 
 How does it work? CORE | ADVANCED
@@ -14,8 +25,22 @@ WillsCreatorFactory - this contract enables users to create assets, assign benef
 liquidate the funds to assigned benefitors.
 
 
-Note: This is rough work.
+Note: This is just a showcase Project at the moment.
 
+Name         | Role:
+----------------------
+
+#Scenario1:
+
+uncle Robert | Will creator or Asset Creator
+Jack         | Benefitor
+
+#Scenario2:
+
+Bruce Willis | Anonymous donator
+Dennis       | Orphan who needs money for his education
+
+>> ##Implemented:
 
 1. Robert create's an asset for eg. 'crypto 4 ETH' with id 'ca-0' with status 'Available':
 
@@ -35,7 +60,6 @@ status of 'ca-0' will be changed to assigned
 No Fees will be colected
 ```
 
-
 4. if Robert wants to change benefitor, thats not possible, however he can cancel the will.
 ```
 2% Fees will be collected
@@ -50,7 +74,6 @@ No Fees | N/I
 Fees 2% will be collected as charge
 
 ```
-
 only Robert as owner of the will can cancel this will. [MultiSign can be added to authorize the txn, in #phase3]
 Will/Txn status - to be udpated | Phase2 Feature
 asset status - to be udpated || Phase2 Feature
@@ -59,8 +82,36 @@ Fees:
 
 ```
 
+7. Admin can see contract balance
+
+>> ## Yet to Implement
+
+[FF]: #P2:
+
+- collect Asset amount entered by asset creator during asset creation, at the momment its hardcoded.
+- Oracle, Chainlink automation to settle wills
+- create api, History table for Assets to track changes by date
+
+[P3]: #P3
+- create api, History table for Wills to track changes by audit info such as datetime
+- create api, to create reports on wills settled for this month
+- create api, to create reports on wills about to settle for this week.
+
+[FF]: #P4:
+- MultiSig for making changes to Wills in future
+- Multi chain
+- Interoperability for funds transfer
+- to work with Multiple tokens (now for testing lets stick to Matic, since value is low)
+
+Admin Page functionalities:
+a) check contract balance.
+Provide override feature for contract owner, if there is a trouble such as hanging amount or in case of bug situations.
+
+Request a feature form:
+
 Legions:
 N/I - Yet to Implement / Not Implemented /
+
 ### Highligths 
 
 WillCreatorFactory smart contract is created by following best practises of using
@@ -137,5 +188,9 @@ module.exports = {
 ```
 
  #1. HardhatError: HH700: Artifact for contract [is missing or contract path not set correcntly]
+
+
+
+
 
 
