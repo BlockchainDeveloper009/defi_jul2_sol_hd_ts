@@ -25,22 +25,10 @@ const pageAssetsCreatorWagmiReactHook = ({Component, pageProps}: AppProps) => {
     <div>
         <h1>Step 1: Create Asset</h1>
 
-        {/* <WagmiConfig config = {wagmiConfig}>   */}
-          {/* <ComProfile></ComProfile> */}
+  
           <CompCreateAssetsFormUsingReactHooksWagmi2></CompCreateAssetsFormUsingReactHooksWagmi2>  
           
-        {/* </WagmiConfig> */}
-        
-        {/* <QueryClientProvider client={queryClient}> */}
-          {/* <WagmiConfig config = {wagmiConfig}> */}
-            
-          {/* </WagmiConfig> */}
-        {/* </QueryClientProvider> */}
-        {/* <WagmiConfigProvider>
-          <Component {...pageProps} />
-          {/* <CompWagmiTestProvider/> */}
-          
-        {/* </WagmiConfigProvider> */}
+
     </div>
   )
 }

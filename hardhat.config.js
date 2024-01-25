@@ -78,7 +78,7 @@ module.exports = {
     },
   },
   paths: {
-    sources: "./contracts/willSettler_23Jul02", // Path to your contract source files
+    sources: "./contracts/willSettler_withMultiToken_2024jan20", // Path to your contract source files
     // artifacts: "./artifacts/contracts/willSettler_23Jul02/contracts/willSettler_23Jul02", // Path to your contract artifact files
     // cache: "./cache", // Path to your cache directory (optional)
     // tests: "./test", // Path to your test files (optional)

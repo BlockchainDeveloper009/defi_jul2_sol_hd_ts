@@ -1,6 +1,12 @@
-export const abi = 
+
+export const CreateBondandAdminRole_CONTRACT_ADDRESS = '0x6635BaCd122cfc8e8D726633f224746Bd2578872'
+//dec-31-2023
+//'0x9bB29A4336A891501595B2CA3ae22FF54652d78C';
+//'0x03C5958b53233dd659EBAECFD5d42fEFdc4D1fDf';
+  //'0xA9e7A34F06B54aabBDcdF47747eb590c93e400d9';
+export const CreateBondandAdminRole_CONTRACT_ABI = 
 [
-{
+  {
     "inputs": [
       {
         "internalType": "string",
@@ -60,31 +66,6 @@ export const abi =
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "depositor",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "Deposit",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": false,
         "internalType": "address",
         "name": "sender",
@@ -117,31 +98,6 @@ export const abi =
       }
     ],
     "name": "Transfer",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "recipient",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "Withdraw",
     "type": "event"
   },
   {
@@ -292,7 +248,7 @@ export const abi =
       },
       {
         "indexed": true,
-        "internalType": "enum WWethBase20_multiToken.baseWillStatus",
+        "internalType": "enum WWethBase20.baseWillStatus",
         "name": "baseWillStatus",
         "type": "uint8"
       },
@@ -328,11 +284,6 @@ export const abi =
         "internalType": "string",
         "name": "assetName",
         "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "assetTokenAddr",
-        "type": "address"
       },
       {
         "internalType": "uint256",
@@ -523,7 +474,7 @@ export const abi =
   {
     "inputs": [
       {
-        "internalType": "enum WWethBase20_multiToken.cryptoAssetStatus",
+        "internalType": "enum WWethBase20.cryptoAssetStatus",
         "name": "assetStatus",
         "type": "uint8"
       }
@@ -561,7 +512,7 @@ export const abi =
   {
     "inputs": [
       {
-        "internalType": "enum WWethBase20_multiToken.baseWillStatus",
+        "internalType": "enum WWethBase20.baseWillStatus",
         "name": "s_baseStatus",
         "type": "uint8"
       }
@@ -649,11 +600,6 @@ export const abi =
         "type": "string"
       },
       {
-        "internalType": "address",
-        "name": "AssetTokenAddress",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "AssetAmount",
         "type": "uint256"
@@ -664,7 +610,7 @@ export const abi =
         "type": "bool"
       },
       {
-        "internalType": "enum WWethBase20_multiToken.cryptoAssetStatus",
+        "internalType": "enum WWethBase20.cryptoAssetStatus",
         "name": "assetStatus",
         "type": "uint8"
       },
@@ -788,12 +734,12 @@ export const abi =
             "type": "address"
           },
           {
-            "internalType": "enum WWethBase20_multiToken.baseWillStatus",
+            "internalType": "enum WWethBase20.baseWillStatus",
             "name": "s_baseStatus",
             "type": "uint8"
           }
         ],
-        "internalType": "struct WWethBase20_multiToken.willlInfo[]",
+        "internalType": "struct WWethBase20.willlInfo[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -815,19 +761,6 @@ export const abi =
         "internalType": "string",
         "name": "",
         "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getChainID",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -889,25 +822,6 @@ export const abi =
     "inputs": [
       {
         "internalType": "address",
-        "name": "token",
-        "type": "address"
-      }
-    ],
-    "name": "getTokenBalance",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "addr",
         "type": "address"
       }
@@ -927,11 +841,6 @@ export const abi =
             "type": "string"
           },
           {
-            "internalType": "address",
-            "name": "AssetTokenAddress",
-            "type": "address"
-          },
-          {
             "internalType": "uint256",
             "name": "AssetAmount",
             "type": "uint256"
@@ -942,7 +851,7 @@ export const abi =
             "type": "bool"
           },
           {
-            "internalType": "enum WWethBase20_multiToken.cryptoAssetStatus",
+            "internalType": "enum WWethBase20.cryptoAssetStatus",
             "name": "assetStatus",
             "type": "uint8"
           },
@@ -952,7 +861,7 @@ export const abi =
             "type": "address"
           }
         ],
-        "internalType": "struct WWethBase20_multiToken.cryptoAssetInfo[]",
+        "internalType": "struct WWethBase20.cryptoAssetInfo[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -1008,12 +917,12 @@ export const abi =
             "type": "address"
           },
           {
-            "internalType": "enum WWethBase20_multiToken.baseWillStatus",
+            "internalType": "enum WWethBase20.baseWillStatus",
             "name": "s_baseStatus",
             "type": "uint8"
           }
         ],
-        "internalType": "struct WWethBase20_multiToken.willlInfo[]",
+        "internalType": "struct WWethBase20.willlInfo[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -1108,19 +1017,6 @@ export const abi =
         "internalType": "string",
         "name": "",
         "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -1262,7 +1158,7 @@ export const abi =
         "type": "address"
       },
       {
-        "internalType": "enum WWethBase20_multiToken.baseWillStatus",
+        "internalType": "enum WWethBase20.baseWillStatus",
         "name": "s_baseStatus",
         "type": "uint8"
       }
@@ -1365,4 +1261,5 @@ export const abi =
   {
     "stateMutability": "payable",
     "type": "receive"
-  }] as const;
+  }
+]

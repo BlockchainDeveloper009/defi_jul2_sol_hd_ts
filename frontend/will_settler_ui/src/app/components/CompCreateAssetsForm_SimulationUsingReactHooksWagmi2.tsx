@@ -30,7 +30,7 @@ import  zodResolver from '@hookform/resolvers';
 import  CompLoader  from './compLoader';
 import CompSelectAssets from './CompSelectAssets';
 import { SelectItems } from '@mantine/core/lib/Select/SelectItems/SelectItems';
-import { useWriteContract } from 'wagmi'
+import { useWriteContract, useSimulateContract  } from 'wagmi'
 import { config } from '@/wagmi'
 
 
@@ -41,7 +41,7 @@ interface AssetCCy {
   ccyName: string
 
 }
-function CompCreateAssetsFormUsingReactHooksWagmi2() {
+function CompCreateAssetsForm_SimulationUsingReactHooksWagmi2() {
 
   const router = useRouter();
   const { address } = useAccount()
@@ -192,28 +192,41 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
 
   console.log(`Accessing contract: '${CreateBondandAdminRole_CONTRACT_ADDRESS}' `)
   
-    function HookDirectUseWrite(){
+  async function handleSimulation(){
+    ()=> {
 
       try {
-        console.log(`calling write contract`)
-        console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${CreateBondandAdminRole_CONTRACT_ADDRESS}`)
-        writeContract
-        ({
-          abi,
-          address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-          functionName: 'a_createAssets',
-          args: [
-            assetName, `0x${'0000000000000000000000000000000000001010'}`, BigInt(10000000000000000) 
-          ],
-           //value: BigInt(1),//dd.parse(BigInt(assetAmountForm)) 
-        })
+            console.log(`calling useSimulation`)
+            console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${CreateBondandAdminRole_CONTRACT_ADDRESS}`)
+            useSimulateContract
+            ({
+              abi,
+              address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+              functionName: 'a_createAssets',
+              args: [
+                assetName, `0x${'0000000000000000000000000000000000001010'}`, 1n 
+              ],
+               //value: BigInt(1),//dd.parse(BigInt(assetAmountForm)) 
+            })
 
-  } catch (error) {
-    console.log(`error during contract write`)
-    console.log(error)
-  }
+          } catch (error) {
+            console.log(`error during contract write`)
+            console.log(error)
+          }
+      }
+    }
+    function HookDirectUseWrite(){
+
       
-      
+      return { 
+        abi,
+        address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+        functionName: 'a_createAssets',
+        args: [
+          assetName, 
+          (assetAmountForm!== undefined) ? parseInt(assetAmountForm.toString()) : 0
+        ],
+     };
     }
 
 let dd:any = z.bigint();
@@ -221,7 +234,7 @@ let dd:any = z.bigint();
 
   return (
     <div>
-    <p>CompCreateAssetsFormUsingReactHooks_2</p>
+    <p>CompCreateAssetsForm_SimulationUsingReactHooks_2</p>
     
     { address && 
         <Box sx={{ maxWidth: 400 }} mx="auto">
@@ -233,6 +246,7 @@ let dd:any = z.bigint();
   
                             setSubmittedValues(JSON.stringify(values, null, 2))
                             setAssetName(values.AssetName)
+                            set
                             setAssetAmountForm(values.Amount)
                     
                     }
@@ -262,32 +276,11 @@ let dd:any = z.bigint();
             {...form.getInputProps('Amount')}
           />
   
-  <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {HookDirectUseWrite}>USE METHOD TO CREATE ASSET</Button>
+
 
           <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {
-            ()=> {
-
-                try {
-                      console.log(`calling write contract`)
-                      console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${CreateBondandAdminRole_CONTRACT_ADDRESS}`)
-                      writeContract
-                      ({
-                        abi,
-                        address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-                        functionName: 'a_createAssets',
-                        args: [
-                          assetName, `0x${'0000000000000000000000000000000000001010'}`, BigInt(1) 
-                        ],
-                         //value: BigInt(1),//dd.parse(BigInt(assetAmountForm)) 
-                      })
-
-                } catch (error) {
-                  console.log(`error during contract write`)
-                  console.log(error)
-                }
-
-            }
-          }>
+            handleSimulation}
+          >
             useHook submit 
           </Button>
           
@@ -323,4 +316,4 @@ let dd:any = z.bigint();
   );
 } 
 
-export default CompCreateAssetsFormUsingReactHooksWagmi2;
+export default CompCreateAssetsForm_SimulationUsingReactHooksWagmi2;

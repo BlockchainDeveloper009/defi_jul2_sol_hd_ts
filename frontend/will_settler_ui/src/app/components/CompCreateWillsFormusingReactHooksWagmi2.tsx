@@ -27,7 +27,7 @@ import {
 import { config } from "../../wagmi";
 import { IAssets } from '../models/IAssets';
 
-import { abi } from './abi';
+import { abi } from './abi.2024jan21.Bak';
 import Link from 'next/link';
 const src_contract_addr = '0x6635BaCd122cfc8e8D726633f224746Bd2578872'
 function  GetAssetsByUsers(addr:any):IAssets[] {

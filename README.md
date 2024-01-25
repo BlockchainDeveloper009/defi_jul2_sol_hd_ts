@@ -21,9 +21,9 @@ P3: [P3 items][P3]
 P4: [p4 Items][P4]
 
 
-How does it work? CORE | ADVANCED
+Core Functionality:
 
-WillsCreatorFactory - this contract enables users to create assets, assign benefitors, and timeline by when, smartcontract wlll
+WillsCreatorFactory - this contract enables users to create assets(transfer 10 MATIC from your account to contract), then create wills to provide start date,benefitor, and end date which is the timeline by when, smartcontract wlll
 liquidate the funds to assigned benefitors.
 
 
@@ -114,7 +114,7 @@ Request a feature form:
 Legions:
 N/I - Yet to Implement / Not Implemented /
 
-### Highligths 
+### Highlights 
 
 WillCreatorFactory smart contract is created by following best practises of using
 events, error, 

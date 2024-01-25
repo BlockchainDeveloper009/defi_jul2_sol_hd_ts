@@ -1,11 +1,13 @@
 
-export const CreateBondandAdminRole_CONTRACT_ADDRESS = '0x6635BaCd122cfc8e8D726633f224746Bd2578872'
+export const CreateBondandAdminRole_CONTRACT_ADDRESS = '0x7a92beDE8B87dD09C8dB1C979647f599f5AeBb14'
+//jan-21.2024 - multiToken
+//'0x6635BaCd122cfc8e8D726633f224746Bd2578872'
 //dec-31-2023
 //'0x9bB29A4336A891501595B2CA3ae22FF54652d78C';
 //'0x03C5958b53233dd659EBAECFD5d42fEFdc4D1fDf';
   //'0xA9e7A34F06B54aabBDcdF47747eb590c93e400d9';
 export const CreateBondandAdminRole_CONTRACT_ABI = 
-[
+[ 
   {
     "inputs": [
       {
@@ -66,6 +68,31 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "depositor",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Deposit",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "address",
         "name": "sender",
@@ -98,6 +125,31 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
       }
     ],
     "name": "Transfer",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Withdraw",
     "type": "event"
   },
   {
@@ -248,7 +300,7 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
       },
       {
         "indexed": true,
-        "internalType": "enum WWethBase20.baseWillStatus",
+        "internalType": "enum WWethBase20_multiToken.baseWillStatus",
         "name": "baseWillStatus",
         "type": "uint8"
       },
@@ -284,6 +336,11 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
         "internalType": "string",
         "name": "assetName",
         "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "assetTokenAddr",
+        "type": "address"
       },
       {
         "internalType": "uint256",
@@ -474,7 +531,7 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
   {
     "inputs": [
       {
-        "internalType": "enum WWethBase20.cryptoAssetStatus",
+        "internalType": "enum WWethBase20_multiToken.cryptoAssetStatus",
         "name": "assetStatus",
         "type": "uint8"
       }
@@ -512,7 +569,7 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
   {
     "inputs": [
       {
-        "internalType": "enum WWethBase20.baseWillStatus",
+        "internalType": "enum WWethBase20_multiToken.baseWillStatus",
         "name": "s_baseStatus",
         "type": "uint8"
       }
@@ -600,6 +657,11 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
         "type": "string"
       },
       {
+        "internalType": "address",
+        "name": "AssetTokenAddress",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "AssetAmount",
         "type": "uint256"
@@ -610,7 +672,7 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
         "type": "bool"
       },
       {
-        "internalType": "enum WWethBase20.cryptoAssetStatus",
+        "internalType": "enum WWethBase20_multiToken.cryptoAssetStatus",
         "name": "assetStatus",
         "type": "uint8"
       },
@@ -734,12 +796,12 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
             "type": "address"
           },
           {
-            "internalType": "enum WWethBase20.baseWillStatus",
+            "internalType": "enum WWethBase20_multiToken.baseWillStatus",
             "name": "s_baseStatus",
             "type": "uint8"
           }
         ],
-        "internalType": "struct WWethBase20.willlInfo[]",
+        "internalType": "struct WWethBase20_multiToken.willlInfo[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -761,6 +823,19 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
         "internalType": "string",
         "name": "",
         "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getChainID",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -822,6 +897,25 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
     "inputs": [
       {
         "internalType": "address",
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "name": "getTokenBalance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "addr",
         "type": "address"
       }
@@ -841,6 +935,11 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
             "type": "string"
           },
           {
+            "internalType": "address",
+            "name": "AssetTokenAddress",
+            "type": "address"
+          },
+          {
             "internalType": "uint256",
             "name": "AssetAmount",
             "type": "uint256"
@@ -851,7 +950,7 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
             "type": "bool"
           },
           {
-            "internalType": "enum WWethBase20.cryptoAssetStatus",
+            "internalType": "enum WWethBase20_multiToken.cryptoAssetStatus",
             "name": "assetStatus",
             "type": "uint8"
           },
@@ -861,7 +960,7 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
             "type": "address"
           }
         ],
-        "internalType": "struct WWethBase20.cryptoAssetInfo[]",
+        "internalType": "struct WWethBase20_multiToken.cryptoAssetInfo[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -917,12 +1016,12 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
             "type": "address"
           },
           {
-            "internalType": "enum WWethBase20.baseWillStatus",
+            "internalType": "enum WWethBase20_multiToken.baseWillStatus",
             "name": "s_baseStatus",
             "type": "uint8"
           }
         ],
-        "internalType": "struct WWethBase20.willlInfo[]",
+        "internalType": "struct WWethBase20_multiToken.willlInfo[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -1017,6 +1116,19 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
         "internalType": "string",
         "name": "",
         "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -1158,7 +1270,7 @@ export const CreateBondandAdminRole_CONTRACT_ABI =
         "type": "address"
       },
       {
-        "internalType": "enum WWethBase20.baseWillStatus",
+        "internalType": "enum WWethBase20_multiToken.baseWillStatus",
         "name": "s_baseStatus",
         "type": "uint8"
       }
