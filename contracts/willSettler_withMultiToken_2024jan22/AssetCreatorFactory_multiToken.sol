@@ -10,6 +10,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 import "./Enums.sol";
+import "./WillCreatorSharedStruct.sol";
 /** **********************************************
  * @notice
  * *******************************************
@@ -25,22 +26,20 @@ import "./Enums.sol";
  *  * variable naming:
  * //s_ = storage vars
  * //i_ immutable vars
+ *  Added moderator for contract
+ *  Added new modifiers
  * */
 contract AssetCreatorFactory_multiToken {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
     using Enums for Enums.CryptoAssetStatus;
 
-    struct cryptoAssetInfo {
-        string AssetId;
-        string AssetName;
-        address AssetTokenAddress;
-        uint256 AssetAmount;
-        bool isAvailable;
-        Enums.CryptoAssetStatus assetStatus;
-        address AssetCreator;
-    }
-
+    cryptoAssetInfo public cryptoAssetInfoInstance;
+    //this is to create an ADMIN role
+    mapping(address => bool) public adminrole;
+    
+    address public s_Contract_moderator;
+    address public owner;
     
     mapping(string => cryptoAssetInfo) public cryptoAssets;
     //added this new variables to track the assets created by a user
@@ -74,7 +73,7 @@ contract AssetCreatorFactory_multiToken {
         uint256 assetAmount
     );
 
-        modifier onlyValidAsset(string memory locId) {
+    modifier onlyValidAsset(string memory locId) {
         console.log('asset--> ');
         //console.log(cryptoAssets[locId].assetStatus);
 
@@ -85,7 +84,28 @@ contract AssetCreatorFactory_multiToken {
         _;
     }
 
+    modifier onlyContractModerator(address addr) {
+        
+        require(
+            s_Contract_moderator == addr,
+            "Not Contract Moderator "
+        );
+        _;
+    }
 
+    modifier onlyAssetOwner(string memory _assetId) {
+        // replace owner with asset owner later from cryptoAssets
+        require(msg.sender == cryptoAssets[_assetId].AssetCreator, "Not the Asset Creator");
+        _;
+    }
+    modifier onlyContractOwner() {
+        require(msg.sender == owner, "Not the Contract owner");
+        _;
+    }
+
+constructor(address mod){
+    s_Contract_moderator = mod;
+}
       /**
      * Step1: Get Admin access,if yes, then
      * Step2: Create Assetts
@@ -230,7 +250,9 @@ contract AssetCreatorFactory_multiToken {
     function getAllAssetIds() external view returns (string[] memory) {
         return s_arr_cryptoAssetIds;
     }
-
+/**
+Returns the assets created by invoking user
+*/
     function getUserCreatedAssets(
         address addr
     ) external view returns (cryptoAssetInfo[] memory) {

@@ -15,6 +15,7 @@ import "./WWethBase20_multiToken.sol";
 import "./AssetCreatorFactory_multiToken.sol";
 import "hardhat/console.sol";
 import "./Enums.sol";
+import "./WillCreatorSharedStruct.sol";
 
 /** **********************************************
  * @notice
@@ -41,6 +42,8 @@ import "./Enums.sol";
  * - create new ds to fetch wills by maturity date either struct or new mapping + array combination
  * - Access control: https://docs.openzeppelin.com/contracts/3.x/extending-contracts#using-hooks
  *
+ * - Added new modifiers
+ * - 
  * DeployVersion-15.0.0
  */
 //error Raffle__UpkeepNotNeeded1(uint256 currentBalance, uint256 numPlayers, uint256 raffleState);
@@ -49,6 +52,7 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
     using Enums for Enums.CryptoAssetStatus; 
+    cryptoAssetInfo public cryptoAssetInfoInstance;
 
     error willCreatorFactory__NotEnoughETHEntered();
     error willCreatorFactory__UpkeepNotNeeded();
@@ -92,6 +96,9 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
         AssetCreatorFactoryInstance = AssetCreatorFactory_multiToken(_AssetCreatorFactoryAddress);
         s_Contract_moderator = mod;
         owner = msg.sender;
+        /** make moderator & owner as default admin*/
+        adminrole[mod] = true;
+        adminrole[msg.sender] = true;
     }
 
           // Events
@@ -163,11 +170,11 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
     // function createCashvault () external {
 
     // }
-
-    modifier onlyModerator() {
+    // Manual settle
+    modifier onlyContractModerator() {
         require(
             msg.sender == s_Contract_moderator,
-            "You must be an Moderator to execute this function"
+            "You must be an Contract Moderator to execute this function"
         );
         _;
     }
@@ -181,14 +188,17 @@ modifier onlyValidAsset(string memory locId) {
         );
         _;
     }
-    modifier onlyAdmin() {
+    // Maintenance admins if implemented
+    //should be used
+    modifier onlyMaintenanceAdmins() {
         require(
             adminrole[msg.sender] == true,
             "You must be an admin to do this"
         );
         _;
     }
-       modifier onlyOwner() {
+    //wallet address used to deploy this contract
+    modifier onlyContractOwner() {
         require(msg.sender == owner, "Not the owner");
         _;
     }
@@ -215,11 +225,9 @@ modifier onlyValidAsset(string memory locId) {
     function getMyWills() public view returns (willlInfo[] memory){
         return s_userCreatedWills[msg.sender];
     }
-    // function getMyAssets() public view returns () (
-
-    //     return AssetCreatorFactoryInstance.getUserCreatedAssets(msg.sender);
-    // )
-
+    function getMyAssets() public view returns (cryptoAssetInfo[] memory) {
+        return AssetCreatorFactoryInstance.getUserCreatedAssets(msg.sender);
+    }
 /**
  * this method had a bool map to store if a position in an array is set or not
  * Optimization: since this involved unncessary storage, removed this method as part of gas optimization
@@ -371,10 +379,8 @@ modifier onlyValidAsset(string memory locId) {
     }
 //s_userCreatedAssets
 
-
-
-    //returns all Bonds in existence
-    function getAllBonds() external view returns (willlInfo[] memory) {
+    //returns all Bond ids in existence for creating reports
+    function mainTenance_getAllBonds() external view returns (willlInfo[] memory) {
         
         return s_willsinExistence;
     }
@@ -426,8 +432,8 @@ modifier onlyValidAsset(string memory locId) {
             AssetCreatorFactoryInstance.getAssetAmount(asst)
         );
     }
-
-    function makeModeratorToReleaseFunds(uint256 willId, address payable recipient, uint256 amount) public payable onlyModerator {
+    /** phase3: function not implemented correctly*/
+    function makeModeratorToReleaseFunds(uint256 willId, address payable recipient, uint256 amount) public payable onlyContractModerator {
         require(msg.value >= amount, "Insufficient Ethers");
         // (bool success, ) = recipient.call(value, amount)("");
 
