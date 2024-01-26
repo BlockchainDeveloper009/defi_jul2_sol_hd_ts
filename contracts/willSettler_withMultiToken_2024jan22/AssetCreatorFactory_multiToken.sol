@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
-
+import "./Enums.sol";
 /** **********************************************
  * @notice
  * *******************************************
@@ -29,6 +29,7 @@ import "hardhat/console.sol";
 contract AssetCreatorFactory_multiToken {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
+    using Enums for Enums.CryptoAssetStatus;
 
     struct cryptoAssetInfo {
         string AssetId;
@@ -36,17 +37,10 @@ contract AssetCreatorFactory_multiToken {
         address AssetTokenAddress;
         uint256 AssetAmount;
         bool isAvailable;
-        cryptoAssetStatus assetStatus;
+        Enums.CryptoAssetStatus assetStatus;
         address AssetCreator;
     }
-    /**
-     * @dev this status to be assigned only Assets
-     */
-    enum cryptoAssetStatus {
-        assetDoesntExist,
-        Created,
-        Assigned
-    }
+
     
     mapping(string => cryptoAssetInfo) public cryptoAssets;
     //added this new variables to track the assets created by a user
@@ -63,8 +57,9 @@ contract AssetCreatorFactory_multiToken {
         // emit Deposit(token, msg.sender, amount);
     }
  event Deposit(address indexed token, address indexed depositor, uint256 amount);
+ event Withdraw(address indexed token, address indexed recipient, uint256 amount);
     /* Events */
-    event LogDepositReceived(address sender);
+    
     /**
         @param assetId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
 
@@ -84,7 +79,7 @@ contract AssetCreatorFactory_multiToken {
         //console.log(cryptoAssets[locId].assetStatus);
 
         require(
-            cryptoAssets[locId].assetStatus == cryptoAssetStatus.Created,
+            cryptoAssets[locId].assetStatus == Enums.CryptoAssetStatus.Created,
             "Asset is not in Created Status "
         );
         _;
@@ -106,14 +101,14 @@ contract AssetCreatorFactory_multiToken {
     ) public payable {
         
         // Check if the contract has the required allowance
-    require(
-        IERC20(assetTokenAddr).allowance(msg.sender, address(this)) >= assetAmount,
-        "Insufficient allowance"
-    );
-        // Check allowance and approve if needed
-        if (IERC20(assetTokenAddr).allowance(msg.sender, address(this)) < assetAmount) {
-            IERC20(assetTokenAddr).approve(address(this), type(uint256).max);
-        }
+    // require(
+    //     IERC20(assetTokenAddr).allowance(msg.sender, address(this)) >= assetAmount,
+    //     "Insufficient allowance"
+    // );
+    //     // Check allowance and approve if needed
+    //     if (IERC20(assetTokenAddr).allowance(msg.sender, address(this)) < assetAmount) {
+    //         IERC20(assetTokenAddr).approve(address(this), type(uint256).max);
+    //     }
 
 
         console.log(
@@ -141,7 +136,7 @@ contract AssetCreatorFactory_multiToken {
                     
                     cryptoAssets[locId].AssetAmount = assetAmount;
                     cryptoAssets[locId].isAvailable = true;
-                    cryptoAssets[locId].assetStatus = cryptoAssetStatus.Created;
+                    cryptoAssets[locId].assetStatus = Enums.CryptoAssetStatus.Created;
                     cryptoAssets[locId].AssetCreator = address(this);
 
                     s_userCreatedAssets[msg.sender].push(cryptoAssets[locId]);
@@ -160,7 +155,8 @@ contract AssetCreatorFactory_multiToken {
         emit assetCreated(locId,assetName,assetAmount);
 
     }
-        /**
+
+    /**
      *
      * @param locId takes an assset id for eg: 'ca-0'
      */
@@ -208,7 +204,22 @@ contract AssetCreatorFactory_multiToken {
     ) external view returns (bool) {
         
         return (cryptoAssets[_assetId].assetStatus ==
-            cryptoAssetStatus.Created);
+            Enums.CryptoAssetStatus.Created);
+    }
+
+    function ChangeCryptoAssetStatus(
+        string memory _assetId, Enums.CryptoAssetStatus val
+    ) public returns (bool) {
+        //todo conly asset owner can call this or will contract
+        cryptoAssets[_assetId].assetStatus = val;
+        return true;
+    }
+    function getAssetAmount(
+        string memory _assetId
+    ) public returns (uint) {
+        //todo conly asset owner can call this or will contract
+        return cryptoAssets[_assetId].AssetAmount;
+        
     }
 
     // Function to get the balance of a specific token
@@ -238,18 +249,22 @@ contract AssetCreatorFactory_multiToken {
        return checkAssetStatus(cryptoAssets[_assetId].assetStatus);
 
     }
+    function getAssetStatusEnum(string memory _assetId) public view returns (Enums.CryptoAssetStatus) {
+       return cryptoAssets[_assetId].assetStatus;
+
+    }
 
     function getNextAssetId() public view returns (uint256) {
         return s_assetsCurrentId;
     }
 
-        function checkAssetStatus(cryptoAssetStatus assetStatus) public pure returns (string memory) {
-             if (assetStatus == cryptoAssetStatus.Created) {
+    function checkAssetStatus(Enums.CryptoAssetStatus assetStatus) public view returns (string memory) {
+        if (assetStatus == Enums.CryptoAssetStatus.Created) {
             return "Created";
         }
-        if (assetStatus == cryptoAssetStatus.Assigned) {
-            return "Assigned";
-        }
+        // if (assetStatus == Enums.CryptoAssetStatus.Assigned) {
+        //     return "Assigned";
+        // }
          
         return "InvalidAssetStatus";
     }

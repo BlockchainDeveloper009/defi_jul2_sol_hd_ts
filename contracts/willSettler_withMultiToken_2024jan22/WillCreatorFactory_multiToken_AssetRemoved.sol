@@ -14,6 +14,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./WWethBase20_multiToken.sol";
 import "./AssetCreatorFactory_multiToken.sol";
 import "hardhat/console.sol";
+import "./Enums.sol";
 
 /** **********************************************
  * @notice
@@ -47,6 +48,7 @@ import "hardhat/console.sol";
 contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_multiToken {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
+    using Enums for Enums.CryptoAssetStatus; 
 
     error willCreatorFactory__NotEnoughETHEntered();
     error willCreatorFactory__UpkeepNotNeeded();
@@ -83,9 +85,11 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
 //
     //this is to create an ADMIN role
     mapping(address => bool) public adminrole;
+ 
+ 
 
     constructor(address _AssetCreatorFactoryAddress, string memory name, string memory symbol, address mod) WWethBase20_multiToken(name, symbol) {
-        AssetCreatorFactoryInstance = AssetCreatorFactory_multiTOken(_AssetCreatorFactoryAddress);
+        AssetCreatorFactoryInstance = AssetCreatorFactory_multiToken(_AssetCreatorFactoryAddress);
         s_Contract_moderator = mod;
         owner = msg.sender;
     }
@@ -168,6 +172,15 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
         _;
     }
 
+modifier onlyValidAsset(string memory locId) {
+        console.log('asset--> ');
+        //console.log(cryptoAssets[locId].assetStatus);
+            require( AssetCreatorFactoryInstance.getAssetStatusEnum(locId) == Enums.CryptoAssetStatus.Created
+            ,
+            "Asset is not in Created Status "
+        );
+        _;
+    }
     modifier onlyAdmin() {
         require(
             adminrole[msg.sender] == true,
@@ -198,6 +211,14 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
         return s_currentBondId;
 
     }
+
+    function getMyWills() public view returns (willlInfo[] memory){
+        return s_userCreatedWills[msg.sender];
+    }
+    // function getMyAssets() public view returns () (
+
+    //     return AssetCreatorFactoryInstance.getUserCreatedAssets(msg.sender);
+    // )
 
 /**
  * this method had a bool map to store if a position in an array is set or not
@@ -234,6 +255,7 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
     function c_getContractBalance() public view returns (uint) {
         return address(this).balance;
     }
+
      /** @dev this function is to initialize the admin role. This will provide the devs with funds
      * Step3: Create  Will, generates will id,
     */
@@ -252,8 +274,8 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
         s_willlInfo[s_currentBondId].willOwner = msg.sender;
         s_willlInfo[s_currentBondId].s_baseStatus = baseWillStatus.Started;
         s_willlInfo[s_currentBondId].Benefitors = payable(Benefitors);
-        AssetCreatorFactoryInstance.cryptoAssets[_assetId].isAvailable = false;
-        AssetCreatorFactoryInstance.cryptoAssets[_assetId].assetStatus = AssetCreatorFactoryInstance.cryptoAssetStatus.Assigned;
+      //  AssetCreatorFactoryInstance.cryptoAssets[_assetId].isAvailable = false;
+        AssetCreatorFactoryInstance.ChangeCryptoAssetStatus(_assetId, Enums.CryptoAssetStatus.Assigned);
         // _mint(
         //     address(this),
         //     //s_currentBondId,
@@ -353,6 +375,7 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
 
     //returns all Bonds in existence
     function getAllBonds() external view returns (willlInfo[] memory) {
+        
         return s_willsinExistence;
     }
     /**
@@ -392,7 +415,7 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
 
         //safeTransferFrom(address(this),s_willlInfo[willId].Benefitors, willId, cryptoAssets[asst].amount, "0x0");
         payable(s_willlInfo[willId].Benefitors).transfer(
-            AssetCreatorFactoryInstance.cryptoAssets[asst].AssetAmount
+            AssetCreatorFactoryInstance.getAssetAmount(asst)
         );
         s_willlInfo[willId].s_baseStatus = baseWillStatus.ManuallySettled;
         emit willSettled(
@@ -400,7 +423,7 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
             s_willlInfo[willId].s_baseStatus,
             s_willlInfo[willId].Benefitors,
             s_willlInfo[willId].willMaturityDate,
-            AssetCreatorFactoryInstance.cryptoAssets[asst].AssetAmount
+            AssetCreatorFactoryInstance.getAssetAmount(asst)
         );
     }
 
@@ -411,6 +434,10 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
         // require(success, "Ether transfer failed");
 
         // emit moderatorOverrideToReleaseFunds(willId, amount);
+    }
+    function getWillInfo(uint256 willId) public view returns (willlInfo memory) {
+        
+        return s_willlInfo[willId];
     }
     //**Cancell the Will  */
     function cancelWill(uint256 willId) public payable {
@@ -432,14 +459,14 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
 
         //safeTransferFrom(address(this),s_willlInfo[willId].Benefitors, willId, AssetCreatorFactoryInstance.cryptoAssets[asst].amount, "0x0");
         payable( s_willlInfo[willId].willOwner).transfer(
-            AssetCreatorFactoryInstance.cryptoAssets[asst].AssetAmount
+            AssetCreatorFactoryInstance.getAssetAmount(asst)
         );
         s_willlInfo[willId].s_baseStatus = baseWillStatus.Cancelled;
         emit willCancelled(
             willId,
             s_willlInfo[willId].willOwner,
             s_willlInfo[willId].willMaturityDate,
-            AssetCreatorFactoryInstance.cryptoAssets[asst].AssetAmount
+            AssetCreatorFactoryInstance.getAssetAmount(asst)
         );
     }
 
@@ -466,12 +493,13 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
 
     fallback() external payable  {
         // custom function code
-        require(msg.data.length == 0); emit LogDepositReceived(msg.sender);
+        require(msg.data.length == 0); 
+        emit contractWillCreatorLogDepositReceived(msg.sender);
     }
-
+event contractWillCreatorLogDepositReceived(address sender);
     receive() external payable  {
         // custom function code
-        require(0 == 0); emit LogDepositReceived(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
+        require(0 == 0); emit contractWillCreatorLogDepositReceived(0x5B38Da6a701c568545dCfcB03FcB875f56beddC4);
     }
 
     function getEntranceFee() public pure returns (uint256) {
@@ -585,3 +613,9 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
     //     // emit RequestedRaffleWinner(requestId);
     // }
 }
+
+
+
+
+
+
