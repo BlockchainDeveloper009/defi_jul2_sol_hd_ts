@@ -1,0 +1,86 @@
+const {ethers} = require("hardhat");
+const { HardhatConfig, HardhatUserConfig } = require("hardhat/types");
+
+const { extendConfig, extendEnvironment } = require("hardhat/config");
+
+async function main(hre) {
+ //"Wrapped Will Ether", "WWETH"
+
+  //const lockedAmount = ethers.utils.parseEther("1");
+  //const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  // const lock = await Lock.deploy(arg1,arg2);
+
+  // await lock.deployed();
+
+   // deploy the contract
+//   const deployedVerifyContract = await Lock.deploy();
+   
+   //await Lock.deploy(arg1,arg2);
+   //AssetCreatorFactory_multiToken
+
+  const owner='0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a'
+  const benefitor='0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1'
+  const moderator='0xccA0b47ab3fe942E5B5DC499762202c3222FF067'
+  const dependent_additional_ContractName1 ="AssetCreatorFactory_multiToken";
+  const main_ContractName ="WillsCreatorFactory_multiToken_AssetHandlingRemoved";
+  const libraryName = "Enums";//"WillCreatorLib";
+
+  const mainContract = await  hre.ethers.getContractFactory(main_ContractName);
+  const name = "Wrapped Will Ether";
+  const symbol = "WCETH";
+console.log('before deploying contract')
+
+
+ const libAddr = '0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82';
+
+
+
+   //const AdditionalContract1 = await hre.ethers.getContractFactory(dependent_additional_ContractName1);
+   let additionalContract1;
+    try {
+      console.log(`step2: trying to additional contract - enumAddress`)
+      console.log(libAddr)
+      
+   additionalContract1
+    =await hre.ethers.getContractFactory(dependent_additional_ContractName1,{
+        libraries:{
+          libAddr
+          
+        },
+      },
+      [moderator]);
+      await additionalContract1.waitForDeployment();
+      console.log(`assetContract -> ${additionalContract1.target}`)
+      
+    } catch (error) {
+      console.error(`error while deploying ${dependent_additional_ContractName1} => ${error}`)
+    }
+ 
+}
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// We recommend this pattern to be able to use async/await everywhere
+// and properly handle errors.
+main(hre).catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});
+
+async function verify (contractAddress, args) {
+  console.log("verifying contract..")
+  try{
+    await run("verify:verify", {
+      address: contractAddress,
+      constructorArguments: args,
+    })
+
+  } catch (e) {
+    if(e.message.toLowerCase().includes("already verified")){
+      console.log("Already Verified!")
+    }else{
+      console.log(e)
+    }
+  }
+}

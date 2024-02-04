@@ -1,5 +1,5 @@
 require("@nomicfoundation/hardhat-toolbox");
-//require("@nomiclabs/hardhat-ethers");
+require("@nomicfoundation/hardhat-ethers");
 require("@openzeppelin/hardhat-upgrades");
 
 let metamask_dets = {
@@ -78,7 +78,7 @@ module.exports = {
     },
   },
   paths: {
-    sources: "./contracts/willSettler_withMultiToken_2024jan20", // Path to your contract source files
+    sources: "./contracts/willSettler_withMultiToken_libraryMerge_2024jan28",//willSettler_withMultiToken_2024jan22", //willSettler_withMultiToken_2024jan20", // Path to your contract source files
     // artifacts: "./artifacts/contracts/willSettler_23Jul02/contracts/willSettler_23Jul02", // Path to your contract artifact files
     // cache: "./cache", // Path to your cache directory (optional)
     // tests: "./test", // Path to your test files (optional)

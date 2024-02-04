@@ -4,12 +4,12 @@ const { expect } = require("chai");
 const { ethers } = require("hardhat");
 //import { testdata_localchain_WillCreator } from "./testdata_localchain_WillCreator.js";
 
-const { d1 } = require("./testdata_localchain_WillCreator");
+//const { d1 } = require("./testdata_localchain_WillCreator");
 let debugMode = true;
 
 printToConsole(`testData---check`) 
 //printToConsole(`testData---check`,d1)
-console.log(d1)
+//console.log(d1)
 
 //import  testData  from "./MockData_willSettler";
 // const  testData = require("./MockData_willSettler");
@@ -44,7 +44,7 @@ const hardhat_BenefitorAddr="0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2";
 
 //hh test --grep "picks a winner"
 //hardhat run test --grep "picks a winner"
-describe("WillsCreateorFactory_localhost", async function () {
+describe("WillsCreateorFactory_hardhat_localhost", async function () {
   
   // We define a fixture to reuse the same setup in every test.
   // We use loadFixture to run this setup once, snapshot that state,
@@ -52,17 +52,73 @@ describe("WillsCreateorFactory_localhost", async function () {
   let deployedContractAddr;
     async function deployOneYearLockFixture() {
       
-
+      let assetContractAddr='';
+      let assetContractINfo='';
+      let willlContractAddr='';
+      let willlContractInfo='';
       // Contracts are deployed using the first signer/account by default
-      const [owner, otherAccount] = await ethers.getSigners();
-      const contracts = ["WillsCreateorFactory","C:\\source\\repos\\solidity_dev\\defi_jul2_sol_hd_ts\\artifacts\\contracts\\willSettler_23Jul02\\WillsCreateorFactory"];
+      const [owner, acct1, moderator] = await ethers.getSigners();
+      const contractIndex=0;
+      const contracts = ["WillCreatorFactory_multiToken_AssetRemoved",
+      "C:\\source\\repos\\solidity_dev\\defi_WillCreator_WagmiReactHooksBr\\defi_jul2_sol_hd_ts\\artifacts\\contracts\\willSettler_23Jul02\\WillCreatorFactory_multiToken_AssetRemoved"];
+      const contractAddress = [
+        '0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf',
+        '0x9d4454B023096f34B160D6B654540c56A1F81688']
         
-      const Lock = await ethers.getContractFactory(contracts[0]);
-      const lock = await Lock.deploy();
-      console.log('Lock-----bytecode' )
+      const additionalContract1 = await ethers.getContractFactory(contracts[contractIndex]);
+      const middleware = await additionalContract1.deploy(moderator);
+      console.log(`assetContract -> ${middleware.target}`)
+      assetContractAddr = middleware.target;
+      assetContractINfo=await middleware.getContractInfo();
+
+      console.log(assetContractINfo)
      // lock.deploymentTransaction.
       //console.log(lock)
       console.log(`--------------------`)
+
+      try {
+                console.log(`step3: trying to ${main_ContractName} - `)
+                const mainContract = await  hre.ethers.getContractFactory(main_ContractName);
+                const name = "Wrapped Will Ether";
+                const symbol = "WCETH";
+                
+                console.log('gggg')
+                console.log(`---------assetContractAddr-----0${assetContractAddr}`)
+                const finalContract = await mainContract.deploy(assetContractAddr,name,symbol,moderator); //moderator
+                
+                console.log(`--------------1`)  
+                
+                //constructor(address _AssetCreatorFactoryAddress, string memory name, string memory symbol, address mod) WWethBase20_multiToken(name, symbol) {
+                //await finalContract.deployed();
+                //console.log(await middleware.deployTransaction.wait()) 
+                willlContractAddr = finalContract.target;
+                console.log(`${main_ContractName} -> ${willlContractAddr}`)
+                console.log(`--------------2-deploy`)
+                willlContractInfo = await finalContract.getContractInfo();
+                console.log(willlContractInfo);
+                  //.getNextWillId()) 
+                console.log(`--------------3`)
+            //    console.log(await finalContract.a_createAssets('fisrt','0x01','4000')) 
+                console.log(`--------------4`)
+                console.log(await finalContract.getMyWills()) 
+                console.log(`--------------5`)
+                console.log(await finalContract.c_getContractBalance()) 
+                console.log(`--------------6`)
+
+                /** a_createCryptoVault(
+                  string memory _assetId,
+                  uint256 willStartDate,
+                  uint256 willMaturityDate,
+                  address payable Benefitors */
+
+                console.log(await finalContract.a_createCryptoVault()) 
+                console.log(`--------------3`)
+                
+        
+      } catch (error) {
+        console.error(`error while deploying ${main_ContractName} => ${error}`)
+      }
+
       // console.log('deployTransaction<hash,type,accessList,blockHash,blockNumber,transactionIndex, from, gasPrice, gasLimit, to, value, nonce, data>')
       
       console.log('lock-----abi, signer, provider, callstatic, estimageGas, populateTransaction, filters, Approval, runningEvents, address')
@@ -75,7 +131,7 @@ describe("WillsCreateorFactory_localhost", async function () {
       // const allSS = await lock.getAllAsset();
       // printToConsole(allSS.data);
       //console.log();
-      return { lock, owner, otherAccount };
+      return { lock, owner, otherAccount,assetContractINfo,willlContractInfo };
     }
     describe("check_state_of_chain",  function () { 
       it("get_assetIds", async function () {
@@ -96,12 +152,15 @@ describe("WillsCreateorFactory_localhost", async function () {
 
            
   });
-      it("check_assets", async function () {
-            const { lock, owner,unlockTime } = await loadFixture(deployOneYearLockFixture);
+      it("check_assetsContractInfo", async function () {
+            const { lock, owner,unlockTime,assetContractINfo } = await loadFixture(deployOneYearLockFixture);
             // const contractAddress = deployedContractAddr;
             // printToConsole(`contractADdr: ${contractAddress}`)
             // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
             //  await lock.init();
+
+            expect(assetContractINfo).to.equal('AssetCreatorFactory_multiToken V2:Deployed on Jan-28-2024');
+
 
           const assstStatus_0 = await lock.getAssetStatus('ca-0');
           printToConsole('assstStatus_0 ==> status')

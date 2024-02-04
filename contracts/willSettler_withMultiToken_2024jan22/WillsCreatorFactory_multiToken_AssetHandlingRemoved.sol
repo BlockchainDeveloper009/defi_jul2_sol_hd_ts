@@ -31,7 +31,7 @@ import "./WillCreatorSharedStruct.sol";
  *         todo : start,end date to unix time stamp
  *         todo : get benefitors (payabel address [])
  *
- * Highlights :  chainlink KeepUp
+ * Highlights :  in future chainlink KeepUp will be added
  * variable naming:
  * //s_ = storage vars
  * //i_ immutable vars
@@ -419,7 +419,7 @@ modifier onlyValidAsset(string memory locId) {
     @param willId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
 
     */
-    function manuallySettleWill(uint256 willId) public payable onlyContractOwner {
+    function manuallySettleWill(uint256 willId, uint CollectPaymentFlag) public payable onlyContractOwner {
         string memory asst = s_willlInfo[willId].assetId;
         require(
             s_willlInfo[willId].s_baseStatus == baseWillStatus.Started,
@@ -432,9 +432,12 @@ modifier onlyValidAsset(string memory locId) {
         //     cryptoAssets[asst].amount);
 
         //safeTransferFrom(address(this),s_willlInfo[willId].Benefitors, willId, cryptoAssets[asst].amount, "0x0");
-        payable(s_willlInfo[willId].Benefitors).transfer(
+        if(CollectPaymentFlag == 1){
+            payable(s_willlInfo[willId].Benefitors).transfer(
             AssetCreatorFactoryInstance.getAssetAmount(asst)
-        );
+            );
+        }
+        
         s_willlInfo[willId].s_baseStatus = baseWillStatus.ManuallySettled;
         emit willSettled(
             willId,
@@ -444,31 +447,7 @@ modifier onlyValidAsset(string memory locId) {
             AssetCreatorFactoryInstance.getAssetAmount(asst)
         );
     }
-    function manuallySettleWill_withoutPayment(uint256 willId) public payable onlyContractOwner {
-        string memory asst = s_willlInfo[willId].assetId;
-        require(
-            s_willlInfo[willId].s_baseStatus == baseWillStatus.Started,
-            string.concat("Will's status should be in start status(1) ","to manually settle")
-            
-        );
-        //require for maturity date comparisoin
-        //add only owner can call
-        // s_willlInfo[willId].Benefitors.transfer(
-        //     cryptoAssets[asst].amount);
-
-        //safeTransferFrom(address(this),s_willlInfo[willId].Benefitors, willId, cryptoAssets[asst].amount, "0x0");
-        // payable(s_willlInfo[willId].Benefitors).transfer(
-        //     AssetCreatorFactoryInstance.getAssetAmount(asst)
-        // );
-        s_willlInfo[willId].s_baseStatus = baseWillStatus.ManuallySettled;
-        emit willSettled(
-            willId,
-            s_willlInfo[willId].s_baseStatus,
-            s_willlInfo[willId].Benefitors,
-            s_willlInfo[willId].willMaturityDate,
-            AssetCreatorFactoryInstance.getAssetAmount(asst)
-        );
-    }
+    
     /** phase3: function not implemented correctly*/
     function makeModeratorToReleaseFunds(uint256 willId, address payable recipient, uint256 amount) public payable onlyContractModerator {
         require(msg.value >= amount, "Insufficient Ethers");
@@ -483,7 +462,7 @@ modifier onlyValidAsset(string memory locId) {
         return s_willlInfo[willId];
     }
     //**Cancell the Will  */
-    function cancelWill(uint256 willId) public payable {
+    function cancelWill(uint256 willId, uint CollectPayment) public payable {
           emit LogCancelWillAttempt(willId, msg.sender);
          
         // require(s_willlInfo[willId].willOwner != address(0), "Invalid willId");
@@ -538,72 +517,15 @@ modifier onlyValidAsset(string memory locId) {
     // Log sender and recipient for debugging
     emit LogSenderAndRecipient(msg.sender, s_willlInfo[willId].willOwner);
 
-    payable(s_willlInfo[willId].willOwner).transfer(assetAmt);
+    if(CollectPayment == 1){
+        payable(s_willlInfo[willId].willOwner).transfer(assetAmt);
+    }
 
     s_willlInfo[willId].s_baseStatus = baseWillStatus.Cancelled;
     emit willCancelled(willId, s_willlInfo[willId].willOwner, s_willlInfo[willId].willMaturityDate, assetAmt);
     }
 
-    function cancelWill_withoutPayment(uint256 willId) public payable {
-          emit LogCancelWillAttempt(willId, msg.sender);
-         
-        // require(s_willlInfo[willId].willOwner != address(0), "Invalid willId");
-
-        // require(
-        //     s_willlInfo[willId].s_baseStatus == baseWillStatus.Started,
-        //     "Will is not in Start Status"
-        // );
-        // string memory asst = s_willlInfo[willId].assetId;
-
-        // // only willl owner can cancell this txn
-        //  require(
-        //     s_willlInfo[willId].willOwner == msg.sender,
-        //     "only will owner can perform this operation"
-        // );
-
-        // //require for maturity date comparisoin
-        // //add only owner can call
-        // // s_willlInfo[willId].Benefitors.transfer(
-        // //     AssetCreatorFactoryInstance.cryptoAssets[asst].amount);
-
-        // //safeTransferFrom(address(this),s_willlInfo[willId].Benefitors, willId, AssetCreatorFactoryInstance.cryptoAssets[asst].amount, "0x0");
-        // uint256 assetAmt = AssetCreatorFactoryInstance.getAssetAmount(asst);
-        // console.log("assetAmt = %s",assetAmt);
-        // payable( s_willlInfo[willId].willOwner).transfer(
-        //     assetAmt
-        // );
-        // s_willlInfo[willId].s_baseStatus = baseWillStatus.Cancelled;
-        // emit willCancelled(
-        //     willId,
-        //     s_willlInfo[willId].willOwner,
-        //     s_willlInfo[willId].willMaturityDate,
-        //     assetAmt
-        // );
-
-         emit LogCancelWillAttempt(willId, msg.sender);
-
-    require(s_willlInfo[willId].willOwner != address(0), "Invalid willId");
-    require(s_willlInfo[willId].s_baseStatus == baseWillStatus.Started, "Will is not in Start Status");
-
-    // Log assetId for debugging
-    emit LogAssetId(s_willlInfo[willId].assetId);
-
-    string memory asst = s_willlInfo[willId].assetId;
-
-    // only will owner can cancell this txn
-    require(s_willlInfo[willId].willOwner == msg.sender, "only will owner can perform this operation");
-
-    uint256 assetAmt = AssetCreatorFactoryInstance.getAssetAmount(asst);
-    emit LogAssetAmount(assetAmt);
-
-    // Log sender and recipient for debugging
-    emit LogSenderAndRecipient(msg.sender, s_willlInfo[willId].willOwner);
-
-    //payable(s_willlInfo[willId].willOwner).transfer(assetAmt);
-
-    s_willlInfo[willId].s_baseStatus = baseWillStatus.Cancelled;
-    emit willCancelled(willId, s_willlInfo[willId].willOwner, s_willlInfo[willId].willMaturityDate, assetAmt);
-    }
+    
     
 
          /**

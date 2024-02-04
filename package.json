@@ -21,11 +21,14 @@
   },
   "homepage": "https://github.com/BlockchainDeveloper009/defi_jul2_sol_hd_ts#readme",
   "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.0.5",
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
     "@openzeppelin/hardhat-upgrades": "^2.0.1",
     "@openzeppelin/test-helpers": "^0.5.16",
     "ethereumjs-testrpc": "^6.0.3",
+    "ethers": "^6.10.0",
     "hardhat": "^2.16.1",
+    "mocha": "^10.2.0",
     "web3": "^4.0.3"
   },
   "dependencies": {

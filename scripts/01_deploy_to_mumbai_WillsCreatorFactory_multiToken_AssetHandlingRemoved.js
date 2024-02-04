@@ -7,10 +7,6 @@ async function main(hre) {
  //"Wrapped Will Ether", "WWETH"
 
   //const lockedAmount = ethers.utils.parseEther("1");
-
-  const Lock = await ethers.getContractFactory("WillsCreatorFactory_multiToken");
-  const name = "Wrapped Will Ether";
-  const symbol = "WCETH";
   //const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
   // const lock = await Lock.deploy(arg1,arg2);
 
@@ -20,12 +16,60 @@ async function main(hre) {
 //   const deployedVerifyContract = await Lock.deploy();
    
    //await Lock.deploy(arg1,arg2);
+   //AssetCreatorFactory_multiToken
+
+  const owner='0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a'
+  const benefitor='0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1'
+  const moderator='0xccA0b47ab3fe942E5B5DC499762202c3222FF067'
+  const dependent_additional_ContractName1 ="AssetCreatorFactory_multiToken";
+  const main_ContractName ="WillsCreatorFactory_multiToken_AssetHandlingRemoved";
+  
+  
+
+  const mainContract = await  hre.ethers.getContractFactory(main_ContractName);
+  const name = "Wrapped Will Ether";
+  const symbol = "WCETH";
+
+   const Library1 = await  hre.ethers.getContractFactory("Enums");
+   let enumsLibrary1;
+   
+   try {
+    console.log(`step1: trying to enums library`)
+    enumsLibrary1 = await hre.ethers.deployContract("Enums",[]);
+    console.log(`address - ${enumsLibrary1}`)
+   } catch (error) {
+    console.log(`error while deploying enums => ${error}`)
+   }
+
+   //const AdditionalContract1 = await hre.ethers.getContractFactory(dependent_additional_ContractName1);
+   let additionalContract1;
+    try {
+      console.log(`step2: trying to additional contract - enumAddress ${enumsLibrary1.address}`)
+   additionalContract1
+    =await hre.ethers.deployContract(dependent_additional_ContractName1,{
+        libraries:{
+          Library1: enumsLibrary1.address,
+          
+        },
+      },
+      [moderator]);
+      
+    } catch (error) {
+      console.log(`error while deploying ${dependent_additional_ContractName1} => ${error}`)
+    }
   try {
-    //
+    //AssetCreatorFactory_multiToken
     const lockedAmount = hre.ethers.parseEther("0.0001");
+    console.log(`step4: trying to deploy Main Contract -- ${additionalContract1.address}`)
     const deployedVerifyContract 
-    = await hre.ethers.deployContract("WillsCreatorFactory_multiToken", 
-    [name,symbol,'0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a']
+    = await hre.ethers.deployContract(main_ContractName, 
+      {
+        libraries:{
+          Library1: enumsLibrary1.address,
+          
+        },
+      },
+    [additionalContract1.address, name,symbol,'0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a']
   );
  
   await deployedVerifyContract.waitForDeployment();
@@ -43,7 +87,7 @@ async function main(hre) {
           // Verify the contract after deploying
           await hre.run("verify:verify", {
             address: deployedVerifyContract.target,
-            constructorArguments: [name,symbol,'0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a'],
+            constructorArguments: [additionalContract1.address,name,symbol,'0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a'],
           });
           console.log(`Contract deployed & Verified ${deployedVerifyContract.target}`);
  
