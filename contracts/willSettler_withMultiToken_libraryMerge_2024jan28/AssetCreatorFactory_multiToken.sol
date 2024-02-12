@@ -37,7 +37,7 @@ contract AssetCreatorFactory_multiToken {
     cryptoAssetInfo public cryptoAssetInfoInstance;
     //this is to create an ADMIN role
     mapping(address => bool) public adminrole;
-    string contractInfo = "AssetCreatorFactory_multiToken V2:Deployed on Jan-28-2024";
+    string contractInfo = "AssetCreatorFactory_multiTokenV2:Deployed on Jan-28-2024";
     address public s_Contract_moderator;
     address public owner;
     

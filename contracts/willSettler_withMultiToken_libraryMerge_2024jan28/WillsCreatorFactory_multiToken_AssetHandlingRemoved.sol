@@ -147,7 +147,7 @@ contract WillsCreatorFactory_multiToken_AssetHandlingRemoved is WWethBase20_mult
         uint256 willAmount
     );
 
-      /**
+    /*  
     @param cryptoWillId: Property name or address for ex. Town home located in Santa clara, 3490 Moretti lane, Milipitas,CA
     @param benefitor: who gets the funds
     @param willMaturityDate: deadline after which will gets executed automatically

@@ -1,13 +1,13 @@
 const { time, loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
-const { ethers } = require("hardhat");
+const { ethers,network, getNamedAccounts } = require("hardhat");
 //import { testdata_localchain_WillCreator } from "./testdata_localchain_WillCreator.js";
 
 //const { d1 } = require("./testdata_localchain_WillCreator");
 let debugMode = true;
 
-printToConsole(`testData---check`) 
+printToConsole(`testData---chec-->${network.config.chainId}----${network.name}`) 
 //printToConsole(`testData---check`,d1)
 //console.log(d1)
 
@@ -33,6 +33,7 @@ function printToConsole(str)
     console.log(str);
     console.log('==============')
   }
+
   
 }
 const meta_benefitorAddr = 0xf821142CC270dAb63767cFAae15dC36D1b043348;
@@ -51,7 +52,7 @@ describe("WillsCreateorFactory_hardhat_localhost", async function () {
   // and reset Hardhat Network to that snapshot in every test.
   let deployedContractAddr;
     async function deployOneYearLockFixture() {
-      
+      let wecth_ccy_addr='';
       let assetContractAddr='';
       let assetContractINfo='';
       let willlContractAddr='';
@@ -59,25 +60,30 @@ describe("WillsCreateorFactory_hardhat_localhost", async function () {
       // Contracts are deployed using the first signer/account by default
       const [owner, acct1, moderator] = await ethers.getSigners();
       const contractIndex=0;
-      const contracts = ["WillCreatorFactory_multiToken_AssetRemoved",
-      "C:\\source\\repos\\solidity_dev\\defi_WillCreator_WagmiReactHooksBr\\defi_jul2_sol_hd_ts\\artifacts\\contracts\\willSettler_23Jul02\\WillCreatorFactory_multiToken_AssetRemoved"];
-      const contractAddress = [
-        '0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf',
-        '0x9d4454B023096f34B160D6B654540c56A1F81688']
-        
-      const additionalContract1 = await ethers.getContractFactory(contracts[contractIndex]);
+      const path = '"C:\\source\\repos\\solidity_dev\\defi_WillCreator_WagmiReactHooksBr\\defi_jul2_sol_hd_ts\\artifacts\\contracts\\willSettler_23Jul02\\';
+      const contracts = ["AssetCreatorFactory_multiToken",
+      "WillsCreatorFactory_multiToken_AssetHandlingRemoved"];
+     
+      console.log(`-------------------------------step1: trying to 'WCETH_Token' `)
+      const wethCCYAddr = await ethers.getContractFactory("WCETH_Token");
+        const wethCCYAddrMiddleware = await wethCCYAddr.deploy("wecth_token","wecth_token",1000000000n);
+        wecth_ccy_addr = wethCCYAddrMiddleware.target;
+        console.log(`wethCCYAddr -> ${wecth_ccy_addr}`);
+      const main_ContractName = contracts[1]
+      console.log(`-------------------------------step2: trying to 'AssetCreatorFactory_multiToken' - `)
+      const additionalContract1 = await ethers.getContractFactory('AssetCreatorFactory_multiToken');
       const middleware = await additionalContract1.deploy(moderator);
       console.log(`assetContract -> ${middleware.target}`)
       assetContractAddr = middleware.target;
       assetContractINfo=await middleware.getContractInfo();
-
+      console.log(`exporting assetAdddr= ${assetContractAddr }`)
       console.log(assetContractINfo)
      // lock.deploymentTransaction.
       //console.log(lock)
       console.log(`--------------------`)
 
       try {
-                console.log(`step3: trying to ${main_ContractName} - `)
+                console.log(`-------------------------------step3: trying to ${main_ContractName} - `)
                 const mainContract = await  hre.ethers.getContractFactory(main_ContractName);
                 const name = "Wrapped Will Ether";
                 const symbol = "WCETH";
@@ -92,8 +98,8 @@ describe("WillsCreateorFactory_hardhat_localhost", async function () {
                 //await finalContract.deployed();
                 //console.log(await middleware.deployTransaction.wait()) 
                 willlContractAddr = finalContract.target;
-                console.log(`${main_ContractName} -> ${willlContractAddr}`)
-                console.log(`--------------2-deploy`)
+                console.log(`-------------------------------${main_ContractName} -> ${willlContractAddr}`)
+                console.log(`--------------contract deploy test\\\\\-deploy`)
                 willlContractInfo = await finalContract.getContractInfo();
                 console.log(willlContractInfo);
                   //.getNextWillId()) 
@@ -131,15 +137,36 @@ describe("WillsCreateorFactory_hardhat_localhost", async function () {
       // const allSS = await lock.getAllAsset();
       // printToConsole(allSS.data);
       //console.log();
-      return { lock, owner, otherAccount,assetContractINfo,willlContractInfo };
+      const lock = middleware;
+      return { middleware, lock, finalContract, owner, wecth_ccy_addr, otherAccount,assetContractINfo,willlContractInfo };
     }
-    describe("check_state_of_chain",  function () { 
-      it("get_assetIds", async function () {
-        const { lock, owner,unlockTime } = await loadFixture(deployOneYearLockFixture);
+    describe.only("check_state_of_chain",  async function () { 
+      
+      it("crear & get_assetIds", async function () {
+        const { middleware, lock, owner,unlockTime } = await loadFixture(deployOneYearLockFixture);
+        console.log('create asset - ca-1');
         // const contractAddress = deployedContractAddr;
         // printToConsole(`contractADdr: ${contractAddress}`)
         // const myContract = await hre.ethers.getContractAt("WWethcreateWillsERC20", contractAddress);
         //  await lock.init();
+        let txn0 = await lock.a_createAssets('ca-1',wethCCYAddr,1_000_000_000n);
+        // Usage
+        //console.log(`'''print txn response --${txn0}`)
+        console.log(`txn0.blockNumber=${txn0.blockNumber}`)
+        console.log(`txn0.blockHash=${txn0.blockHash}`)
+        console.log(`txn0.hash=${txn0.hash}`)
+        console.log('create asset');
+        await expect(
+          lock
+          .a_createAssets('ca-2',wethCCYAddr,2_000_000_000n))
+          .to.emit(lock, 'assetCreated')
+          .withArgs('ca-1', 'ca-1', 2_000_000_000n); //
+
+        //listen for event
+        saveEvents(txn0);
+        emittedEvents.forEach(event => {
+
+          console.log(`event name => ${event.name}`)});
 
       const assstStatus_0 = await lock.getAllAsset();
       printToConsole('assstStatus_0 ==> status')

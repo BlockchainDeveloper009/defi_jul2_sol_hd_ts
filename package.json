@@ -5,8 +5,19 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "run-end-to-end-test-localhost":"npx hardhat test test\\willSettler_withMultiToken_libraryMerge_2024jan28\\hardhat.contractAt.EndToEndTests.test.js  --network localhost",
+    "run-end-to-end-test-mumbai":"npx hardhat test '.\\test\\willSettler_withMultiToken_libraryMerge_2024jan28\\hardhat.contractAt.EndToEndTests.test.js'  --network mumbai",
+    "run-deploy-And-test-localhost":"npx hardhat test test\\willSettler_withMultiToken_libraryMerge_2024jan28\\hardhat.deployAndTest_Regression_WillSettler_withMultiToken_libraryMerge_HappyPathRegression.test.js --network localhost",
+    "run-deploy-And-test-localhost2":"npx hardhat test './test\\willSettler_withMultiToken_libraryMerge_2024jan28\\hardhat.deployAndTest_WillSettler_withMultiToken_libraryMerge_HappyPathRegression.test.js' --network localhost",
+    "run-deploy-And-test-mumbai":"npx hardhat test '.\\test\\willSettler_withMultiToken_libraryMerge_2024jan28\\hardhat.deployAndTest_WillSettler_withMultiToken_libraryMerge_HappyPathRegression.test.js' --network mumbai",
     "deploy_locally": "npx hardhat run .\\scripts\\01_deploy_to_hh_WillsCreateorFactory.js --network localhost",
     "deploy_to_mumbai": "npx hardhat run .\\scripts\\01_deploy_to_mumbai_WillsCreateorFactory.js --network mumbai",
+    "local_deploy1": "npx hardhat run .\\scripts\\01_deploy_to_hh_WillsCurrency.js --network localhost",
+    "local_deploy2": "npx hardhat run .\\scripts\\01_deploy_to_mumbai_assets_withoutlib_Asset_withMultiToken_libraryMerge_2024jan28.js --network localhost",
+    "local_deploy3": "npx hardhat run .\\scripts\\01_deploy_to_mumbai_assets_withoutlib_WillsCreatorFactory_withMultiToken_libraryMerge_2024jan28.js --network localhost",
+    "mumbai_deploy1": "npx hardhat run .\\scripts\\01_deploy_to_hh_WillsCurrency.js --network mumbai",
+    "mumbai_deploy2": "npx hardhat run .\\scripts\\01_deploy_to_mumbai_assets_withoutlib_Asset_withMultiToken_libraryMerge_2024jan28.js --network mumbai",
+    "mumbai_deploy3": "npx hardhat run .\\scripts\\01_deploy_to_mumbai_assets_withoutlib_WillsCreatorFactory_withMultiToken_libraryMerge_2024jan28.js --network mumbai",
     "deploy_lock_to_mumbai": "npx hardhat run .\\scripts\\deploy.js --network mumbai"
   },
   "repository": {

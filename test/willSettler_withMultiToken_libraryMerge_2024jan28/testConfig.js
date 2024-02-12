@@ -1,0 +1,33 @@
+const WECTH_TOKEN_ADDRESS = '0xB106179CE262C251D393f9915285Bd1C51E8144C'
+const ASSETCONTRACT_ADDRESS = '0x0DaFC14Af4E71716971E04444fe858d9fC413dc3'
+const WILLCREATORFACTORY_ADDRESS = '0xE2004201614A5D19753bd0356f96296fF536E175'
+const contract_config = {
+    "31337":{
+        "WECTH_TOKEN_ADDRESS":"0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+        "ASSETCONTRACT_ADDRESS":"0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
+        "WILLCREATORFACTORY_ADDRESS":"0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
+        "ChainName":"hardhat-localhost"
+    },
+    "80001":{
+        "WECTH_TOKEN_ADDRESS":"0xB106179CE262C251D393f9915285Bd1C51E8144C",
+        "ASSETCONTRACT_ADDRESS":"0x0DaFC14Af4E71716971E04444fe858d9fC413dc3",
+        "WILLCREATORFACTORY_ADDRESS":"0xE2004201614A5D19753bd0356f96296fF536E175",
+        "ChainName":"polygon-mumbai"
+    },
+}
+
+module.exports = { chainIds,contract_config, WECTH_TOKEN_ADDRESS, ASSETCONTRACT_ADDRESS, WILLCREATORFACTORY_ADDRESS}
+
+const chainIds = {
+    "arbitrum-mainnet": 42161,
+    avalanche: 43114,
+    bsc: 56,
+    ganache: 1337,
+    hardhat: 31337,
+    mainnet: 1,
+    "optimism-mainnet": 10,
+    "polygon-mainnet": 137,
+    "polygon-mumbai": 80001,
+    sepolia: 11155111,
+  };
+  
