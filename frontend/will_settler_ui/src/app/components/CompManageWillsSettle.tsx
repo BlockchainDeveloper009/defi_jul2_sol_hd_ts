@@ -1,26 +1,20 @@
 import { Table } from "@mantine/core";
 import { BigNumberish } from "ethers";
 
-import {
-  getContract,
-  useContractRead,
-  useContractWrite,
-  usePrepareContractWrite,
-  useWaitForTransaction,
-} from "./wrapperForWagmi";
+
 
 import {
-  CreateBondandAdminRole_CONTRACT_ABI,
-  CreateBondandAdminRole_CONTRACT_ADDRESS,
-} from "../srcConstants";
+  WillsCreator_CONTRACT_ADDRESS,
+  WillsCreator_CONTRACT_ADDRESS_ABI,
+} from "../SrcConstants_Wills";
 
 import { Button } from "@mantine/core";
 import { useState } from "react";
-import { useAccount, useContractEvent } from "wagmi";
+import { useAccount, useContractRead } from "wagmi";
 import { useRouter as navUseRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { useNavigate, useParams } from "react-router-dom";
-import { prepareWriteContract, writeContract } from "wagmi/actions";
+import { writeContract } from "wagmi/actions";
 
 interface IWillsInfo {
   willId: BigNumberish;
@@ -34,8 +28,8 @@ interface IWillsInfo {
 }
 function GetWillsByUsers(stttt: any) {
   const { data: functionData, status } = useContractRead({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    address: WillsCreator_CONTRACT_ADDRESS,
+    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
     functionName: "getUserCreatedBonds",
     args: [stttt],
   });
@@ -51,8 +45,8 @@ function GetWillsByUsers(stttt: any) {
 
 function GetWilStatus(willId: any) {
   const { data: functionData, status } = useContractRead({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    address: WillsCreator_CONTRACT_ADDRESS,
+    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
     functionName: "getWillStatus",
     args: [willId],
   });
@@ -98,8 +92,8 @@ function CompManageWillsSettle() {
   });
 
   const contract = getContract({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    address: WillsCreator_CONTRACT_ADDRESS,
+    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
   });
 
   // const navigate = useNavigate();

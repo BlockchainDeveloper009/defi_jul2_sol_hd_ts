@@ -1,5 +1,4 @@
-export const WillsCreator_CONTRACT_ADDRESS = '0xE2004201614A5D19753bd0356f96296fF536E175'
-export const WillsCreator_CONTRACT_ADDRESS_ABI = [
+export const abi_willCreator = [
     {
       "inputs": [
         {
@@ -1340,4 +1339,4 @@ export const WillsCreator_CONTRACT_ADDRESS_ABI = [
       "stateMutability": "payable",
       "type": "receive"
     }
-  ]
+  ] as const;

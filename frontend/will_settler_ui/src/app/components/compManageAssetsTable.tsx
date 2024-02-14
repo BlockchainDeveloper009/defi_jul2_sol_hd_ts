@@ -1,13 +1,13 @@
 import { Table } from '@mantine/core';
 import { BigNumberish } from 'ethers';
 import { useState } from 'react';
-import {  useContractRead } from './wrapperForWagmi'
+
 
 import {
  
-  CreateBondandAdminRole_CONTRACT_ABI,
-  CreateBondandAdminRole_CONTRACT_ADDRESS,
-} from "../srcConstants";
+  Assets_CONTRACT_ADDRESS_ABI,
+  Assets_CONTRACT_ADDRESS,
+} from "../SrcConstants_Assets";
 
 import { BrowserRouter, Routes, useNavigate, useParams } from "react-router-dom";
 import { formatEther } from 'viem'
@@ -26,9 +26,10 @@ interface IAss {
   isAvailable: boolean
 }
 function GetAssetStaus(assetId:string) {
+  console.log(`contractAddr= '${Assets_CONTRACT_ADDRESS}'`);
   const { data:functionData,status} = useReadContract({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    address: Assets_CONTRACT_ADDRESS,
+    abi: Assets_CONTRACT_ADDRESS_ABI,
     functionName: 'getAssetStatus',
     args: [assetId]
     
@@ -37,9 +38,10 @@ function GetAssetStaus(assetId:string) {
 }
 function  GetAssetsByUsers(customerAddr:any):IAss[] {
   
+  console.log(`contractAddr= '${Assets_CONTRACT_ADDRESS}'`);
   const { data:functionData,status} = useReadContract({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    address: Assets_CONTRACT_ADDRESS,
+    abi: Assets_CONTRACT_ADDRESS_ABI,
     functionName: 'getUserCreatedAssets',
     args: [customerAddr]
     

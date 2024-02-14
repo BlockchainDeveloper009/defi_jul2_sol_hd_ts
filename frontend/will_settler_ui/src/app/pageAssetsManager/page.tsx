@@ -15,11 +15,7 @@ import Link from 'next/link';
 
 const ProjectName = 'Manage Your Assets on this page'
 const ProjectIndex_template = () => {
- 
-
-
-
-
+ 1
   return (
     <div>
         <title>`${ProjectName}`</title>

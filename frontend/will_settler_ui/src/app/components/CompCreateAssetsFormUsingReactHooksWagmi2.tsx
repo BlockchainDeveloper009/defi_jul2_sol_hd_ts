@@ -7,13 +7,13 @@ import axios  from 'axios'
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
 import { watchContractEvent } from '@wagmi/core'
-import { abi } from './abi';
+import { abi } from './abi.2024feb13.Bak';
 //import {  getContract,  useContractWrite, usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
 import {
  
-  CreateBondandAdminRole_CONTRACT_ABI,
-  CreateBondandAdminRole_CONTRACT_ADDRESS,
-} from "../srcConstants";
+  Assets_CONTRACT_ADDRESS,
+  Assets_CONTRACT_ADDRESS_ABI
+} from "../SrcConstants_Assets";
 
 
 import { use, useEffect, useState } from 'react';
@@ -183,24 +183,24 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
     transformValues: (values) => ({
       AssetName: `${values.assetName}`,
       Amount: Number(values.Amount) || 0,
-      Addr: CreateBondandAdminRole_CONTRACT_ADDRESS,
+      Addr: Assets_CONTRACT_ADDRESS,
       assetCCY: assetCCY
            
       
     }),
   });
 
-  console.log(`Accessing contract: '${CreateBondandAdminRole_CONTRACT_ADDRESS}' `)
+  console.log(`Accessing contract: '${Assets_CONTRACT_ADDRESS}' `)
   
     function HookDirectUseWrite(){
 
       try {
         console.log(`calling write contract`)
-        console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${CreateBondandAdminRole_CONTRACT_ADDRESS}`)
+        console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${Assets_CONTRACT_ADDRESS}`)
         writeContract
         ({
           abi,
-          address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+          address: Assets_CONTRACT_ADDRESS,
           functionName: 'a_createAssets',
           args: [
             assetName, `0x${'0000000000000000000000000000000000001010'}`, BigInt(10000000000000000) 
@@ -273,7 +273,7 @@ let dd:any = z.bigint();
                       writeContract
                       ({
                         abi,
-                        address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+                        address: Assets_CONTRACT_ADDRESS,
                         functionName: 'a_createAssets',
                         args: [
                           assetName, `0x${'0000000000000000000000000000000000001010'}`, BigInt(1) 

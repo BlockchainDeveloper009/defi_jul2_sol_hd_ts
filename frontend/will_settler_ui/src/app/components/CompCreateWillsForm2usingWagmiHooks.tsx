@@ -11,9 +11,9 @@ import { TextInput, Button, Box, Code } from '@mantine/core';
 import { useAccount, useReadContract } from 'wagmi'
 import {
 
-  CreateBondandAdminRole_CONTRACT_ABI,
-  CreateBondandAdminRole_CONTRACT_ADDRESS,
-} from "../srcConstants";
+  WillsCreator_CONTRACT_ADDRESS,
+  WillsCreator_CONTRACT_ADDRESS_ABI,
+} from "../SrcConstants_Wills";
 //import { contractConfig } from "../Config";
 import { IAssets } from '../models/IAssets';
 import { writeContract } from '@wagmi/core';
@@ -26,8 +26,8 @@ function  GetAssetsByUsers(addr:any):IAssets[] {
   }
   //const { data:functionData,status} 
   const result = useReadContract({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    address: WillsCreator_CONTRACT_ADDRESS,
+    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
     functionName: 'getUserCreatedBonds',
     args: [addr]
 
@@ -107,8 +107,8 @@ function CompCreateWillsForm2usingWagmiHooks() {
   });
   //const { data:Result, error:Error ,isError:boolean, status}
   const result = useReadContract({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    address: WillsCreator_CONTRACT_ADDRESS,
+    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
     functionName: 'checkAssetisAvailable',
     args: [assetId],
   })
@@ -117,8 +117,8 @@ async function coreWriteCreateWill(){
   console.log(config)
   const result  = await writeContract(config,
     {
-    address: '0x6635BaCd122cfc8e8D726633f224746Bd2578872',
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    address: WillsCreator_CONTRACT_ADDRESS,
+    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
     functionName: 'a_createCryptoVault',
     args: [assetId, willStartDate,willEndDate,benefitorAddr],
     value: BigInt(0)

@@ -7,13 +7,13 @@ import axios  from 'axios'
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
 import { watchContractEvent } from '@wagmi/core'
-import { abi } from './abi';
+import { abi_assetsContractor } from './abi_assetsContractor';
 //import {  getContract,  useContractWrite, usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
 import {
  
-  CreateBondandAdminRole_CONTRACT_ABI,
-  CreateBondandAdminRole_CONTRACT_ADDRESS,
-} from "../srcConstants";
+  Assets_CONTRACT_ADDRESS,
+  Assets_CONTRACT_ADDRESS_ABI,
+} from "../SrcConstants_Assets";
 
 
 import { use, useEffect, useState } from 'react';
@@ -93,8 +93,8 @@ function CompCreateAssetsForm_SimulationUsingReactHooksWagmi2() {
   };
 
   const unwatch = watchContractEvent(config, {
-    address: '0x7a92beDE8B87dD09C8dB1C979647f599f5AeBb14',
-    abi,
+    address: Assets_CONTRACT_ADDRESS, //'0x7a92beDE8B87dD09C8dB1C979647f599f5AeBb14',
+    abi:abi_assetsContractor,
     eventName: 'assetCreated',
     onLogs(logs) {
       console.log('New logs!', logs)
@@ -183,25 +183,25 @@ function CompCreateAssetsForm_SimulationUsingReactHooksWagmi2() {
     transformValues: (values) => ({
       AssetName: `${values.assetName}`,
       Amount: Number(values.Amount) || 0,
-      Addr: CreateBondandAdminRole_CONTRACT_ADDRESS,
+      Addr: Assets_CONTRACT_ADDRESS,
       assetCCY: assetCCY
            
       
     }),
   });
 
-  console.log(`Accessing contract: '${CreateBondandAdminRole_CONTRACT_ADDRESS}' `)
+  console.log(`Accessing contract: '${Assets_CONTRACT_ADDRESS}' `)
   
   async function handleSimulation(){
     ()=> {
 
       try {
             console.log(`calling useSimulation`)
-            console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${CreateBondandAdminRole_CONTRACT_ADDRESS}`)
+            console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${Assets_CONTRACT_ADDRESS}`)
             useSimulateContract
             ({
-              abi,
-              address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+              abi_assetsContractor,
+              address: Assets_CONTRACT_ADDRESS,
               functionName: 'a_createAssets',
               args: [
                 assetName, `0x${'0000000000000000000000000000000000001010'}`, 1n 
@@ -219,8 +219,8 @@ function CompCreateAssetsForm_SimulationUsingReactHooksWagmi2() {
 
       
       return { 
-        abi,
-        address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+        abi_assetsContractor,
+        address: Assets_CONTRACT_ADDRESS,
         functionName: 'a_createAssets',
         args: [
           assetName, 
@@ -246,7 +246,7 @@ let dd:any = z.bigint();
   
                             setSubmittedValues(JSON.stringify(values, null, 2))
                             setAssetName(values.AssetName)
-                            set
+                            setAssetCCY(values.assetCCY)
                             setAssetAmountForm(values.Amount)
                     
                     }

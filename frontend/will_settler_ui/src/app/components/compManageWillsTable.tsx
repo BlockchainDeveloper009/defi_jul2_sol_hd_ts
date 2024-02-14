@@ -1,15 +1,13 @@
 import { Box, Table } from '@mantine/core';
 import { BigNumberish } from 'ethers';
 
-import {  getContract, 
-  useContractRead, useContractWrite,
-   usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
+
 
 import {
   
-  CreateBondandAdminRole_CONTRACT_ABI,
-  CreateBondandAdminRole_CONTRACT_ADDRESS,
-} from "../srcConstants";
+  WillsCreator_CONTRACT_ADDRESS,
+  WillsCreator_CONTRACT_ADDRESS_ABI,
+} from "../SrcConstants_Wills";
 
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from 'react';
@@ -19,6 +17,7 @@ import { useRouter as routUseRouter} from 'next/router';
 import { CodeSandboxLogoIcon } from '@radix-ui/react-icons';
 import CSVDownloadButton from './CSVDownloadButton';
 import { IUseWillsInfo } from '../models/IWillInfo';
+import { abi_willCreator } from './abi_willCreator';
 
 enum baseWillStatus {
   Created, //0
@@ -29,9 +28,11 @@ enum baseWillStatus {
 }
 
 function GetWillsByUsers(stttt:any) {
+  console.log(`willCreator_contractor_Address: '${WillsCreator_CONTRACT_ADDRESS}'`);
+  console.log(`incoming value: ${stttt}`)
   const result = useReadContract({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    address: WillsCreator_CONTRACT_ADDRESS,
+    abi: abi_willCreator,
     functionName: 'getUserCreatedBonds',
     args: [stttt]
     
@@ -109,6 +110,7 @@ function convertUnixTimestampToDateString(unixTimestamp: any): import("react").R
   }
   try {
 
+    
     console.log(`addresss -----> ${address}`)
     // let d:any = [
     //   { willId: 0,
@@ -131,12 +133,17 @@ function convertUnixTimestampToDateString(unixTimestamp: any): import("react").R
     // }
     // ] ;
     
-    let d:any = GetWillsByUsers(address)
-    if(d.length>=0)
+    let d:any = GetWillsByUsers('0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1')
+    console.log(`wills read---------`)
+    console.log(d.data.length)
+    console.log(d.length)
+    console.log(d.data)
+    console.log(d)
+    if(d.data.length>=0)
     {
       
             console.log(d[0])
-          const trows = d.map((element:any) => (
+          const trows = d.data.map((element:any) => (
             
             <tr key={element.assetId}>
               

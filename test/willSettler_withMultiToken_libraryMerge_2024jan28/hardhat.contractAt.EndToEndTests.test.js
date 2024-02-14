@@ -135,8 +135,12 @@ describe("WillsCreateorFactory_hardhat_localhost",  function () {
     describe.only("End-to-End_CREATE SINGLE TXN", async function(){
         let assetIDcreated='N'
         it("create asset1", async function () {
-          let txn = {"assetId":"ca-3", "assetAmt":2_000_000_000n}
-          const { AssetCreatorFactory_multiTokenInstance, wethCCYAddr,otherAccount } = await loadFixture(deployOneYearLockFixture);
+          let txn = [
+            {"assetId":"ca-3", "assetAmt":2_000_000_000n},
+            {"assetId":"ca-3", "assetAmt":2_000_000_000n}
+          ]
+          const { AssetCreatorFactory_multiTokenInstance, wethCCYAddr,otherAccount } 
+          = await loadFixture(deployOneYearLockFixture);
           // let txn0 
           // = await AssetCreatorFactory_multiTokenInstance
           // .a_createAssets(txn.assetId,wethCCYAddr,txn.assetAmt);
@@ -145,6 +149,12 @@ describe("WillsCreateorFactory_hardhat_localhost",  function () {
           // console.log(`txn0.blockNumber=${txn0.blockNumber}`)
           // console.log(`txn0.blockHash=${txn0.blockHash}`)
           // console.log(`txn0.hash=${txn0.hash}`)
+
+          await expect(
+            AssetCreatorFactory_multiTokenInstance
+            .a_createAssets(txn.assetId,wethCCYAddr,assetAmt))
+            .to.emit(AssetCreatorFactory_multiTokenInstance, 'assetCreated')
+            .withArgs(txn.assetId, txn.assetId, txn.assetAmt); 
           
           await expect(
             AssetCreatorFactory_multiTokenInstance
