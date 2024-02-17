@@ -7,7 +7,7 @@ import axios  from 'axios'
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
 import { watchContractEvent } from '@wagmi/core'
-import { abi_assetsContractor } from './abi_assetsContractor';
+import { abi_assetsContractor } from './abiassetsContractor';
 //import {  getContract,  useContractWrite, usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
 import {
  

@@ -8,9 +8,13 @@ import {
   useReadContract,
 } from "wagmi";
 import {
-  CreateBondandAdminRole_CONTRACT_ABI,
-  CreateBondandAdminRole_CONTRACT_ADDRESS,
-} from "../srcConstants";
+  WillsCreator_CONTRACT_ADDRESS_ABI,
+  WillsCreator_CONTRACT_ADDRESS,
+} from "../SrcConstants_Wills";
+import {
+  Assets_CONTRACT_ADDRESS,
+  Assets_CONTRACT_ADDRESS_ABI,
+} from "../SrcConstants_Assets";
 import { Box, Button, Flex, Header, TextInput } from "@mantine/core";
 
 import { useForm } from "@mantine/form";

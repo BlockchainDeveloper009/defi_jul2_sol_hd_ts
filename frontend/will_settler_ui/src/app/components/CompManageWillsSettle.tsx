@@ -10,11 +10,15 @@ import {
 
 import { Button } from "@mantine/core";
 import { useState } from "react";
-import { useAccount, useContractRead } from "wagmi";
+import { useAccount, useContractRead, useWriteContract } from "wagmi";
 import { useRouter as navUseRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { useNavigate, useParams } from "react-router-dom";
-import { writeContract } from "wagmi/actions";
+
+import { watchContractEvent } from '@wagmi/core'
+import { config } from '@/wagmi'
+import { abi_willCreator } from './abiwillCreator';
+import { abi } from './abi';
 
 interface IWillsInfo {
   willId: BigNumberish;
@@ -65,7 +69,7 @@ function CompManageWillsSettle() {
   //const router = routUseRouter();
   const router = navUseRouter();
   const searchParams = useSearchParams();
-
+  const { writeContract } = useWriteContract()
   const [willInfoData, setWillInfoData] = useState(null);
 
   const { address, connector, isConnected } = useAccount();
@@ -79,51 +83,66 @@ function CompManageWillsSettle() {
     uint256 willAmount
 );
   */
-  useContractEvent({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
-    eventName: "willSettled",
-    listener(log) {
-      console.log("listening to event assetCreated");
-      console.log(log[0].args.cryptoWillId);
-      console.log(log[0].args.willMaturityDate);
-      console.log(log[0].args.benefitor);
-    },
-  });
 
-  const contract = getContract({
-    address: WillsCreator_CONTRACT_ADDRESS,
-    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
-  });
+  setWillId(searchParams.get("willId"));
+  const unwatch_will_settled = watchContractEvent(config, {
+    address: WillsCreator_CONTRACT_ADDRESS, //'0x7a92beDE8B87dD09C8dB1C979647f599f5AeBb14',
+    abi:WillsCreator_CONTRACT_ADDRESS_ABI,
+    eventName: 'willSettled',
+    onLogs(log) {
+      console.log("listening to event assetCreated");
+      console.log(log);
+      console.log(`willSettled-watchContractEventEnds--------------`);
+      // console.log(log[0].args.cryptoWillId);
+      // console.log(log[0].args.willMaturityDate);
+      // console.log(log[0].args.benefitor);
+      // console.log(logs[0].args.willId)
+      // console.log(logs[0].args.willOwner)
+      // console.log(logs[0].args.willMaturityDate)
+      // console.log(logs[0].args.AssetAmount)
+    },
+    onError(error) { 
+      console.error('Logs error', error) 
+    }, 
+  })
+  unwatch_will_settled();
+  // const contract = getContract({
+  //   address: WillsCreator_CONTRACT_ADDRESS,
+  //   abi: WillsCreator_CONTRACT_ADDRESS_ABI,
+  // });
 
   // const navigate = useNavigate();
   const handleSettleNotification = async () => {
-    let willsId: string | null = searchParams.get("willId");
+    let willsId = searchParams.get("willId");
     // setWillId(willsId)
     console.log("---handleProceed---");
 
     console.log(`before Manual settle=> ${address}`);
 
     try {
-    } catch (error) {}
-    try {
-      const { request, result } = await prepareWriteContract({
-        address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-        abi: CreateBondandAdminRole_CONTRACT_ABI, //CreateBondandAdminRole_CONTRACT_ABI
-        functionName: "manuallySettleWill",
-        args: [willId],
-        chainId: 80001,
+
+      
+      const result  = await writeContract( {
+        abi,
+        address: WillsCreator_CONTRACT_ADDRESS,
+        //WillsCreator_CONTRACT_ADDRESS_ABI
+        functionName: 'manuallySettleWill',
+        arg:  [BigInt(willId)],
+        //chainId: 80001,
         account: address,
+        
       });
 
       console.log(`result of contractprepare=> %% ${result} %%`);
-      const { hash } = await writeContract(request);
-      console.log(`txn Hash`);
-      console.log(hash);
+
     } catch (error) {
-      console.log(`error during Prepare or Settle Contract`);
-      console.log(error);
+
+      console.log(`write--manuallySettlewill`)
+      console.log(error)
     }
+
+        
+    
     console.log(willsId);
     console.log("----------");
     // router.push(`/pageWillsManagerDetails?${createQueryString('willsId',will)}`)

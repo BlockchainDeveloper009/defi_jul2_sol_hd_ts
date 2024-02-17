@@ -17,7 +17,7 @@ import { useRouter as routUseRouter} from 'next/router';
 import { CodeSandboxLogoIcon } from '@radix-ui/react-icons';
 import CSVDownloadButton from './CSVDownloadButton';
 import { IUseWillsInfo } from '../models/IWillInfo';
-import { abi_willCreator } from './abi_willCreator';
+import { abiwillCreator } from './abiwillCreator';
 
 enum baseWillStatus {
   Created, //0
@@ -32,15 +32,19 @@ function GetWillsByUsers(stttt:any) {
   console.log(`incoming value: ${stttt}`)
   const result = useReadContract({
     address: WillsCreator_CONTRACT_ADDRESS,
-    abi: abi_willCreator,
+    abi: abiwillCreator,
     functionName: 'getUserCreatedBonds',
     args: [stttt]
     
   })
   
   
-  console.log('---getUserCreatedBonds-----')
-  console.log(result)
+  console.log('---getWillsByUsers-----')
+  console.log(result.data)
+  console.log(result.isLoading)
+  console.log(result.data)
+  console.log(result.error)
+
   console.log('---------------')
   let retData:IUseWillsInfo[];
   //retData = result as Array<IUseWillsInfo>;
@@ -227,5 +231,6 @@ function convertUnixTimestampToDateString(unixTimestamp: any): import("react").R
 }
 
 export default ManageWillsTable;
+
 
 

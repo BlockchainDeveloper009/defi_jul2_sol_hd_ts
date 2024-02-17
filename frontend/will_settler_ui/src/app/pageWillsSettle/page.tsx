@@ -11,10 +11,9 @@ import { WagmiConfig, configureChains } from 'wagmi'
 //  import { chains, publicClient, webSocketPublicClient } from '../components/wrapperForWagmi';
 
 import { AppProps } from 'next/app'
-import CompCreateAssetsForm from '../components/CompCreateAssetsForm';
-import { InjectedConnector } from 'wagmi/connectors/injected';
+
 import { polygonMumbai } from 'viem/chains';
-import { publicProvider } from 'wagmi/providers/public';
+
 import ComProfile from '../components/CompProfile';
 import CompSelectAssets from '../components/CompSelectAssets';
 import CompManageWillsSettle from '../components/CompManageWillsSettle';
@@ -22,41 +21,14 @@ import CompManageWillsSettle from '../components/CompManageWillsSettle';
 
 const pageWillsSettle = ({Component, pageProps}: AppProps) => {
 
-  const { chains, publicClient, webSocketPublicClient } = configureChains(
-    [
-      // mainnet,
-      // polygon,
-      polygonMumbai,
-      // goerli,
 
 
-    ],
-    [publicProvider()]
-)
 
-  const wagmiConfig = createConfig({
-    autoConnect: true,
-    publicClient,
-    connectors: [
-        new InjectedConnector({
-            chains,  //injecting the chains you would like the wallet to connect
-            options: {
-                name: 'Injected',  
-                shimDisconnect: true,
-            }
-        })
-    ],
-    webSocketPublicClient,
-})
   return (
     <div>
-        <h1>Step 3: Settle Will Manually</h1>
-
-        <WagmiConfig config = {wagmiConfig}>  
-          
-          
+        <h1>Step 3: Settle Will Manually</h1>  
           <CompManageWillsSettle></CompManageWillsSettle>
-        </WagmiConfig>
+        
         {/* <QueryClientProvider client={queryClient}> */}
           {/* <WagmiConfig config = {wagmiConfig}> */}
             

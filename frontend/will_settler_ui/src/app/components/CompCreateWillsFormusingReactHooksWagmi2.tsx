@@ -18,26 +18,29 @@ import { http,
   stringify, } from 'viem'
 
 
-import { useAccount, useContractRead, useReadContract, useSimulateContract, useWriteContract, useWatchContractEvent  } from 'wagmi'
+import { useAccount, useReadContract, useSimulateContract, 
+  useWriteContract, useWatchContractEvent  } from 'wagmi'
 import {
 
-  CreateBondandAdminRole_CONTRACT_ABI,
-  CreateBondandAdminRole_CONTRACT_ADDRESS,
-} from "../srcConstants";
+  WillsCreator_CONTRACT_ADDRESS,
+  WillsCreator_CONTRACT_ADDRESS_ABI,
+} from "../SrcConstants_Wills";
 import { config } from "../../wagmi";
 import { IAssets } from '../models/IAssets';
 
-import { abi } from './abi.2024jan21.Bak';
+
 import Link from 'next/link';
+import { abiwillCreator } from './abiwillCreator';
+import { abi } from './abi.2024feb13.Bak';
 const src_contract_addr = '0x6635BaCd122cfc8e8D726633f224746Bd2578872'
 function  GetAssetsByUsers(addr:any):IAssets[] {
 
   if(addr == null){
     console.log("address is null");
   }
-  const { data:functionData,status} = useContractRead({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
+  const { data:functionData,status} = useReadContract({
+    address: WillsCreator_CONTRACT_ADDRESS,
+    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
     functionName: 'getUserCreatedBonds',
     args: [addr]
 
@@ -116,15 +119,16 @@ function CompCreateWillsFormusingReactHooksWagmi2() {
   });
   const result
   = useReadContract({
-    address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-    abi: CreateBondandAdminRole_CONTRACT_ABI,
+    abiwillCreator,
+    address: WillsCreator_CONTRACT_ADDRESS,    
     functionName: 'checkAssetisAvailable',
     args: [assetId],
   })
 
   useWatchContractEvent({
-    address: '0x6635BaCd122cfc8e8D726633f224746Bd2578872',
-    abi,
+    abiwillCreator,
+    address: WillsCreator_CONTRACT_ADDRESS,
+    
     eventName: 'willCreated',
     onLogs(logs) {
       console.log('New logs!', logs)
@@ -133,7 +137,7 @@ function CompCreateWillsFormusingReactHooksWagmi2() {
   // const simulateResult = useSimulateContract
   // ({
   //   abi,
-  //   address: CreateBondandAdminRole_CONTRACT_ADDRESS,
+  //   address: WillsCreator_CONTRACT_ADDRESS,
   //   functionName: 'a_createCryptoVault',
   //   args: [
   //     assetId, BigInt(willStartDate),BigInt(willEndDate),'0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1'
@@ -186,7 +190,7 @@ const { writeContract } = useWriteContract()
  ? newBenefitorValue as `0x${string}`  // If it already has '0x', use it as is
  : `0x${newBenefitorValue}` as `0x${string}` | undefined;  // If not, add the '0x' prefix
 
-         console.log(`---src contract=> ${CreateBondandAdminRole_CONTRACT_ADDRESS}`)
+         console.log(`---src contract=> ${WillsCreator_CONTRACT_ADDRESS}`)
           
           console.log(`incoming benefitor before seeting ${updatedBenefitor}`)
 
@@ -249,7 +253,7 @@ const { writeContract } = useWriteContract()
                                 writeContract
                                 ({
                                   abi,
-                                  address: '0x6635BaCd122cfc8e8D726633f224746Bd2578872',//'0x6635BaCd122cfc8e8D726633f224746Bd2578872',//,CreateBondandAdminRole_CONTRACT_ADDRESS
+                                  address: WillsCreator_CONTRACT_ADDRESS,//'0x6635BaCd122cfc8e8D726633f224746Bd2578872',//,CreateBondandAdminRole_CONTRACT_ADDRESS
                                   functionName: 'a_createCryptoVault',
                                   args: [assetId, BigInt(willStartDate),BigInt(willEndDate),
                                   '0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a'],//benefitorAddr],//0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a

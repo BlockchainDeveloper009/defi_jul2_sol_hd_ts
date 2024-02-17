@@ -21,7 +21,9 @@ const WillsManager = () => {
         
               
               <div >
-                  <ManageWillsTable></ManageWillsTable>
+                <Container>
+                    <ManageWillsTable></ManageWillsTable>
+                </Container>
               </div>
               <Container>
                   <CompFindStatus_Assets_Wills></CompFindStatus_Assets_Wills>

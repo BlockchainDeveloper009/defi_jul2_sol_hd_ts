@@ -14,33 +14,7 @@ import ComProfile from '../components/CompProfile';
 
 const pageHeader = `pageWillsCreatorUsingWagmiReact`
 const WillsCreator = ( {Component, pageProps}: AppProps) => {
-  const { chains, publicClient, webSocketPublicClient } = configureChains(
-    [
-      // mainnet,
-      // polygon,
-      polygonMumbai,
-      // goerli,
-
-
-    ],
-    [publicProvider()]
-)
-
-  const wagmiConfig = createConfig({
-    autoConnect: true,
-    publicClient,
-    connectors: [
-        new InjectedConnector({
-            chains,  //injecting the chains you would like the wallet to connect
-            options: {
-                name: 'Injected',  
-                shimDisconnect: true,
-            }
-        })
-    ],
-    webSocketPublicClient,
-})
-
+ 
   return (
     <div>
       {/* <WagmiConfigProvider>
@@ -49,10 +23,10 @@ const WillsCreator = ( {Component, pageProps}: AppProps) => {
          
       {/* </WagmiConfigProvider> */}
       { pageHeader }
-      <WagmiConfig config = {wagmiConfig}>  
+      
           
           <CreateWillsForm></CreateWillsForm>
-        </WagmiConfig>
+        
     </div>
   )
 }
