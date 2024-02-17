@@ -7,7 +7,7 @@ import axios  from 'axios'
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
 import { watchContractEvent } from '@wagmi/core'
-import { abi } from './abi.2024feb13.Bak';
+
 //import {  getContract,  useContractWrite, usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
 import {
  
@@ -32,7 +32,8 @@ import CompSelectAssets from './CompSelectAssets';
 import { SelectItems } from '@mantine/core/lib/Select/SelectItems/SelectItems';
 import { useWriteContract } from 'wagmi'
 import { config } from '@/wagmi'
-
+import {abiassetsContractor} from './abiassetsContractor';
+import { abi } from './abi';
 
 //const prisma = new PrismaClient()
 type Assets = z.infer<typeof createAssetSchema >;
@@ -93,8 +94,8 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
   };
 
   const unwatch = watchContractEvent(config, {
-    address: '0x7a92beDE8B87dD09C8dB1C979647f599f5AeBb14',
-    abi,
+    address: '0x0DaFC14Af4E71716971E04444fe58d9fC413dc3',//'0x7a92beDE8B87dD09C8dB1C979647f599f5AeBb14',
+    abi: abiassetsContractor,
     eventName: 'assetCreated',
     onLogs(logs) {
       console.log('New logs!', logs)
@@ -192,7 +193,7 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
 
   console.log(`Accessing contract: '${Assets_CONTRACT_ADDRESS}' `)
   
-    function HookDirectUseWrite(){
+    function useMethodToWriteAsset_Buttoncall(){
 
       try {
         console.log(`calling write contract`)
@@ -200,7 +201,7 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
         writeContract
         ({
           abi,
-          address: Assets_CONTRACT_ADDRESS,
+          address: '0x0DaFC14Af4E71716971E04444fe858d9fC413dc3',
           functionName: 'a_createAssets',
           args: [
             assetName, `0x${'0000000000000000000000000000000000001010'}`, BigInt(10000000000000000) 
@@ -262,14 +263,14 @@ let dd:any = z.bigint();
             {...form.getInputProps('Amount')}
           />
   
-  <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {HookDirectUseWrite}>USE METHOD TO CREATE ASSET</Button>
+  <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {useMethodToWriteAsset_Buttoncall}>USE METHOD TO CREATE ASSET</Button>
 
           <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {
             ()=> {
 
                 try {
-                      console.log(`calling write contract`)
-                      console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${CreateBondandAdminRole_CONTRACT_ADDRESS}`)
+                      console.log(`calling write contract to create assets`)
+                      console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${Assets_CONTRACT_ADDRESS}`)
                       writeContract
                       ({
                         abi,
@@ -288,7 +289,7 @@ let dd:any = z.bigint();
 
             }
           }>
-            useHook submit 
+            direct WRITE submit 
           </Button>
           
           {/* {isSuccess && (

@@ -53,6 +53,14 @@ function GetWillsByUsers(stttt:any) {
 
 }
 
+/*
+ * converts time stamp to formatted data
+ * @returns 
+ *   - Loads list of wills owned by user
+ *   - Wills Edit  - pageWillsManagerEdit
+ *   - Wills Cancel
+ *   - Wills Settle
+*/
 
 function ManageWillsTable() {
   
@@ -146,10 +154,10 @@ function convertUnixTimestampToDateString(unixTimestamp: any): import("react").R
     if(d.data.length>=0)
     {
       
-            console.log(d[0])
+          
           const trows = d.data.map((element:any) => (
             
-            <tr key={element.assetId}>
+            <tr key={element.willId}>
               
               <td ><a href="" target="_blank">{element.willId.toString()}</a></td>
               <td >{element.assetId}</td>

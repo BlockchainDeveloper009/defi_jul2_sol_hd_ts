@@ -7,7 +7,7 @@ import axios  from 'axios'
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
 import { watchContractEvent } from '@wagmi/core'
-import { abi_assetsContractor } from './abiassetsContractor';
+
 //import {  getContract,  useContractWrite, usePrepareContractWrite, useWaitForTransaction } from './wrapperForWagmi'
 import {
  
@@ -32,6 +32,7 @@ import CompSelectAssets from './CompSelectAssets';
 import { SelectItems } from '@mantine/core/lib/Select/SelectItems/SelectItems';
 import { useWriteContract, useSimulateContract  } from 'wagmi'
 import { config } from '@/wagmi'
+import { abiassetsContractor } from './abiassetsContractor';
 
 
 //const prisma = new PrismaClient()
@@ -70,6 +71,30 @@ function CompCreateAssetsForm_SimulationUsingReactHooksWagmi2() {
 
   const { writeContract } = useWriteContract()
   const [abiFromMongoDb,setabiFromMongoDb] = useState();
+
+  async function obsolete_handleUseSimulation(){
+    ()=> {
+  
+      try {
+            console.log(`calling useSimulation`)
+            console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${Assets_CONTRACT_ADDRESS}`)
+            useSimulateContract
+            ({
+              abi: abiassetsContractor,
+              address: Assets_CONTRACT_ADDRESS,
+              functionName: 'a_createAssets',
+              args: [
+                assetName, `0x${'0000000000000000000000000000000000001010'}`, 1n 
+              ],
+               //value: BigInt(1),//dd.parse(BigInt(assetAmountForm)) 
+            })
+  
+          } catch (error) {
+            console.log(`error during contract write`)
+            console.log(error)
+          }
+      }
+    }
   /** 
         useEffect(()=>{
           let readContractFromMongoDb;
@@ -94,7 +119,7 @@ function CompCreateAssetsForm_SimulationUsingReactHooksWagmi2() {
 
   const unwatch = watchContractEvent(config, {
     address: Assets_CONTRACT_ADDRESS, //'0x7a92beDE8B87dD09C8dB1C979647f599f5AeBb14',
-    abi:abi_assetsContractor,
+    abi:abiassetsContractor,
     eventName: 'assetCreated',
     onLogs(logs) {
       console.log('New logs!', logs)
@@ -200,7 +225,7 @@ function CompCreateAssetsForm_SimulationUsingReactHooksWagmi2() {
             console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${Assets_CONTRACT_ADDRESS}`)
             useSimulateContract
             ({
-              abi_assetsContractor,
+              abi:abiassetsContractor,
               address: Assets_CONTRACT_ADDRESS,
               functionName: 'a_createAssets',
               args: [
@@ -219,7 +244,7 @@ function CompCreateAssetsForm_SimulationUsingReactHooksWagmi2() {
 
       
       return { 
-        abi_assetsContractor,
+        abiassetsContractor,
         address: Assets_CONTRACT_ADDRESS,
         functionName: 'a_createAssets',
         args: [
@@ -281,7 +306,7 @@ let dd:any = z.bigint();
           <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {
             handleSimulation}
           >
-            useHook submit 
+            Simulation submit 
           </Button>
           
           {/* {isSuccess && (

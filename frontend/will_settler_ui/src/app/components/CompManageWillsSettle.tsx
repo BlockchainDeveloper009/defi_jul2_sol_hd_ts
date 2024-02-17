@@ -18,7 +18,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { watchContractEvent } from '@wagmi/core'
 import { config } from '@/wagmi'
 import { abi_willCreator } from './abiwillCreator';
-import { abi } from './abi';
+import { abi } from './abi.2024feb17.Bak.oldWorkingContract';
 
 interface IWillsInfo {
   willId: BigNumberish;

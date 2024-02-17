@@ -31,7 +31,8 @@ import { IAssets } from '../models/IAssets';
 
 import Link from 'next/link';
 import { abiwillCreator } from './abiwillCreator';
-import { abi } from './abi.2024feb13.Bak';
+import { abiassetsContractor } from './abiassetsContractor';
+
 const src_contract_addr = '0x6635BaCd122cfc8e8D726633f224746Bd2578872'
 function  GetAssetsByUsers(addr:any):IAssets[] {
 
@@ -252,7 +253,7 @@ const { writeContract } = useWriteContract()
                         
                                 writeContract
                                 ({
-                                  abi,
+                                  abiassetsContractor,
                                   address: WillsCreator_CONTRACT_ADDRESS,//'0x6635BaCd122cfc8e8D726633f224746Bd2578872',//,CreateBondandAdminRole_CONTRACT_ADDRESS
                                   functionName: 'a_createCryptoVault',
                                   args: [assetId, BigInt(willStartDate),BigInt(willEndDate),

@@ -14,8 +14,8 @@ import { writeContract } from "wagmi/actions";
 import { useAccount, useContractRead, useWriteContract } from "wagmi";
 import { config } from '@/wagmi'
 
-import { abi_willCreator } from './abiwillCreator';
-import { abi } from './abi';
+import { abiwillCreator } from './abiwillCreator';
+import { abi } from './abi.2024feb17.Bak.oldWorkingContract';
 
 function GetWillStatus(willId:any):string {
   const { data:functionData,status} = useContractRead({
@@ -56,7 +56,9 @@ function CompManageWillsCancel() {
 
       // const { willId } = router. as { willId?: string}
       function  CancelWill(){
-        let willId = searchParams.get("willId")
+        let _willId = -1;
+        _willId = Number(searchParams.get("willId"));
+        let willId = BigInt(_willId);
         if(willId){
           console.log(`Will Id passed -- ${willId}`)
         }else{
@@ -65,9 +67,9 @@ function CompManageWillsCancel() {
         
         try {
           const result  = writeContract({
-            abi,
+            abiwillCreator,
             address: WillsCreator_CONTRACT_ADDRESS,
-            //WillsCreator_CONTRACT_ADDRESS_ABI
+           
             functionName: 'cancelWill',
             args: [willId]
             // chainId: 80001
