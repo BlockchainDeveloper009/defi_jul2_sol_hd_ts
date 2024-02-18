@@ -19,7 +19,7 @@ import {
   Assets_CONTRACT_ADDRESS,
   Assets_CONTRACT_ADDRESS_ABI,
 } from "../SrcConstants_Assets";
-//import { contractConfig } from "../Config";
+
 import { IAssets } from '../models/IAssets';
 
 

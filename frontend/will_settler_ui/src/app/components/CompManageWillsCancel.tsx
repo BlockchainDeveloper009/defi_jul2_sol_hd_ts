@@ -10,12 +10,14 @@ import {
   WillsCreator_CONTRACT_ADDRESS_ABI,
 } from "../SrcConstants_Wills";
 import { Button } from "@mantine/core";
-import { writeContract } from "wagmi/actions";
+
 import { useAccount, useContractRead, useWriteContract } from "wagmi";
 import { config } from '@/wagmi'
 
 import { abiwillCreator } from './abiwillCreator';
-import { abi } from './abi.2024feb17.Bak.oldWorkingContract';
+import { abiwill } from "./abiwill";
+import CompManageWillsTableRouter from "./CompManageWillsTableRouter";
+
 
 function GetWillStatus(willId:any):string {
   const { data:functionData,status} = useContractRead({
@@ -30,6 +32,7 @@ function GetWillStatus(willId:any):string {
 function CompManageWillsCancel() {
   const { address, connector, isConnected } = useAccount()
   const router = navUseRouter();
+  
   const searchParams = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [Hash, setHash] = useState('')
@@ -46,12 +49,15 @@ function CompManageWillsCancel() {
     eventName: 'willCancelled',
     onLogs(logs) {
       console.log('will cancelled!', logs)
-      console.log('listening to event assetCreated')
+      console.log('listening to event willCancelled')
       // console.log(logs[0].args.willId)
       // console.log(logs[0].args.willOwner)
       // console.log(logs[0].args.willMaturityDate)
       // console.log(logs[0].args.AssetAmount)
     },
+    onError(error) { 
+      console.log('Error', error) 
+    } 
   })
 
       // const { willId } = router. as { willId?: string}
@@ -67,11 +73,11 @@ function CompManageWillsCancel() {
         
         try {
           const result  = writeContract({
-            abiwillCreator,
+            abi:abiwillCreator,
             address: WillsCreator_CONTRACT_ADDRESS,
            
             functionName: 'cancelWill',
-            args: [willId]
+            args: [BigInt(willId)]
             // chainId: 80001
             
             
@@ -103,26 +109,27 @@ function CompManageWillsCancel() {
           </div>)
       }
  
+     
 let willStatus = GetWillStatus(searchParams.get("willId"));
   return (
     <div>
       <h1>Manage will Cancel</h1>
       <h1>{searchParams.get("willId")}</h1>
       
-
+      <CompManageWillsTableRouter/>
       {/* <p>Hello will id, {willId || 'Invalid WIll Id'}</p> */}
       <h2>`will Status '{willStatus}'`</h2>
-          <Button onClick={CancelWill} >Cancel will</Button>
+         
 
 
           <Button onClick={()=>
           
           writeContract({
-            abi,
+            abi:WillsCreator_CONTRACT_ADDRESS_ABI,
             address: WillsCreator_CONTRACT_ADDRESS,
             //WillsCreator_CONTRACT_ADDRESS_ABI
             functionName: 'cancelWill',
-            args: [0]
+            args: [BigInt(0),BigInt(0)]
             // chainId: 80001
             
             

@@ -10,15 +10,17 @@ import {
 
 import { Button } from "@mantine/core";
 import { useState } from "react";
-import { useAccount, useContractRead, useWriteContract } from "wagmi";
+import { useAccount, useContractRead, useReadContract, useWriteContract } from "wagmi";
 import { useRouter as navUseRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { watchContractEvent } from '@wagmi/core'
-import { config } from '@/wagmi'
-import { abi_willCreator } from './abiwillCreator';
-import { abi } from './abi.2024feb17.Bak.oldWorkingContract';
+
+import { abiwillCreator } from './abiwillCreator';
+import { abiwill } from './abiwill';
+import { config } from "@/wagmi";
+import CompManageWillsTableRouter from "./CompManageWillsTableRouter";
 
 interface IWillsInfo {
   willId: BigNumberish;
@@ -31,31 +33,31 @@ interface IWillsInfo {
   willManager: BigInteger;
 }
 function GetWillsByUsers(stttt: any) {
-  const { data: functionData, status } = useContractRead({
-    address: WillsCreator_CONTRACT_ADDRESS,
-    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
-    functionName: "getUserCreatedBonds",
-    args: [stttt],
-  });
+  // const { data: functionData, status } = useReadContract({
+  //   address: WillsCreator_CONTRACT_ADDRESS,
+  //   abi: WillsCreator_CONTRACT_ADDRESS_ABI,
+  //   functionName: "getUserCreatedBonds",
+  //   args: [stttt],
+  // });
 
-  console.log("---getUserCreatedBonds-----");
-  console.log(functionData);
-  console.log("---------------");
-  let retData: IWillsInfo[];
-  retData = functionData as Array<IWillsInfo>;
-  console.log(retData);
-  return retData;
+  // console.log("---getUserCreatedBonds-----");
+  // console.log(functionData);
+  // console.log("---------------");
+  // let retData: IWillsInfo[];
+  // retData = functionData as Array<IWillsInfo>;
+  // console.log(retData);
+  // return retData;
 }
 
 function GetWilStatus(willId: any) {
-  const { data: functionData, status } = useContractRead({
+  const { data: functionData, status } = useReadContract({
     address: WillsCreator_CONTRACT_ADDRESS,
     abi: WillsCreator_CONTRACT_ADDRESS_ABI,
     functionName: "getWillStatus",
     args: [willId],
   });
 
-  console.log("---getUserCreatedBonds-----");
+  console.log("---GetWilStatus-----");
   console.log(functionData);
   console.log("---------------");
   let retData: any;
@@ -83,8 +85,11 @@ function CompManageWillsSettle() {
     uint256 willAmount
 );
   */
-
-  setWillId(searchParams.get("willId"));
+//  let will_id = 0; //searchParams.get("willId")!="" ?searchParams.get("willId"):"";
+//  if(will_id !=null){
+//   setWillId(will_id);
+//  }
+  
   const unwatch_will_settled = watchContractEvent(config, {
     address: WillsCreator_CONTRACT_ADDRESS, //'0x7a92beDE8B87dD09C8dB1C979647f599f5AeBb14',
     abi:WillsCreator_CONTRACT_ADDRESS_ABI,
@@ -106,12 +111,7 @@ function CompManageWillsSettle() {
     }, 
   })
   unwatch_will_settled();
-  // const contract = getContract({
-  //   address: WillsCreator_CONTRACT_ADDRESS,
-  //   abi: WillsCreator_CONTRACT_ADDRESS_ABI,
-  // });
 
-  // const navigate = useNavigate();
   const handleSettleNotification = async () => {
     let willsId = searchParams.get("willId");
     // setWillId(willsId)
@@ -122,12 +122,12 @@ function CompManageWillsSettle() {
     try {
 
       
-      const result  = await writeContract( {
-        abi,
+      const result  = writeContract( {
+        abi:abiwill,
         address: WillsCreator_CONTRACT_ADDRESS,
         //WillsCreator_CONTRACT_ADDRESS_ABI
         functionName: 'manuallySettleWill',
-        arg:  [BigInt(willId)],
+        args:  [BigInt(willId),BigInt(0)],
         //chainId: 80001,
         account: address,
         
@@ -157,25 +157,53 @@ function CompManageWillsSettle() {
   };
 
   // main function start
-  try {
-    console.log(`addresss -----> ${address}`);
-    let willStatus = GetWilStatus(searchParams.get("willId"));
-    return (
-      <div className="App">
-        <h2>Wills Manual Settle by User</h2>
-        {!address && <div>Account Not connected</div>}
+  // try {
+  //   console.log(`addresss -----> ${address}`);
+  //   let willStatus = GetWilStatus(searchParams.get("willId"));
+  //   return (
+  //     <div className="App">
+  //       <h2>Wills Manual Settle by User</h2>
+  //       {!address && <div>Account Not connected</div>}
 
-        <h1>id ...{searchParams.get("willId")}...</h1>
-        <h2>will Status {willStatus}</h2>
-        {willStatus == "Started" && (
-          <Button onClick={handleSettleNotification}>Settle will</Button>
-        )}
-      </div>
-    );
-  } catch (error) {
-    console.log(`Ex-10: GetWillsByUsers - ${error}`);
-  }
-  return null;
+  //       <h1>id ...{searchParams.get("willId")}...</h1>
+  //       <h2>will Status {willStatus}</h2>
+  //       {willStatus == "Started" && (
+  //         <Button onClick={handleSettleNotification}>Settle will</Button>
+  //       )}
+  //       <Button onClick={()=>writeContract({ 
+  //         abi:abiwillCreator,
+  //         address: WillsCreator_CONTRACT_ADDRESS,
+  //       //WillsCreator_CONTRACT_ADDRESS_ABI
+  //       functionName: 'manuallySettleWill',
+  //       args:  [BigInt(willId),BigInt(0)],
+  //      })}>Direct Write Settle will</Button>
+  //     </div>
+  //   );
+  // } catch (error) {
+  //   console.log(`Ex-10: GetWillsByUsers - ${error}`);
+  // }
+  // return <div><p>invalid action item</p></div>;
+  let _willId = searchParams.get("willId");
+ let willStatus = GetWilStatus(_willId);
+
+  return (
+    <div className="App">
+      <h2>Wills Manual Settle by User</h2>
+     
+      <CompManageWillsTableRouter/>
+      <h1>id ...{_willId}...</h1>
+      <h2>will Status -- {willStatus} --</h2>
+      
+      <Button onClick={()=>writeContract({ 
+        abi:abiwillCreator,
+        address: WillsCreator_CONTRACT_ADDRESS,
+      //WillsCreator_CONTRACT_ADDRESS_ABI
+      functionName: 'manuallySettleWill',
+      args:  [BigInt(willId),BigInt(0)],
+     })}>Direct Write Settle will</Button>
+    </div>
+  );
+
 }
 
 export default CompManageWillsSettle;

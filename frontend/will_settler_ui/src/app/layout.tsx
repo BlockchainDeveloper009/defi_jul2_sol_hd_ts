@@ -1,8 +1,12 @@
 
+
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import GlobalProfile from './components/GlobalProfile'
+
+import { trackUserActivity } from '../app/utils/activityTracker';
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,16 +22,21 @@ import { type ReactNode } from 'react'
 
 export default function RootLayout(props: { children: ReactNode }) {
 
-
+  function trackActivity(activity: string) {
+    trackUserActivity(activity);
+  }
+  // useEffect(() => {
+  //   // Example: Track page load activity
+  //   trackActivity('Page loaded');
+  // }, []);
   return (
     <html lang="en">
       <body className={inter.className}>
  
-        
         <Providers>
-        <NavBar></NavBar>
-       
-          {props.children}</Providers>
+           <NavBar></NavBar>
+           {props.children}
+        </Providers>
         </body>
     </html>
   )
