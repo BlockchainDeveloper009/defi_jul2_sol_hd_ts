@@ -202,7 +202,7 @@ function convertUnixTimestampToDateString(unixTimestamp: any): import("react").R
                     <tr>
                     <th>will_Id</th>
                     <th>asset_Id</th>
-                    <th>status</th>
+                    <th>will_status</th>
                     <th>Edit</th>
                     <th>Cancel</th>
                     <th>Settle</th>

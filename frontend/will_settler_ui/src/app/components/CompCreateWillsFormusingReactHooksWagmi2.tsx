@@ -32,6 +32,7 @@ import { IAssets } from '../models/IAssets';
 import Link from 'next/link';
 import { abiwillCreator } from './abiwillCreator';
 import { abiassetsContractor } from './abiassetsContractor';
+import { getTodaysDate,getDateAfterDays } from '../utils/dateUtils';
 
 const src_contract_addr = '0x6635BaCd122cfc8e8D726633f224746Bd2578872'
 function  GetAssetsByUsers(addr:any):IAssets[] {
@@ -101,8 +102,8 @@ function CompCreateWillsFormusingReactHooksWagmi2() {
   }
   const form = useForm({
     initialValues: {
-      willStartDate: '',
-      willEndDate: '',
+      willStartDate: getTodaysDate(),
+      willEndDate: getDateAfterDays(3),
       Benefitor: '0x',
       AssetId: '1',
       // AssetId: [

@@ -39,6 +39,9 @@ function GetAssetStaus(assetId:string) {
 function  GetAssetsByUsers(customerAddr:any):IAss[] {
   
   console.log(`contractAddr= '${Assets_CONTRACT_ADDRESS}'`);
+  console.log(`---getAssets by----- ${customerAddr}`);
+  
+
   const { data:functionData,status} = useReadContract({
     address: Assets_CONTRACT_ADDRESS,
     abi: Assets_CONTRACT_ADDRESS_ABI,
@@ -48,8 +51,7 @@ function  GetAssetsByUsers(customerAddr:any):IAss[] {
   })
   
   
-  console.log('---getUserCreatedBonds-----')
-  console.log(customerAddr)
+ 
   console.log('--expect use address')
   console.log('expect function data')
   console.log(functionData)
@@ -98,11 +100,15 @@ function ManageAssetsTable() {
             <tr key={element.AssetId}>
               
               {/* <td ><a href="" target="_blank">{element.assetId}</a></td> */}
-              
               <td>{element.AssetId}</td>
+              <td>{element.AssetName}</td>
               {/* <td>{GetAssetStaus(element.assid)}</td> */}
+              <td>{element.AssetTokenAddress}</td>
+              <td>{element.assetStatus}</td>
+              <td>{element.isAvailable}</td> 
+
        
-              <td><button onClick={()=>handleProceed(element.assid)}></button></td>
+              <td><button onClick={()=>handleProceed(element.assid)}>handleAssetBttn</button></td>
               {/* <td>{element.willManager}</td>
               <td>{element.willOwner}</td> */}
               
@@ -120,8 +126,13 @@ function ManageAssetsTable() {
                 <Table  highlightOnHover withColumnBorders>
                       <thead>
                           <tr>
+                            
                             <th>assetId</th>
                             <th>assetName</th>
+                            <th>AssetTokenAddr</th>
+                            <th>Asset_Amount</th>
+                            <th>IsAvailable_flg</th>
+                            <th>asset_handler</th>
                           </tr>
                       </thead>
 

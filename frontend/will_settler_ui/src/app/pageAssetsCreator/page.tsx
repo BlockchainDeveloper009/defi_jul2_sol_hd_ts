@@ -11,7 +11,7 @@ import { WagmiConfig, configureChains } from 'wagmi'
 //  import { chains, publicClient, webSocketPublicClient } from '../components/wrapperForWagmi';
 
 import { AppProps } from 'next/app'
-import CompCreateAssetsForm from '../components/CompCreateAssetsForm';
+import CompCreateAssetsForm from '../components/compCreateAssetsForm';
 
 
 import ComProfile from '../components/CompProfile';

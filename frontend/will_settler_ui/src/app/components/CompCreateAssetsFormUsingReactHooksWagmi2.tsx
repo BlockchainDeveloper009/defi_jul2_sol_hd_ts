@@ -42,6 +42,7 @@ interface AssetCCy {
   ccyName: string
 
 }
+//pageAssetsCreatorWagmiReactHook
 function CompCreateAssetsFormUsingReactHooksWagmi2() {
 
   const router = useRouter();

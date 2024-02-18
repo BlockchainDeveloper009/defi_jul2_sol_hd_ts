@@ -8,33 +8,42 @@ import { useEffect, useState } from 'react';
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
 
-import { useAccount, useReadContract } from 'wagmi'
+import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import {
 
   WillsCreator_CONTRACT_ADDRESS,
   WillsCreator_CONTRACT_ADDRESS_ABI,
 } from "../SrcConstants_Wills";
+import {
+
+  Assets_CONTRACT_ADDRESS,
+  Assets_CONTRACT_ADDRESS_ABI,
+} from "../SrcConstants_Assets";
 //import { contractConfig } from "../Config";
 import { IAssets } from '../models/IAssets';
-import { writeContract } from '@wagmi/core';
-import { config } from '../wagmiConfig'
 
+
+import { getTodaysDate,getDateAfterDays } from '../utils/dateUtils';
+
+//read from asset contract
 function  GetAssetsByUsers(addr:any):IAssets[] {
 
   if(addr == null){
-    console.log("address is null");
+    console.log("address is null, HARDCODING 0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1");
+    addr = '0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1';
+
   }
   //const { data:functionData,status} 
   const result = useReadContract({
-    address: WillsCreator_CONTRACT_ADDRESS,
-    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
-    functionName: 'getUserCreatedBonds',
+    address: Assets_CONTRACT_ADDRESS,
+    abi: Assets_CONTRACT_ADDRESS_ABI,
+    functionName: 'getUserCreatedAssets',
     args: [addr]
 
   })
   const { address } = useAccount()
 
-  console.log('---getUserCreatedBonds-----')
+  console.log('---getUserCreatedAssetsa-----')
   console.log(address)
   console.log('--expect use address')
   console.log('expect function data')
@@ -81,15 +90,15 @@ function CompCreateWillsForm2usingWagmiHooks() {
 
   const [createWillFlag, setCreateWillFlag] = useState(false);
   const [submittedValues, setSubmittedValues] = useState('');
-
+  const { writeContract} = useWriteContract();
 
   const assetIds = async () => {
     console.log(assetIds)
   }
   const form = useForm({
     initialValues: {
-      willStartDate: '',
-      willEndDate: '',
+      willStartDate: getTodaysDate(),
+      willEndDate: getDateAfterDays(3),
       Benefitor: '0x',
       AssetId: '1',
       // AssetId: [
@@ -106,26 +115,14 @@ function CompCreateWillsForm2usingWagmiHooks() {
     }),
   });
   //const { data:Result, error:Error ,isError:boolean, status}
-  const result = useReadContract({
-    address: WillsCreator_CONTRACT_ADDRESS,
-    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
-    functionName: 'checkAssetisAvailable',
-    args: [assetId],
-  })
-async function coreWriteCreateWill(){
-  console.log(`print the config details`)
-  console.log(config)
-  const result  = await writeContract(config,
-    {
-    address: WillsCreator_CONTRACT_ADDRESS,
-    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
-    functionName: 'a_createCryptoVault',
-    args: [assetId, willStartDate,willEndDate,benefitorAddr],
-    value: BigInt(0)
-    
-  }).then(()=> {console.log('successfull write contract')})
-  .catch(er => alert(er.message));
-}
+  // const result = useReadContract({
+  //   address: WillsCreator_CONTRACT_ADDRESS,
+  //   abi: WillsCreator_CONTRACT_ADDRESS_ABI,
+  //   functionName: 'checkAssetisAvailable',
+  //   args: [assetId],
+  // })
+
+ 
   /**extension of usePrepareCOntractWrite
   // if(isPrepareError){
   //   console.log(`usePrepareContractWrite - error`)
@@ -143,14 +140,28 @@ async function coreWriteCreateWill(){
 //   },[prepareError])
 */
 
+const CreateWill = async () => {
+  console.log(`direct create will using writeContract`)
+  console.log(`willStartDate-> '${willStartDate}'`)
+  console.log(`willEndDate-> '${willEndDate}'`)
+  setCreateWillFlag(true);
+  const result  = writeContract(
+    {
+    address: WillsCreator_CONTRACT_ADDRESS,
+    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
+    functionName: 'a_createCryptoVault',
+    args: [assetId, willStartDate,willEndDate,benefitorAddr],
+    value: BigInt(0)
+    });
+    console.log(`result after write`)
+    console.log(result)
+    console.log(`-------------`)
 
-  const CreateWill = async () => {
+};
 
-    console.log(`willStartDate-> '${willStartDate}'`)
-    console.log(`willEndDate-> '${willEndDate}'`)
-    setCreateWillFlag(true);
+  const obsolete_CreateWill1 = async () => {
 
-    await coreWriteCreateWill();
+
                     // const { 
                     //   request } = await prepareWriteContract({
                     //   address: CreateBondandAdminRole_CONTRACT_ADDRESS,
@@ -212,7 +223,7 @@ async function coreWriteCreateWill(){
           setWillStartDate(ConvertDateToUnixTimeStamp(values.willStartDate).toString())
           setWillEndDate(ConvertDateToUnixTimeStamp(values.willEndDate).toString()) //values.willEndDate
           setbenefitorAddr(values.Benefitor)
-        //  write?.();
+        
 
         })}
       >
