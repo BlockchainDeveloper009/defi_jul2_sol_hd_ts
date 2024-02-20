@@ -2,7 +2,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import { useRouter as navUseRouter} from 'next/navigation';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { watchContractEvent } from '@wagmi/core'
 import {
   
@@ -17,6 +17,7 @@ import { config } from '@/wagmi'
 import { abiwillCreator } from './abiwillCreator';
 import { abiwill } from "./abiwill";
 import CompManageWillsTableRouter from "./CompManageWillsTableRouter";
+import { Container } from "postcss";
 
 
 function GetWillStatus(willId:any):string {
@@ -31,6 +32,7 @@ function GetWillStatus(willId:any):string {
 } 
 function CompManageWillsCancel() {
   const { address, connector, isConnected } = useAccount()
+  const { writeContract } = useWriteContract()
   const router = navUseRouter();
   
   const searchParams = useSearchParams();
@@ -40,7 +42,7 @@ function CompManageWillsCancel() {
 
   const [TransactionError, setTransactionError] = useState('')
 
-  const { writeContract } = useWriteContract()
+  const [watchCancellError, setwatchCancellError] = useState('');
 
 
   const unwatch_assets = watchContractEvent(config, {
@@ -56,10 +58,13 @@ function CompManageWillsCancel() {
       // console.log(logs[0].args.AssetAmount)
     },
     onError(error) { 
-      console.log('Error', error) 
+      console.log('Error', error)
+      setwatchCancellError(error.message) ;
     } 
   })
+  useEffect(()=>{
 
+  },[watchCancellError]);
       // const { willId } = router. as { willId?: string}
       function  CancelWill(){
         let _willId = -1;
@@ -113,10 +118,11 @@ function CompManageWillsCancel() {
 let willStatus = GetWillStatus(searchParams.get("willId"));
   return (
     <div>
+      <CompManageWillsTableRouter/>
       <h1>Manage will Cancel</h1>
       <h1>{searchParams.get("willId")}</h1>
       
-      <CompManageWillsTableRouter/>
+      
       {/* <p>Hello will id, {willId || 'Invalid WIll Id'}</p> */}
       <h2>`will Status '{willStatus}'`</h2>
          
@@ -138,7 +144,9 @@ let willStatus = GetWillStatus(searchParams.get("willId"));
 
 
           
-
+          <p>--Notify Errors--</p>
+            {watchCancellError && <p>Error:{watchCancellError}</p>}
+            <p>----</p>
           
     </div>
   )

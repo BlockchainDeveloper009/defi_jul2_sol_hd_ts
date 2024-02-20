@@ -18,6 +18,8 @@ import { CodeSandboxLogoIcon } from '@radix-ui/react-icons';
 import CSVDownloadButton from './CSVDownloadButton';
 import { IUseWillsInfo } from '../models/IWillInfo';
 import { abiwillCreator } from './abiwillCreator';
+import { readContract } from '@wagmi/core';
+import { config } from '@/wagmi';
 
 enum baseWillStatus {
   Created, //0
@@ -120,6 +122,26 @@ function convertUnixTimestampToDateString(unixTimestamp: any): import("react").R
   //   );
   // };
   }
+  async function getWillStat(_willId:string){
+    // const {data, isError,error,isSuccess} = useReadContract({
+    //   address: WillsCreator_CONTRACT_ADDRESS,
+    //   abi: WillsCreator_CONTRACT_ADDRESS_ABI,
+    //   functionName: 'getWillStatus',
+    //   args: [_willId]
+
+    //   })
+    //   return data;
+    const result = await readContract(config, {
+      abi: WillsCreator_CONTRACT_ADDRESS_ABI,
+      address: WillsCreator_CONTRACT_ADDRESS,
+      functionName: 'getWillStatus',
+      args:[_willId]
+    })
+    console.log(`====in getwill Stat====`)
+    console.log(result)
+    console.log(`====in getwill ends====`)
+    return result;
+  }
   try {
 
     
@@ -151,6 +173,32 @@ function convertUnixTimestampToDateString(unixTimestamp: any): import("react").R
     console.log(d.length)
     console.log(d.data)
     console.log(d)
+    let stat:{ [key: string]: string }={
+      "0":"Started"
+    }; 
+    for(let i=0;i<d.data.length;i++){
+      console.log(`in for loop`)
+      console.log((d.data[i].willId).toString())
+      let r = (d.data[i].willId).toString();
+      let s1 =  getWillStat(r).then(s=> 
+                {
+                  console.log(`-stat then-`)
+                  console.log(s)
+                  stat["h"]= s.toString();     
+
+                    console.log(`=stat ends=`)
+              })
+              .catch(er => {
+                console.log(`==error in catch of promise in for loop==`)
+                console.log(er)
+                console.log(`====`)
+              });
+      
+    //  stat[r] = getWillStat(d.data[i].willId)
+    }// for loop ends here
+    console.log(`171::all will status`)
+    console.log(stat)
+    console.log(`----------`)
     if(d.data.length>=0)
     {
       
@@ -161,7 +209,8 @@ function convertUnixTimestampToDateString(unixTimestamp: any): import("react").R
               
               <td ><a href="" target="_blank">{element.willId.toString()}</a></td>
               <td >{element.assetId}</td>
-              <td>{element.s_baseStatus}</td>
+              <td >{element.will_status}</td>
+              
               <td><button onClick={()=>handleProceed(
                 JSON.stringify({
                   willId: element.willId.toString(),

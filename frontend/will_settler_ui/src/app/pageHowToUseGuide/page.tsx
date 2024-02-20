@@ -20,9 +20,11 @@ const pageHowToUseGuide = () => {
         <Box>
           <Title order={1}> Why & What </Title>
          <Text truncate="end">
-              Using WIll creator Application, person `"`A`"`" would be able setup a 
-                contract which will liquidate money into Benefitor account automatically
-                on Will end date.
+              Will creator Application is for Crypto Tokens & Assets.
+
+              Using Will creator Application, person `"`A`"` would be able setup a 
+              contract which will liquidate money into Benefitor account automatically
+              on Will end date.
           
          </Text>
         </Box>
@@ -31,9 +33,9 @@ const pageHowToUseGuide = () => {
           <Text truncate="end">
               <p>
               1. People who owns Crypto tokens & would like to pass it on
-                  to benefitors automatically
-              2. People who wants to credit their benefitors on a recurring basis
-              3. 
+                  to benefitors automatically.
+              2. People who wants to automate, credit their benefitors on a recurring basis
+              3. People who are uncertain
               </p>
           </Text>
 

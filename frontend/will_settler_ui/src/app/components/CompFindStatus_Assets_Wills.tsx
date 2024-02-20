@@ -43,7 +43,7 @@ const CompFindStatus_Assets_Wills: React.FC = ()=> {
   const searchParams = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const [CompWillId, setCompWillId] = useState<string | null>('');
+  const [CompWillId, setCompWillId] = useState('');
   const [CompAssetId, setCompAssetId] = useState('');
   const [CompAssetStatus, setCompAssetStatus] = useState<string | null>('');
   const [CompWillStatus, setCompWillStatus] = useState<string | null>('');
@@ -181,21 +181,27 @@ useEffect(() => {
          
           <Header height={3}>Asset Status Legions</Header>
               <ul>
-                <li></li>
-                <li>Created</li>
-                <li>Assigned</li>
-                <li></li>
-                <li></li>
+                <li> </li>
+                <li>0-AssetNotCreated</li>
+                <li>1-Created</li>
+                <li>2-Assigned</li>
+                <li>3-Matured</li>
+                <li>4-CancelledByUser</li>
+                <li>5-CancelledByAdmin</li>
+                <li>6-CancelledByWill</li>
+                
+                
               </ul>
           </Flex>
           <Flex>
           <Header height={3}>Will Status Legions</Header>
             <ul>
-              
-              <li>Created</li>
-              <li>Matured</li>
-              <li>ManualySettled</li>
-              <li>Cancelled</li>
+              <li>0-willDoesntExist</li>
+              <li>1-Created</li>
+              <li>2-Started</li>
+              <li>3-Matured</li>
+              <li>4-ManualySettled</li>
+              <li>5-Cancelled</li>
             </ul>
           </Flex>
       </Box>  

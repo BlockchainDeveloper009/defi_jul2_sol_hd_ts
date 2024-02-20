@@ -4,14 +4,15 @@ import {
     useReadContract,
   } from "wagmi";
   import {
-    CreateBondandAdminRole_CONTRACT_ABI,
-    CreateBondandAdminRole_CONTRACT_ADDRESS,
-  } from "../srcConstants";
+    Assets_CONTRACT_ADDRESS,
+    Assets_CONTRACT_ADDRESS_ABI,
+  } from "../SrcConstants_Assets";
   interface ComponentBProps {
     _assetId: string;
   }
 
-const CompFIndStatus_Asset: React.FC<ComponentBProps> = ({ _assetId }) => {
+const CompFIndStatus_Asset: React.FC<ComponentBProps> = 
+({ _assetId }) => {
   const [va, setVa] = useState('')
         console.log(`_assetId passed => ${_assetId}`)
         if(_assetId === null || _assetId === undefined)
@@ -22,13 +23,13 @@ const CompFIndStatus_Asset: React.FC<ComponentBProps> = ({ _assetId }) => {
         // refer code at link https://wagmi.sh/core/api/actions/readContract
         // to use wagmi core
      const {data, isError,error,isSuccess} = useReadContract({
-      address: CreateBondandAdminRole_CONTRACT_ADDRESS,
-      abi: CreateBondandAdminRole_CONTRACT_ABI,
+      address: Assets_CONTRACT_ADDRESS,
+      abi: Assets_CONTRACT_ADDRESS_ABI,
       functionName: 'getAssetStatus',
       args: [_assetId]
 
     })
-    
+    console.log(data)
     if(isSuccess){
       console.log(`data from CompFIndStatus_Asset`)
       console.log(data)

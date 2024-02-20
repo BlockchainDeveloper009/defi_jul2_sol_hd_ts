@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import GlobalProfile from './components/GlobalProfile'
 
-import { trackUserActivity } from '../app/utils/activityTracker';
+import { trackUserActivity } from './utils/activityTracker';
 
 
 const inter = Inter({ subsets: ['latin'] })

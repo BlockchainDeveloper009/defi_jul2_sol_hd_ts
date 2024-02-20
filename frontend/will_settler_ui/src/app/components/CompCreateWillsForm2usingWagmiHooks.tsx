@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
 
-import { useAccount, useReadContract, useWriteContract } from 'wagmi'
+import { useAccount, useReadContract, useWriteContract,useWaitForTransactionReceipt } from 'wagmi'
 import {
 
   WillsCreator_CONTRACT_ADDRESS,
@@ -51,8 +51,6 @@ function  GetAssetsByUsers(addr:any):IAssets[] {
   console.log(result)
   console.log('---------')
 
-  const today = new Date();
-  const todayDateFmt =  today.getMonth() + '-' + today.getDate() + '-' +  today.getFullYear();
 
   //let retData = result as Array<IAssets>;
 
@@ -84,13 +82,14 @@ function CompCreateWillsForm2usingWagmiHooks() {
   const [ isWillCreationSuccess, setisWillCreationSuccess] = useState<boolean>(false)
   const [ willCreationPrepareError, setWillCreationPrepareError] = useState<Error | null | undefined>();
   const [ willWriteError, setWillWriteError ] = useState<Error | null | undefined>()
+  const [ contractExecutionError, setContractExecutionError ] = useState()
   const [willStartDate, setWillStartDate] = useState('');
   const [willEndDate, setWillEndDate] = useState('');
   const [benefitorAddr, setbenefitorAddr] = useState('');
 
   const [createWillFlag, setCreateWillFlag] = useState(false);
   const [submittedValues, setSubmittedValues] = useState('');
-  const { writeContract} = useWriteContract();
+  const { data: hash, error, isPending, writeContract} = useWriteContract();
 
   const assetIds = async () => {
     console.log(assetIds)
@@ -145,17 +144,32 @@ const CreateWill = async () => {
   console.log(`willStartDate-> '${willStartDate}'`)
   console.log(`willEndDate-> '${willEndDate}'`)
   setCreateWillFlag(true);
-  const result  = writeContract(
-    {
-    address: WillsCreator_CONTRACT_ADDRESS,
-    abi: WillsCreator_CONTRACT_ADDRESS_ABI,
-    functionName: 'a_createCryptoVault',
-    args: [assetId, willStartDate,willEndDate,benefitorAddr],
-    value: BigInt(0)
-    });
-    console.log(`result after write`)
-    console.log(result)
+  
+  try {
+    const result  = writeContract(
+      {
+      address: WillsCreator_CONTRACT_ADDRESS,
+      abi: WillsCreator_CONTRACT_ADDRESS_ABI,
+      functionName: 'a_createCryptoVault',
+      args: [assetId, willStartDate,willEndDate,benefitorAddr],
+      value: BigInt(0)
+      });
+      console.log(`result after write`)
+      console.log(result)
+      console.log(`-------------`)
+
+      const { isLoading: isConfirming, isSuccess: isConfirmed } =
+      useWaitForTransactionReceipt({
+        hash,
+      })
+  } catch (error) {
+    //ContractFunctionExecutionError
+    console.log(`------ContractFunctionExecutionError-------`)
+    console.log(error)
     console.log(`-------------`)
+    setContractExecutionError(error.message)
+    
+  }
 
 };
 
@@ -275,8 +289,8 @@ const CreateWill = async () => {
           {...form.getInputProps('Benefitor')}
         />
 
-        <Button type="submit" mt="md" onClick = {CreateWill}>
-          Create Will
+        <Button type="submit" mt="md"  disabled={isPending} onClick = {CreateWill}>
+        {isPending ? 'Confirming...' : 'Create Will'} 
         </Button>
         <p>
             {/* {isSuccess && (
@@ -292,6 +306,14 @@ const CreateWill = async () => {
                         </div>
                 )
                 }  */}
+
+                {willWriteError && (<div>Error: {contractExecutionError}</div>)}
+
+                {hash && <div>Transaction Hash: {hash}</div>}
+
+      {error && (
+        <div>Error: {(error as BaseError).shortMessage || error.message}</div>
+      )}
         </p>
 {willCreationPrepareError && (
           <div>

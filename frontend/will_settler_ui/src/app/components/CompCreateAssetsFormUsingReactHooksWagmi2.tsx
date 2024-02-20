@@ -70,7 +70,7 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
     setSelectedOption(value);
   };
 
-  const { writeContract } = useWriteContract()
+  const { data: hash, error, isPending,writeContract } = useWriteContract()
   const [abiFromMongoDb,setabiFromMongoDb] = useState();
   /** 
         useEffect(()=>{
@@ -198,7 +198,7 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
 
       try {
         console.log(`calling write contract`)
-        console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${Assets_CONTRACT_ADDRESS}`)
+        console.log(`ASSETS CONTRACT-${Assets_CONTRACT_ADDRESS}`)
         writeContract
         ({
           abi,
@@ -264,7 +264,9 @@ let dd:any = z.bigint();
             {...form.getInputProps('Amount')}
           />
   
-  <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {useMethodToWriteAsset_Buttoncall}>USE METHOD TO CREATE ASSET</Button>
+  <Button type="submit" mt="md" disabled={isPending}  onClick = {useMethodToWriteAsset_Buttoncall}>
+    
+  {isPending ? 'Creating...' : 'USE METHOD TO CREATE ASSET'} </Button>
 
           <Button type="submit" mt="md" disabled={isSubmitting}  onClick = {
             ()=> {
@@ -305,7 +307,7 @@ let dd:any = z.bigint();
             
           </div>
         )} */}
-  
+        {hash && <div>Transaction Hash: {hash}</div>}
         {assetIdCreated && <p>Successfully created - {assetIdCreated}</p>}
         {/* {(isPrepareError || isError) && (
           <div>Error: {(prepareError || error)?.message}</div>
