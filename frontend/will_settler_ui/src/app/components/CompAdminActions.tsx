@@ -88,6 +88,8 @@ let custAcct3 = `0x${'ccA0b47ab3fe942E5B5DC499762202c3222FF067'}`
         <Text id='connectedAcct' aria-label='connected Acct'>{`${connectedAcct.address}`}</Text>
         <h2>Contract balance</h2>
         <Text id='custBalance' aria-label='cust balance'>mat- {contractAcct1Balance} -ic</Text>
+
+        
     </div>
   )
 }

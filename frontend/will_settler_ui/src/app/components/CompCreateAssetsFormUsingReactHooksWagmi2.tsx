@@ -273,7 +273,7 @@ let dd:any = z.bigint();
 
                 try {
                       console.log(`calling write contract to create assets`)
-                      console.log(`CreateBondandAdminRole_CONTRACT_ADDRESS-${Assets_CONTRACT_ADDRESS}`)
+                      console.log(`-${Assets_CONTRACT_ADDRESS}`)
                       writeContract
                       ({
                         abi,

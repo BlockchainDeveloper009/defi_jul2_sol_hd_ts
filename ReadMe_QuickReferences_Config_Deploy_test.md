@@ -1,0 +1,7 @@
+current_contract
+last_contract='0x6635BaCd122cfc8e8D726633f224746Bd2578872
+
+current contract:
+assetCreator=0x0DaFC14Af4E71716971E04444fe858d9fC413dc3
+willCreator=0xE2004201614A5D19753bd0356f96296fF536E175
+

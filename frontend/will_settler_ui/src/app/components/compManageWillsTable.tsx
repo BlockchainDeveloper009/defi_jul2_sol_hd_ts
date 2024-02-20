@@ -167,7 +167,7 @@ function convertUnixTimestampToDateString(unixTimestamp: any): import("react").R
     // }
     // ] ;
     
-    let d:any = GetWillsByUsers('0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1')
+    let d:any = GetWillsByUsers(address);//'0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1')
     console.log(`wills read---------`)
     console.log(d.data.length)
     console.log(d.length)

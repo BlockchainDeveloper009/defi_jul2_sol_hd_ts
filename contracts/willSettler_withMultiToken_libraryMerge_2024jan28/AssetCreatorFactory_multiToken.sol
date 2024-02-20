@@ -287,14 +287,25 @@ Returns the assets created by invoking user
     }
 
     function checkAssetStatus(Enums.CryptoAssetStatus assetStatus) public view returns (string memory) {
+        if (assetStatus == Enums.CryptoAssetStatus.AssetNotCreated) {
+            return "AssetNotCreated";
+        }
         if (assetStatus == Enums.CryptoAssetStatus.Created) {
             return "Created";
         }
-        // if (assetStatus == Enums.CryptoAssetStatus.Assigned) {
-        //     return "Assigned";
-        // }
-         
-        return "InvalidAssetStatus";
+        if (assetStatus == Enums.CryptoAssetStatus.Matured) {
+            return "Matured";
+        }
+        if (assetStatus == Enums.CryptoAssetStatus.CancelledByUser) {
+            return "CancelledByUser";
+        }
+        if (assetStatus == Enums.CryptoAssetStatus.CancelledByAdmin) {
+            return "CancelledByAdmin";
+        }
+        if (assetStatus == Enums.CryptoAssetStatus.CancelledByWill) {
+            return "CancelledByWill";
+        }
+        return "Invalid_AssetStatus";
     }
 
 

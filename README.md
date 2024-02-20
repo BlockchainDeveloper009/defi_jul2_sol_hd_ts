@@ -90,9 +90,11 @@ Fees:
 
 [P2]: #p2
 
-- collect Asset amount entered by asset creator during asset creation, at the momment its hardcoded.
+- If user enters 100BTC, then check user account has collect Asset amount entered by asset creator during asset creation, at the momment its hardcoded.
+
 - Oracle, Chainlink automation to settle wills
 - create api, History table for Assets to track changes by date
+- Build Admin page which displays Contract's account balance.
 
 [P3]: #P3
 - create api, History table for Wills to track changes by audit info such as datetime
