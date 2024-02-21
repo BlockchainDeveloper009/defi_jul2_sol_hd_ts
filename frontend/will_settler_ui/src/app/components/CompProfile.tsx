@@ -13,9 +13,9 @@ const CompProfile = () => {
     const { disconnect } = useDisconnect()
     const { connectors, connect, status, error } = useConnect()
    // const { disconnect } = useDisconnect()
-   const { data: ensName } = useEnsName({
-    address: account.address,
-  })
+  //  const { data: ensName } = useEnsName({
+  //   address: account.address,
+  // })
   function NavigateToHomePage(){
     router.push("/");
   }
@@ -26,7 +26,8 @@ const CompProfile = () => {
             <h2>Account</h2>
 
       <div>
-        account: {account.address} {ensName}
+        account: {account.address} 
+        {/* {ensName} */}
         <br />
         chainId: {account.chainId}
         <br />
@@ -36,9 +37,10 @@ const CompProfile = () => {
             {/* <Button onClick={disconnect}>Disconnect</Button> */}
                 {account.status !== 'disconnected' && (
                   
-            <button type="button" onClick={() => disconnect()}>
+            <Button color='red'
+            type="button" onClick={() => disconnect()}>
               Disconnect
-            </button>
+            </Button>
           )}
         </div>
       )

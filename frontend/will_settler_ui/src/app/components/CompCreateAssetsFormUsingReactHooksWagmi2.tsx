@@ -1,10 +1,10 @@
 'use client'
 
-import { ActionIcon, Select, useMantineColorScheme } from '@mantine/core';
+import { ActionIcon, NumberInput, NumberInputProps, Select, useMantineColorScheme } from '@mantine/core';
 //import { IconSun, IconMoonStars } from '@tabler/icons';
 
 import axios  from 'axios'
-import { useForm } from '@mantine/form';
+import { hasLength, isInRange, useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
 import { watchContractEvent } from '@wagmi/core'
 
@@ -57,7 +57,11 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
   const [submittedValues, setSubmittedValues] = useState('');
   const [assetCCY, setAssetCCY] = useState<string | null>('');
   const [assetName, setAssetName] = useState('');
+  const [TokenCount, setTokenCount] = useState(0);
+  
   const [eventAssetName, setEventAssetName] = useState('');
+  
+
   const [eventAssetAmt, setEventAssetAmt] = useState('');
   
   const [assetAmountForm, setAssetAmountForm] = useState<any>();
@@ -93,6 +97,11 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
     // Do something with the selected option
     console.log('Selected option:', selectedOption);
   };
+// Define the onChange event handler for the input field
+const handleAssetAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  console.log(`----------handling assetAmount change----------------------`)
+  setTokenCount(event.target.value); // Update the state with the new input value
+};
 
   const unwatch = watchContractEvent(config, {
     address: '0x0DaFC14Af4E71716971E04444fe58d9fC413dc3',//'0x7a92beDE8B87dD09C8dB1C979647f599f5AeBb14',
@@ -137,6 +146,11 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
 //       setAssetIdCreated(logs[0].args.assetId)  
 //     }
 //   })
+
+
+useEffect(()=>{
+
+},[assetName,assetAmountForm, TokenCount])
   // useEffect(() => {
   //   const fetchCCY = async() => {
   //     const { data } = await axios.get<AssetCCy[]>('/api/assetCCY');
@@ -177,19 +191,23 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
   const form  = useForm({
     initialValues: {
       assetName: '',
-      Amount: '0',
-      assetCCY: ''
-      
+      Amount: 0,
+      assetCCY: '',
+      TokenCount: 2000,
     },
 
     transformValues: (values) => ({
       AssetName: `${values.assetName}`,
       Amount: Number(values.Amount) || 0,
       Addr: Assets_CONTRACT_ADDRESS,
-      assetCCY: assetCCY
-           
+      assetCCY: assetCCY,
+      TokenCount: Number(values.TokenCount)
       
     }),
+    validate: {
+      assetName:  hasLength({ min: 2, max: 10 }, 'minimum = 4 Characters & maximum 20'),
+      Amount: isInRange({ min: 2000, max: 1000000000000000000 },'Enter Value between 2000 & 3000000000000000000 '),
+    },
   });
 
   console.log(`Accessing contract: '${Assets_CONTRACT_ADDRESS}' `)
@@ -197,8 +215,13 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
     function useMethodToWriteAsset_Buttoncall(){
 
       try {
-        console.log(`calling write contract`)
+        console.log(`calling useMethodToWriteAsset_Buttoncall`)
         console.log(`ASSETS CONTRACT-${Assets_CONTRACT_ADDRESS}`)
+        
+        console.log(`-${form.values.assetName}-`);
+        console.log(`amount-${form.values.Amount}-`);
+        console.log(`-${assetCCY}-`);
+        console.log(`-${form.values.TokenCount}-`)
         writeContract
         ({
           abi,
@@ -236,31 +259,51 @@ let dd:any = z.bigint();
                             setSubmittedValues(JSON.stringify(values, null, 2))
                             setAssetName(values.AssetName)
                             setAssetAmountForm(values.Amount)
-                    
+                            console.log(`----Amount values----`)
+                            console.log(`${values.Amount}`)
+                            console.log(`----Amount values----`)
+
+                            console.log(`----token values----`)
+                            console.log(`${values.TokenCount}`)
+                            console.log(`----token values----`)
+                            setTokenCount(values.TokenCount)
                     }
             )
           } 
         >
           <TextInput
             label="Asset name"
-            placeholder="Asset name"
+            placeholder="PAY-50-ETH-TO-SON-NATE-BY-2030"
+            withAsterisk
             {...form.getInputProps('assetName')}
           />
          <Select 
               label="in built Select Asset Currency"
-              placeholder="Pick value"
+              placeholder="Pick a Token"
+              withAsterisk
              data={ccyOptions} 
              value={assetCCY} 
              onChange={setAssetCCY}
              searchable
              //nothingFoundMessage="Nothing found..."
              />
-  
+
+          <NumberInput
+                label="Am2"
+                placeholder="Amt2"
+                withAsterisk
+                mt="md"
+              //  onChange={handleAssetAmountChange}
+              {...form.getInputProps('TokenCount')}
+              />
           <TextInput
             type="number"
-            label="Amount"
-            placeholder="Amt"
+            label="Token Amount in Wei<1 Ether = 1,000,000,000,000,000,000 Wei>"
+            placeholder="1,000,000"
+            withAsterisk
             mt="md"
+           // value={assetAmountForm} // Bind the value to the state
+            // onChange={handleAssetAmountChange} // Call the event handler on input change
             {...form.getInputProps('Amount')}
           />
   
@@ -274,6 +317,8 @@ let dd:any = z.bigint();
                 try {
                       console.log(`calling write contract to create assets`)
                       console.log(`-${Assets_CONTRACT_ADDRESS}`)
+                      console.log(`-${assetAmountForm}-`);
+                      console.log(`-${TokenCount}-`)
                       writeContract
                       ({
                         abi,
@@ -307,6 +352,7 @@ let dd:any = z.bigint();
             
           </div>
         )} */}
+        
         {hash && <div>Transaction Hash: {hash}</div>}
         {assetIdCreated && <p>Successfully created - {assetIdCreated}</p>}
         {/* {(isPrepareError || isError) && (
