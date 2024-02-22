@@ -34,6 +34,7 @@ import { useWriteContract } from 'wagmi'
 import { config } from '@/wagmi'
 import {abiassetsContractor} from './abiassetsContractor';
 import { abi } from './abi';
+import { Decimal } from '@prisma/client/runtime/library';
 
 //const prisma = new PrismaClient()
 type Assets = z.infer<typeof createAssetSchema >;
@@ -69,6 +70,8 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [apiToUpdateDBError, setApiToUpdateDbError] = useState('')
   const [transactionExecutionError, settransactionExecutionError] = useState('')
+  const [tokenFractions, settokenFractions] = useState<string | null>('');
+
   const [selectedOption, setSelectedOption] = useState(null);
   const handleSelectChange = (value) => {
     setSelectedOption(value);
@@ -112,11 +115,17 @@ const handleAssetAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => 
     },
   })
  
-  
+   const fractionOptions = [
+    { label: '0.001 CCY', value: '0.001' },
+    { label: '0.01 CCY', value: '0.01' },
+    { label: '0.1 CCY', value: '0.1' },
+    { label: '0.2 CCY', value: '0.2' },
+    
+  ];
   //change this later
   const ccyOptions = [
     { label: 'MATIC CCY', value: 'MATIC' },
-    { label: 'ETH CCY', value: 'ETH' },
+    { label: 'ETH CCY', value: '0x0000000000000000000000000000000000001010' },
     { label: 'BTC CCY', value: 'BTC' },
     { label: 'AVAX CCY', value: 'AVAX' },
     
@@ -193,16 +202,17 @@ useEffect(()=>{
       assetName: '',
       Amount: 0,
       assetCCY: '',
-      TokenCount: 2000,
+      TokenCount: 0.2,
+      fractionOptions: 0.0001
     },
 
     transformValues: (values) => ({
       AssetName: `${values.assetName}`,
       Amount: Number(values.Amount) || 0,
       Addr: Assets_CONTRACT_ADDRESS,
-      assetCCY: assetCCY,
-      TokenCount: Number(values.TokenCount)
-      
+      assetCCY: values.assetCCY,
+      TokenCount: Number(values.TokenCount),
+      fractionOptions: parseFloat(values.fractionOptions.toString())
     }),
     validate: {
       assetName:  hasLength({ min: 2, max: 10 }, 'minimum = 4 Characters & maximum 20'),
@@ -219,16 +229,20 @@ useEffect(()=>{
         console.log(`ASSETS CONTRACT-${Assets_CONTRACT_ADDRESS}`)
         
         console.log(`-${form.values.assetName}-`);
-        console.log(`amount-${form.values.Amount}-`);
-        console.log(`-${assetCCY}-`);
-        console.log(`-${form.values.TokenCount}-`)
+        console.log(`Amount-${form.values.Amount}-`);
+        console.log(`direct_assetCCY-${assetCCY}-`);
+        console.log(`TokenCount-${form.values.TokenCount}-`)
+        console.log(`fractionOptions-${form.values.fractionOptions}-`)
+
+        console.log(`assetCCY-${form.values.assetCCY}-`)
         writeContract
         ({
           abi,
           address: '0x0DaFC14Af4E71716971E04444fe858d9fC413dc3',
           functionName: 'a_createAssets',
           args: [
-            assetName, `0x${'0000000000000000000000000000000000001010'}`, BigInt(10000000000000000) 
+            assetName, `0x${'0000000000000000000000000000000000001010'}`, BigInt(form.values.TokenCount)
+            //BigInt(10000000000000000) 
           ],
            //value: BigInt(1),//dd.parse(BigInt(assetAmountForm)) 
         })
@@ -274,6 +288,7 @@ let dd:any = z.bigint();
           <TextInput
             label="Asset name"
             placeholder="PAY-50-ETH-TO-SON-NATE-BY-2030"
+            description="give meaningful info for eg. PAY-ASSET VALUE-ASSETCLASS-TO-BENEFITOR NAME-BY-FULLYEAR"
             withAsterisk
             {...form.getInputProps('assetName')}
           />
@@ -288,9 +303,22 @@ let dd:any = z.bigint();
              //nothingFoundMessage="Nothing found..."
              />
 
+            <Select 
+              label="Token Fractions"
+              placeholder="Pick a value"
+              withAsterisk
+             data={fractionOptions} 
+             value={assetCCY} 
+             onChange={settokenFractions}
+             searchable
+             //nothingFoundMessage="Nothing found..."
+             />
+
+
           <NumberInput
                 label="Am2"
-                placeholder="Amt2"
+                placeholder="TokenCount"
+                description="Additional TokenCount"
                 withAsterisk
                 mt="md"
               //  onChange={handleAssetAmountChange}
@@ -298,10 +326,13 @@ let dd:any = z.bigint();
               />
           <TextInput
             type="number"
-            label="Token Amount in Wei<1 Ether = 1,000,000,000,000,000,000 Wei>"
-            placeholder="1,000,000"
+            label="Enter Token Amount in Wei"
+            aria-label="Accessbility Enter Token Amount in Wei"
+            description="<1 Ether = 1,000,000,000,000,000,000 Wei, for eg. enter 1,000,000 for '0.001' ETH"
+            placeholder=" 1,000,000"
             withAsterisk
             mt="md"
+            
            // value={assetAmountForm} // Bind the value to the state
             // onChange={handleAssetAmountChange} // Call the event handler on input change
             {...form.getInputProps('Amount')}

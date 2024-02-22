@@ -13,7 +13,7 @@ import { polygonMumbai } from 'viem/chains';
 
 import ComProfile from '../components/CompProfile';
 
-const pageHeader = `pageWillsCreatorUsingWagmiReact`
+const pageHeader = `pageWillsCreatorUsingWagmiReact>>>>>>CompCreateWillsForm2usingWagmiHooks`
 const pageWillsCreatorUsingWagmiReact 
         = ( {Component, pageProps}: AppProps) => 
       {

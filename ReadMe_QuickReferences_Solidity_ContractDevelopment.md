@@ -58,7 +58,7 @@ Soln: Create an instance of the contract: Use the ethers library to create an in
 #5. How to parse ethers in  javascript to send to solidity
 const amountToSend = ethers.utils.parseEther("1.0"); 
 
-```CreateContract Instance & fromat ethers
+```CreateContract Instance & format ethers
 
 **            const provider = new ethers.providers.JsonRpcProvider(); // Use the default provider
 

@@ -24,9 +24,20 @@ import { IAssets } from '../models/IAssets';
 
 
 import { getTodaysDate,getDateAfterDays } from '../utils/dateUtils';
+import { isNull } from 'util';
+
+interface IAssetsFromContract {
+  assetId:string,
+  assetName: string,
+  AssetTokenAddress: BigInt,
+  AssetCreator: BigInt,
+  isAvailable: number,
+  assetStatus:number,
+  
+ }
 
 //read from asset contract
-function  GetAssetsByUsers(addr:any):IAssets[] {
+function  GetAssetsByUsers(addr:any):any {
 
   if(addr == null){
     console.log("address is null, HARDCODING 0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1");
@@ -54,7 +65,7 @@ function  GetAssetsByUsers(addr:any):IAssets[] {
 
   //let retData = result as Array<IAssets>;
 
-  return result 
+  return result.data;
 
 }
 function ConvertDateToUnixTimeStamp(incomingDate:string):number{
@@ -86,7 +97,8 @@ function CompCreateWillsForm2usingWagmiHooks() {
   const [willStartDate, setWillStartDate] = useState('');
   const [willEndDate, setWillEndDate] = useState('');
   const [benefitorAddr, setbenefitorAddr] = useState('');
-
+  const [AssetCCY, setAssetCCY] = useState<string | null>('');
+  
   const [createWillFlag, setCreateWillFlag] = useState(false);
   const [submittedValues, setSubmittedValues] = useState('');
   const { data: hash, error, isPending, writeContract} = useWriteContract();
@@ -218,15 +230,48 @@ const CreateWill = async () => {
   // }
 
   //setisWillCreationSuccess(isSuccess)
-  let assets:IAssets[] = GetAssetsByUsers(address)
-  if(assets?.length>=0 ){
-        console.log(assets)
-  } else { 
-   // assets.push({ assetId: 'ca-0', assetName: 'testData'})
-  }
 
+  // Assuming transformedData is potentially undefined
+
+
+// Provide a fallback array if transformedData is undefined
+
+
+  let transformedData:{ value: string; label: string; }[]= [];
+  
+  let assets = GetAssetsByUsers(address)
+  console.log(`--getassets--`)
+         console.log(assets)
+        console.log(assets?.length)
+        console.log(`----`)
+  if(assets && assets?.length> 0 ){
+        console.log(`----`)
+        console.log(assets)
+        // Assuming IAssets has a property called 'assetId' which you want to use as the 'value'
+   transformedData = assets.map((asset:any) => 
+
+   ({
+    value: asset.AssetId,
+    label: `${asset.AssetName}-${asset.AssetAmount}`, // Assuming assetName should be used as the label
+  })
+   );
+
+console.log(`---transformedData-----------`)
+console.log(transformedData)
+console.log(`---transformedData-----------`)
+
+  } else { 
+    //assets.push({ assetId: 'ca-0', assetName: 'testData'})
+    // Handle the case where assets is empty or null
+  transformedData = [];
+  }
+  const dataToUse = transformedData || [];
 
   const willDatas = Array(50).fill(0).map((_, index) => `Item ${index}`);
+  console.log(`---dataToUse-----------`)
+console.log(dataToUse)
+console.log(`---dataToUse-----------`)
+  
   return (
     <Box sx={{ maxWidth: 400 }} mx="auto">
         <form
@@ -248,6 +293,7 @@ const CreateWill = async () => {
           placeholder="AssetId"
           mt="md"
           withAsterisk
+          description="Asset id created and not used in any will"
           {...form.getInputProps('AssetId')}
 
           // rightSection={<Loader size="xs" />}
@@ -255,29 +301,30 @@ const CreateWill = async () => {
           // onBlur={(event) => ValidateUserAssetId(event.currentTarget.value)}
         //  onError=()=>{}
         />
-        <p>
-        {/* <Select 
+    <Select 
           label="Your fav"
           placeholder="ca-01"
           value={assetId}
           onChange={setAssetId}
-          data = {assets}
+          data = {dataToUse || []}
           //{[{value:'testData'}]}
           //assets.length>=0 ? assets : [{value:'testData'}]   
           
-        /> */}
-        </p>
+        />
 
         <TextInput
           label="Will Start Date"
-          placeholder="MM-DD-YYYY"
+          placeholder="YYYY-MM-DD"
           withAsterisk
+          
+          description="YYYY-MM-DD"
           {...form.getInputProps('willStartDate')}
         />
         <TextInput
           label="Will End Date"
-          placeholder="MM-DD-YYYY"
+          placeholder="YYYY-MM-DD"
           withAsterisk
+          description="YYYY-MM-DD - will Matures at 12 am."
           {...form.getInputProps('willEndDate')}
         />
         <TextInput
@@ -285,10 +332,20 @@ const CreateWill = async () => {
           label="Benefitor"
           placeholder="0x Address"
           mt="md"
+          description="Benefitor Address to which this Will settle amount"
           withAsterisk
           {...form.getInputProps('Benefitor')}
         />
-
+        
+      {/* <Select 
+              label="in built Select Asset Currency"
+              placeholder="Pick value"
+             data={transformedData} 
+             //value={assetCCY} 
+             onChange={setAssetCCY}
+             searchable
+             //nothingFoundMessage="Nothing found..."
+             /> */}
         <Button type="submit" mt="md"  disabled={isPending} onClick = {CreateWill}>
         {isPending ? 'Confirming...' : 'Create Will'} 
         </Button>
