@@ -56,7 +56,7 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
   // })
   const [customerAccountAddress, setCustomerAccountAddress] = useState(0x0);
   const [submittedValues, setSubmittedValues] = useState('');
-  const [assetCCY, setAssetCCY] = useState<string | null>('');
+  const [assetCCY, setAssetCCY] = useState<`0x${''}`>('0x');
   const [assetName, setAssetName] = useState('');
   const [TokenCount, setTokenCount] = useState(0);
   
@@ -68,13 +68,34 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
   const [assetAmountForm, setAssetAmountForm] = useState<any>();
   const [assetIdCreated, setAssetIdCreated] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [resetFields, setResetFields] = useState(false)
   const [apiToUpdateDBError, setApiToUpdateDbError] = useState('')
   const [transactionExecutionError, settransactionExecutionError] = useState('')
-  const [tokenFractions, settokenFractions] = useState<string | null>('');
+  const [tokenFractions, setTokenFractions] = useState<string | null | number>(0.001);
 
   const [selectedOption, setSelectedOption] = useState(null);
+
+  const fractionOptions = [
+    { label: '0.001 MATIC', value: '1000000000000000' },
+    { label: '0.01 MATIC', value: '10000000000000000' },
+    { label: '0.1 MATIC', value: '100000000000000000' },
+    { label: '0.2 MATIC', value: '200000000000000000' },
+    
+  ];
+  //change this later
+  const ccyOptions = [
+    { label: 'MATIC CCY', value: `0x${'0000000000000000000000000000000000001010'}` },
+    { label: 'ETH CCY', value: `0x${'0000000000000000000000000000000000001010'}` },
+    { label: 'BTC CCY', value: `0x${'0000000000000000000000000000000000001010'}` },
+    { label: 'AVAX CCY', value: `0x${'0000000000000000000000000000000000001010'}` },
+    
+  ];
+  const [ccy, setCCY] = useState<AssetCCy[]>([]);
   const handleSelectChange = (value) => {
     setSelectedOption(value);
+  };
+  const handleFractionChange = (value: string | number | null) => {
+    setTokenFractions(value);
   };
 
   const { data: hash, error, isPending,writeContract } = useWriteContract()
@@ -115,22 +136,7 @@ const handleAssetAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => 
     },
   })
  
-   const fractionOptions = [
-    { label: '0.001 CCY', value: '0.001' },
-    { label: '0.01 CCY', value: '0.01' },
-    { label: '0.1 CCY', value: '0.1' },
-    { label: '0.2 CCY', value: '0.2' },
-    
-  ];
-  //change this later
-  const ccyOptions = [
-    { label: 'MATIC CCY', value: 'MATIC' },
-    { label: 'ETH CCY', value: '0x0000000000000000000000000000000000001010' },
-    { label: 'BTC CCY', value: 'BTC' },
-    { label: 'AVAX CCY', value: 'AVAX' },
-    
-  ];
-  const [ccy, setCCY] = useState<AssetCCy[]>([]);
+ 
   /**
   event willSettled(
     uint indexed cryptoWillId,
@@ -202,8 +208,10 @@ useEffect(()=>{
       assetName: '',
       Amount: 0,
       assetCCY: '',
-      TokenCount: 0.2,
-      fractionOptions: 0.0001
+      TokenCount: 0,
+      fractionValue: 0
+
+      
     },
 
     transformValues: (values) => ({
@@ -212,7 +220,8 @@ useEffect(()=>{
       Addr: Assets_CONTRACT_ADDRESS,
       assetCCY: values.assetCCY,
       TokenCount: Number(values.TokenCount),
-      fractionOptions: parseFloat(values.fractionOptions.toString())
+      
+      fractionValue: parseFloat(values.fractionValue.toString())
     }),
     validate: {
       assetName:  hasLength({ min: 2, max: 10 }, 'minimum = 4 Characters & maximum 20'),
@@ -231,31 +240,55 @@ useEffect(()=>{
         console.log(`-${form.values.assetName}-`);
         console.log(`Amount-${form.values.Amount}-`);
         console.log(`direct_assetCCY-${assetCCY}-`);
+        //console.log(`direct-fractionOptions-${fractionValue.}-`);
         console.log(`TokenCount-${form.values.TokenCount}-`)
-        console.log(`fractionOptions-${form.values.fractionOptions}-`)
-
-        console.log(`assetCCY-${form.values.assetCCY}-`)
+        
+let cc = form.values.fractionValue;
+console.log(`fractionOptions-${cc}-`)
+        console.log(`Assets_CONTRACT_ADDRESS-${Assets_CONTRACT_ADDRESS}-`)
+        // writeContract
+        // ({
+        //   abi,
+        //   address: '0x0DaFC14Af4E71716971E04444fe858d9fC413dc3',
+        //   functionName: 'a_createAssets',
+        //   args: [
+        //     assetName, `0x${'0000000000000000000000000000000000001010'}`, BigInt(form.values.TokenCount)
+        //     //BigInt(10000000000000000) 
+        //   ],
+        //    //value: BigInt(1),//dd.parse(BigInt(assetAmountForm)) 
+        // })
+        // let cc = form.values.fractionValue * 10 000 000 000 000
+        // 000;
+        // console.log(`cc-${cc}-`)
         writeContract
         ({
           abi,
-          address: '0x0DaFC14Af4E71716971E04444fe858d9fC413dc3',
+          address: Assets_CONTRACT_ADDRESS,
           functionName: 'a_createAssets',
           args: [
-            assetName, `0x${'0000000000000000000000000000000000001010'}`, BigInt(form.values.TokenCount)
-            //BigInt(10000000000000000) 
+            form.values.assetName, assetCCY, BigInt(cc)
+            
           ],
-           //value: BigInt(1),//dd.parse(BigInt(assetAmountForm)) 
+          value:BigInt(cc ),//dd.parse(BigInt(assetAmountForm)) 
         })
 
   } catch (error) {
     console.log(`error during contract write`)
     console.log(error)
   }
-      
+   
       
     }
 
 let dd:any = z.bigint();
+
+
+useEffect(()=> {
+  if(resetFields){
+    setAssetName('')
+  }
+  
+},[assetName])      
 
 
   return (
@@ -281,6 +314,13 @@ let dd:any = z.bigint();
                             console.log(`${values.TokenCount}`)
                             console.log(`----token values----`)
                             setTokenCount(values.TokenCount)
+
+                            console.log(`----fractionOptions values----`)
+                            console.log(`${values.fractionValue}`)
+                            console.log(`----fractionOptions values----`)
+                        //    setAssetCCY(values.assetCCY);
+                            setTokenFractions(values.fractionValue);
+
                     }
             )
           } 
@@ -308,10 +348,11 @@ let dd:any = z.bigint();
               placeholder="Pick a value"
               withAsterisk
              data={fractionOptions} 
-             value={assetCCY} 
-             onChange={settokenFractions}
+          //   value={tokenFractions?.toString()} 
+      //       onChange={handleFractionChange}
              searchable
              //nothingFoundMessage="Nothing found..."
+             {...form.getInputProps('fractionValue')}
              />
 
 
