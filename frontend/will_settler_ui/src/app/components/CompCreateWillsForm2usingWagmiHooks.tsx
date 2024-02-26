@@ -155,6 +155,8 @@ const CreateWill = async () => {
   console.log(`direct create will using writeContract`)
   console.log(`willStartDate-> '${willStartDate}'`)
   console.log(`willEndDate-> '${willEndDate}'`)
+  console.log(`assetId-> '${assetId}'`)
+  
   setCreateWillFlag(true);
   
   try {
@@ -287,29 +289,18 @@ console.log(`---dataToUse-----------`)
         })}
       >
 
-        <TextInput
 
-          label="AssetId"
-          placeholder="AssetId"
-          mt="md"
-          withAsterisk
-          description="Asset id created and not used in any will"
-          {...form.getInputProps('AssetId')}
-
-          // rightSection={<Loader size="xs" />}
-
-          // onBlur={(event) => ValidateUserAssetId(event.currentTarget.value)}
-        //  onError=()=>{}
-        />
     <Select 
-          label="Your fav"
+          label="AssetId"
           placeholder="ca-01"
           value={assetId}
           onChange={setAssetId}
           data = {dataToUse || []}
           //{[{value:'testData'}]}
-          //assets.length>=0 ? assets : [{value:'testData'}]   
-          
+          //assets.length>=0 ? assets : [{value:'testData'}]
+          mt="md"
+          withAsterisk   
+          description="Asset id created and not used in any will"
         />
 
         <TextInput

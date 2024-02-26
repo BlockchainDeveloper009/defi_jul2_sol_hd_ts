@@ -199,7 +199,7 @@ function CompManageWillsSettle() {
         address: WillsCreator_CONTRACT_ADDRESS,
       //WillsCreator_CONTRACT_ADDRESS_ABI
       functionName: 'manuallySettleWill',
-      args:  [BigInt(willId),BigInt(0)],
+      args:  [BigInt(willId),BigInt(1)],
      })}>Direct Write Settle will</Button>
     </div>
   );

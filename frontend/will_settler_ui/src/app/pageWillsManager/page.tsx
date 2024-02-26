@@ -11,7 +11,9 @@ import CompFindStatus_Assets_Wills from '../components/CompFindStatus_Assets_Wil
 import { Container } from '@mantine/core'
 
 
+        //Dlete file
 
+        
 const WillsManager = () => {
 
   

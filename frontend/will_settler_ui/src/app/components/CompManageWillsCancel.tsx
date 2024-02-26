@@ -38,7 +38,7 @@ function CompManageWillsCancel() {
   const searchParams = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [Hash, setHash] = useState('')
-  const [CompWillId, setCompWillId] = useState();
+  const [CompWillId, setCompWillId] = useState<string | null>();
 
   const [TransactionError, setTransactionError] = useState('')
 
@@ -63,8 +63,9 @@ function CompManageWillsCancel() {
     } 
   })
   useEffect(()=>{
-
-  },[watchCancellError]);
+    
+    setCompWillId(searchParams.get("willId") ? searchParams.get("willId")  : null);
+  },[CompWillId, watchCancellError]);
       // const { willId } = router. as { willId?: string}
       function  CancelWill(){
         let _willId = -1;
@@ -120,9 +121,9 @@ let willStatus = GetWillStatus(searchParams.get("willId"));
     <div>
       <CompManageWillsTableRouter/>
       <h1>Manage will Cancel</h1>
-      <h1>{searchParams.get("willId")}</h1>
+      {/* <h1>{searchParams.get("willId")}</h1> */}
       
-      
+      <h2>{CompWillId}</h2>
       {/* <p>Hello will id, {willId || 'Invalid WIll Id'}</p> */}
       <h2>`will Status '{willStatus}'`</h2>
          
@@ -135,7 +136,7 @@ let willStatus = GetWillStatus(searchParams.get("willId"));
             address: WillsCreator_CONTRACT_ADDRESS,
             //WillsCreator_CONTRACT_ADDRESS_ABI
             functionName: 'cancelWill',
-            args: [BigInt(0),BigInt(0)]
+            args: [CompWillId,BigInt(0)]
             // chainId: 80001
             
             

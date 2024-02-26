@@ -35,6 +35,9 @@ import { config } from '@/wagmi'
 import {abiassetsContractor} from './abiassetsContractor';
 import { abi } from './abi';
 import { Decimal } from '@prisma/client/runtime/library';
+import TimeHelper from '../utils/TimeHelper';
+import FileHelper from '../../../FileHelper';
+
 
 //const prisma = new PrismaClient()
 type Assets = z.infer<typeof createAssetSchema >;
@@ -62,7 +65,7 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
   
   const [eventAssetName, setEventAssetName] = useState('');
   
-
+  
   const [eventAssetAmt, setEventAssetAmt] = useState('');
   
   const [assetAmountForm, setAssetAmountForm] = useState<any>();
@@ -70,6 +73,8 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [resetFields, setResetFields] = useState(false)
   const [apiToUpdateDBError, setApiToUpdateDbError] = useState('')
+  const [transactionHash, setTransactionHash] = useState<`0x${''}`>('0x');
+  const [assetCreatorAddr, setAssetCreatorAddr] = useState<`0x${''}`>('0x');
   const [transactionExecutionError, settransactionExecutionError] = useState('')
   const [tokenFractions, setTokenFractions] = useState<string | null | number>(0.001);
 
@@ -97,6 +102,11 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
   const handleFractionChange = (value: string | number | null) => {
     setTokenFractions(value);
   };
+  //import FileHelper from './FileHelper';
+
+
+
+
 
   const { data: hash, error, isPending,writeContract } = useWriteContract()
   const [abiFromMongoDb,setabiFromMongoDb] = useState();
@@ -164,8 +174,8 @@ const handleAssetAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => 
 
 
 useEffect(()=>{
-
-},[assetName,assetAmountForm, TokenCount])
+  setAssetCreatorAddr(address)
+},[assetName,assetAmountForm, TokenCount, assetCreatorAddr])
   // useEffect(() => {
   //   const fetchCCY = async() => {
   //     const { data } = await axios.get<AssetCCy[]>('/api/assetCCY');
@@ -187,11 +197,29 @@ useEffect(()=>{
         asset_Id: assetIdCreated , 
         asset_Name:assetName,
         asset_Amount: (assetAmountForm!== undefined) ? assetAmountForm : "0"
+        
+        }
+        console.log(`asset creator wallet address - '${address}'`)
+        let apiData = {
+          "txn_originator": assetCreatorAddr,
+          "channel_id": "WebApp",
+          "chain_id": "80001",
+          "ContractAddr": Assets_CONTRACT_ADDRESS,
+          "asset_tx": { 
+            
+            asset_Name:form.values.assetName,
+            asset_Amount: form.values.fractionValue, ///(assetAmountForm!== undefined) ? assetAmountForm : "0",
+            assetCurrency: assetCCY,
+            txnId: hash,
+            assetCreatorAddr: assetCreatorAddr,
+            txn_orig_time:TimeHelper.getTimeStampISOString()
+          }
         }
       try {
 
+
         console.log('create API call')
-        await axios.post('/api/createAsset', data)
+        await axios.put('/api/createAsset', apiData)
 
       } catch (error) {
         console.log(`error caught: api call to createAsset  ${error}`)
@@ -200,8 +228,15 @@ useEffect(()=>{
         setApiToUpdateDbError(error)
       }
     }
+
+    if(hash){
+      console.log(`callisng api to put asset details`)
+      callCreateApi();
+      console.log(`completed api puT call`)
+      setTransactionHash('0x0');
+    }
     
-  })
+  },[transactionHash, hash])
 
   const form  = useForm({
     initialValues: {
@@ -271,12 +306,20 @@ console.log(`fractionOptions-${cc}-`)
           ],
           value:BigInt(cc ),//dd.parse(BigInt(assetAmountForm)) 
         })
+        if(hash){
+          console.log(`--set Transaction Hash -- `)
+          setTransactionHash(hash);
+        }else{
+          setTransactionHash("0x");
+        }
+        
 
   } catch (error) {
     console.log(`error during contract write`)
     console.log(error)
+    
   }
-   
+      
       
     }
 
@@ -287,6 +330,8 @@ useEffect(()=> {
   if(resetFields){
     setAssetName('')
   }
+
+
   
 },[assetName])      
 
@@ -320,7 +365,7 @@ useEffect(()=> {
                             console.log(`----fractionOptions values----`)
                         //    setAssetCCY(values.assetCCY);
                             setTokenFractions(values.fractionValue);
-
+                            
                     }
             )
           } 
@@ -409,7 +454,7 @@ useEffect(()=> {
 
             }
           }>
-            direct WRITE submit 
+            direct WRITE submit - TO BE REMOVED
           </Button>
           
           {/* {isSuccess && (
