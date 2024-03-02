@@ -132,6 +132,11 @@ export async function PUT(req:NextRequest, res:NextResponse) {
     if(body.will_tx.willCreatorAddr === null || undefined){
       filePath2 = `${folderLocation}${'wills_miscellaneous'}.json`
       }else{
+        console.log(`--body.will_tx---${body.will_tx}--`)
+        console.log(body.will_tx)
+        console.log(`----`)
+        console.log(body.will_tx.walletAddr)
+        console.log(`----`)
         filePath2 = `${folderLocation}${body.will_tx.walletAddr}.json`
     }
   

@@ -3,7 +3,7 @@
 
 import { ActionIcon, Loader, Select, useMantineColorScheme } from '@mantine/core';
 //import { IconSun, IconMoonStars } from '@tabler/icons';
-
+import axios  from 'axios'
 import { useEffect, useState } from 'react';
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
@@ -25,6 +25,7 @@ import { IAssets } from '../models/IAssets';
 
 import { getTodaysDate,getDateAfterDays } from '../utils/dateUtils';
 import { isNull } from 'util';
+import TimeHelper from '../utils/TimeHelper';
 
 interface IAssetsFromContract {
   assetId:string,
@@ -150,6 +151,60 @@ function CompCreateWillsForm2usingWagmiHooks() {
 //     }
 //   },[prepareError])
 */
+const [assetName, setAssetName] = useState('');
+const [assetAmountForm, setAssetAmountForm] = useState<any>();
+  const [assetIdCreated, setAssetIdCreated] = useState('')
+  const [assetCreatorAddr, setassetCreatorAddr] = useState('')
+  const [apiToUpdateDBError, setApiToUpdateDbError] = useState('')
+  const [transactionHash, setTransactionHash] = useState<`0x${''}`>('0x');
+
+useEffect(() => {
+  // cannot make inline function as async when used with useEffect hook
+  //therefore created separate async function below
+  async function callCreateApi(){
+
+      console.log(`asset creator wallet address - '${assetCreatorAddr}'`)
+      let apiData = {
+        "txn_originator": address,
+        "channel_id": "WebApp",
+        "chain_id": "80001",
+        "will_ContractAddr": WillsCreator_CONTRACT_ADDRESS,
+        "will_tx": { 
+          will_StartDate: form.values.willStartDate,
+          will_EndDate : form.values.willEndDate,
+          will_Benefitors : form.values.Benefitor,
+          will_Owner: "0x1",
+          will_asset_Id: assetId,
+          will_asset_Amount: 5,
+          will_Manager: address,
+
+          txnId: hash,
+          walletCreatorAddr: address,
+          txn_orig_time:TimeHelper.getTimeStampISOString()
+        }
+      }
+    try {
+
+
+      console.log('create API call')
+      await axios.put('/api/createWill', apiData)
+
+    } catch (error) {
+      console.log(`error caught: api call to createWill  ${error}`)
+      
+      console.log(error)
+      setApiToUpdateDbError(error)
+    }
+  }
+
+  if(hash){
+    console.log(`callisng api to put asset details`)
+    callCreateApi();
+    console.log(`completed api puT call`)
+    setTransactionHash('0x0');
+  }
+  
+},[transactionHash, hash])
 
 const CreateWill = async () => {
   console.log(`direct create will using writeContract`)
@@ -318,7 +373,8 @@ console.log(`---dataToUse-----------`)
           description="YYYY-MM-DD - will Matures at 12 am."
           {...form.getInputProps('willEndDate')}
         />
-        <TextInput
+        
+        <TextInput 
 
           label="Benefitor"
           placeholder="0x Address"
@@ -391,3 +447,5 @@ console.log(`---dataToUse-----------`)
 }
 
 export default CompCreateWillsForm2usingWagmiHooks;
+
+

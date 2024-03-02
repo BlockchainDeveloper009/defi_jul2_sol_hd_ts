@@ -1,0 +1,40 @@
+[
+  {
+    "txn_originator": "0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1",
+    "channel_id": "WebApp",
+    "chain_id": "80001",
+    "will_ContractAddr": "0xE2004201614A5D19753bd0356f96296fF536E175",
+    "will_tx": {
+      "will_StartDate": "2024-03-02",
+      "will_EndDate": "2024-03-05",
+      "will_Benefitors": "0xccA0b47ab3fe942E5B5DC499762202c3222FF067",
+      "will_Owner": "0x1",
+      "will_asset_Id": "1",
+      "will_asset_Amount": 5,
+      "will_Manager": "0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1",
+      "txnId": "0x661f5d033dd353f6098c0c54cde2e7c59e247110ca42ff4d9413ada232456067",
+      "walletCreatorAddr": "0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1",
+      "txn_orig_time": "2024-03-02T07:12:03.641Z"
+    },
+    "api_entry_timestamp": "2024-03-02T07:12:30.355Z"
+  },
+  {
+    "txn_originator": "0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1",
+    "channel_id": "WebApp",
+    "chain_id": "80001",
+    "will_ContractAddr": "0xE2004201614A5D19753bd0356f96296fF536E175",
+    "will_tx": {
+      "will_StartDate": "2024-03-02",
+      "will_EndDate": "2024-03-08",
+      "will_Benefitors": "0xccA0b47ab3fe942E5B5DC499762202c3222FF067",
+      "will_Owner": "0x1",
+      "will_asset_Id": "1",
+      "will_asset_Amount": 5,
+      "will_Manager": "0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1",
+      "txnId": "0x38644c4f37be7c910ba37cab8bc52cc29f6935aeabb089963e0b97814a05eec5",
+      "walletCreatorAddr": "0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1",
+      "txn_orig_time": "2024-03-02T07:16:36.303Z"
+    },
+    "api_entry_timestamp": "2024-03-02T07:16:36.489Z"
+  }
+]
