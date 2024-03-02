@@ -199,7 +199,7 @@ useEffect(()=>{
         asset_Amount: (assetAmountForm!== undefined) ? assetAmountForm : "0"
         
         }
-        console.log(`asset creator wallet address - '${address}'`)
+        console.log(`asset creator wallet address - '${assetCreatorAddr}'`)
         let apiData = {
           "txn_originator": assetCreatorAddr,
           "channel_id": "WebApp",

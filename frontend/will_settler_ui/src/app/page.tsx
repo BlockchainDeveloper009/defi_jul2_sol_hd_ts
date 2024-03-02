@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { WagmiConfig, configureChains } from 'wagmi'
+
 import { createClient } from 'viem';
 
 // _app.js or _app.tsx

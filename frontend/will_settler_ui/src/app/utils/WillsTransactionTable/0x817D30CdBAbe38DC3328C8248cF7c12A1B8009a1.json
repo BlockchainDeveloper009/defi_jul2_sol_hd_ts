@@ -1,0 +1,40 @@
+[
+  {
+    "txn_originator": "0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a",
+    "channel_id": "Api_Tool",
+    "will_tx": {
+      "will_Id": 1,
+      "will_StartDate": 20230504,
+      "will_EndDate": 20230504,
+      "will_Benefitors": "0x1",
+      "will_Owner": "0x1",
+      "will_Status": 1,
+      "will_asset_Id": "test0",
+      "will_asset_Amount": 5,
+      "will_Manager": "0x1",
+      "txnId": "0xc4b08dcccc183dadb1934fadfa68743f81751d6ceb2eaadc2274bf42f8b11279",
+      "walletAddr": "0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1",
+      "txn_orig_time": "2024-02-25T19:12:18.801Z"
+    },
+    "api_entry_timestamp": "2024-03-02T00:05:20.957Z"
+  },
+  {
+    "txn_originator": "0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a",
+    "channel_id": "Api_Tool",
+    "will_tx": {
+      "will_Id": 1,
+      "will_StartDate": 20230504,
+      "will_EndDate": 20230504,
+      "will_Benefitors": "0x1",
+      "will_Owner": "0x1",
+      "will_Status": 1,
+      "will_asset_Id": "test0",
+      "will_asset_Amount": 5,
+      "will_Manager": "0x1",
+      "txnId": "0xc4b08dcccc183dadb1934fadfa68743f81751d6ceb2eaadc2274bf42f8b11279",
+      "walletAddr": "0x817D30CdBAbe38DC3328C8248cF7c12A1B8009a1",
+      "txn_orig_time": "2024-02-25T19:12:18.801Z"
+    },
+    "api_entry_timestamp": "2024-03-02T00:06:27.293Z"
+  }
+]
