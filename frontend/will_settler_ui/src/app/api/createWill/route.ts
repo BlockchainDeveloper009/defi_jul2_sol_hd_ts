@@ -146,6 +146,7 @@ export async function PUT(req:NextRequest, res:NextResponse) {
 
         try { 
      
+          
           await JsonHelper.appendToJsonArrayFile(filePath2, dataWithTimestamp);
           return NextResponse.json(body, { status: 201})
           } catch (error) {
