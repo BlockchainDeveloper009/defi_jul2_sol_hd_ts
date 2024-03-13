@@ -6,13 +6,13 @@ import CompAdminActions from '../components/CompAdminActions';
 
 
 const pageHeader = `pageAdminActionsUsingReactWagmi2`
-const pageAdminActionsUsingReactWagmi2 
-        = ( {Component, pageProps}: AppProps) => 
+const pageAdminActionsUsingReactWagmi2  = () =>
+        // = ( {Component, pageProps}: AppProps) => 
       {
             return (
               <div>
             
-                { pageHeader }
+                {/* { pageHeader }
                 
                 <p><code className="font-mono font-bold">Check Contract Balance</code></p>
                 <p><code className="font-mono font-bold">list All Wills</code></p>
@@ -20,10 +20,10 @@ const pageAdminActionsUsingReactWagmi2
                 <p><code className="font-mono font-bold">list Closed Wills</code></p>
                 
                     
-                <CompAdminActions />
+                <CompAdminActions /> */}
                 
               </div>
-            );
+            )
         }
 
-export default pageAdminActionsUsingReactWagmi2
+export default pageAdminActionsUsingReactWagmi2;

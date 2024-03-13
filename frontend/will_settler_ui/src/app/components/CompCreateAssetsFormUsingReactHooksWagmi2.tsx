@@ -37,6 +37,7 @@ import { abi } from './abi';
 import { Decimal } from '@prisma/client/runtime/library';
 import TimeHelper from '../utils/TimeHelper';
 import FileHelper from '../../../FileHelper';
+import { AppProps } from 'next/app';
 
 
 //const prisma = new PrismaClient()

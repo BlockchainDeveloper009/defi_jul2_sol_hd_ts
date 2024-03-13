@@ -42,7 +42,7 @@ import CompSelectAssets from '../components/CompSelectAssets';
 // } from 'wagmi'
 // import { optimism } from 'wagmi/chains'
 
-const pageAssetsCreatorWagmiReactHook = ({Component, pageProps}: AppProps) => {
+const pageAssetsCreatorWagmiReactHook = () => {
 
   return (
     <div>
@@ -54,7 +54,7 @@ const pageAssetsCreatorWagmiReactHook = ({Component, pageProps}: AppProps) => {
 
     </div>
   )
-}
+};
 // function Connect() {
 //   const chainId = useChainId()
 //   const { connectors, connect, status, error } = useConnect()
