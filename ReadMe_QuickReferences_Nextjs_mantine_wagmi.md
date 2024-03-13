@@ -83,3 +83,56 @@ npm run build
 npm install --force
 *  if you dont want to force install, then use below command
 npm install --legacy-peer-deps
+
+
+
+### Error#4
+
+```
+"Linting and checking validity of types ...
+ ⨯ ESLint: Failed to load config "next/babel" to extend from. Referenced from: /vercel/path0/.eslintrc.json
+Failed to compile.
+src/app/pageWillsSettle/page.tsx
+Type error: Page "src/app/pageWillsSettle/page.tsx" has an invalid "default" export:
+  Type "AppInitialProps<any> & { Component: NextComponentType<NextPageContext, any, any>; router: Router; __N_SSG?: boolean | undefined; __N_SSP?: boolean | undefined; }" is not valid.
+Error: Command "npm run build" exited with 1"
+```
+### Soln to problem #4
+
+```
+import { AppProps } from 'next/app';
+import CompProfile from '../components/CompProfile';
+import CompSelectAssets from '../components/CompSelectAssets';
+import CompManageWillsSettle from '../components/CompManageWillsSettle';
+
+const PageWillsSettle = ({ Component, pageProps }: AppProps) => {
+  return (
+    <div>
+      <h1>Step 3: User initiates Settlement of Will Early</h1>  
+      <CompManageWillsSettle />
+    </div>
+  );
+};
+
+export default PageWillsSettle;
+```
+
+```
+import React from 'react';
+
+interface CompManageWillsSettleProps {
+  // Define any props needed by CompManageWillsSettle
+}
+
+const CompManageWillsSettle: React.FC<CompManageWillsSettleProps> = ({}) => {
+  return (
+    <div>
+      {/* Your component JSX goes here */}
+      <p>This is the CompManageWillsSettle component.</p>
+    </div>
+  );
+};
+
+export default CompManageWillsSettle;
+
+```

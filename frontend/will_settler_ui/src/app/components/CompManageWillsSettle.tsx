@@ -21,7 +21,9 @@ import { abiwillCreator } from './abiwillCreator';
 import { abiwill } from './abiwill';
 import { config } from "@/wagmi";
 import CompManageWillsTableRouter from "./CompManageWillsTableRouter";
-
+interface CompManageWillsSettleProps {
+  // Define any props needed by CompManageWillsSettle
+}
 interface IWillsInfo {
   willId: BigNumberish;
   assetId: string;
@@ -66,7 +68,7 @@ function GetWilStatus(willId: any) {
   return retData;
 }
 
-function CompManageWillsSettle() {
+const CompManageWillsSettle: React.FC<CompManageWillsSettleProps> = ({}) =>  {
   // const router = useNavigate();
   //const router = routUseRouter();
   const router = navUseRouter();

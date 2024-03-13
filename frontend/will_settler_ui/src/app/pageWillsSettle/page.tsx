@@ -10,7 +10,7 @@ import CompSelectAssets from '../components/CompSelectAssets';
 import CompManageWillsSettle from '../components/CompManageWillsSettle';
 
 
-const pageWillsSettle = ({Component, pageProps}: AppProps) => {
+const PageWillsSettle = ({Component, pageProps}: AppProps) => {
 
 
 
@@ -25,4 +25,4 @@ const pageWillsSettle = ({Component, pageProps}: AppProps) => {
   )
 }
 
-export default pageWillsSettle
+export default PageWillsSettle
