@@ -22,9 +22,6 @@ const ProjectIndex_template = () => {
         <header>`${ProjectName}`</header>
         <Link href="/">Home</Link>
        
-        
-          
-         
     </div>
   )
 }
