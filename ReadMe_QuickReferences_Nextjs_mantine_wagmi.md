@@ -21,8 +21,36 @@ failure:
 passed:
 
 
-error:
+## FrontEndErrors faced while building/deploying:
 
+>npm run build gives me
+
+``` Linting and checking validity of types  . ⨯ ESLint: Failed to load config "next/babel" to extend from. Referenced from: C:\source\repos\solidity_dev\defi_WillCreator_WagmiReactHooksBr\defi_jul2_sol_hd_ts\frontend\will_settler_ui\.eslintrc.json
+   Linting and checking validity of types  ..Failed to compile.
+
+.next/types/app/pageAdminActionsUsingReactWagmi2/page.ts:26:13
+Type error: Type 'OmitWithTag<AppInitialProps<any> & { Component: NextComponentType<NextPageContext, any, any>; router: Router; __N_SSG?: boolean | undefined; __N_SSP?: boolean | undefined; }, keyof PageProps, "default">' does not satisfy the constraint '{ [x: string]: never; }'.        
+  Property 'Component' is incompatible with index signature.
+    Type 'NextComponentType<NextPageContext, any, any>' is not assignable to type 'never'.      
+      Type 'ComponentClass<any, any> & { getInitialProps?(context: NextPageContext): any; }' is 
+not assignable to type 'never'.
+
+  24 | 
+  25 | // Check the prop type of the entry function
+> 26 | checkFields<Diff<PageProps, FirstArg<TEntry['default']>, 'default'>>()
+     |             ^
+  27 | 
+  28 | // Check the arguments and return type of the generateMetadata function
+  29 | if ('generateMetadata' in entry) {
+PS C:\source\repos\solidity_dev\defi_WillCreator_WagmiReactHooksBr\defi_jul2_sol_hd_ts\frontend\will_settler_ui>
+
+```
+## Solution to problem#2
+
+```
+I was using {Component, pageProps}: AppProps in the page, to pass argument values to component. however i did not write suitable code at componentand therefore error..
+as solution i removed aboe args '{Component, pageProps}: AppProps' from page.
+```
 PS C:\source\repos\solidity_dev\defi_WillCreator_WagmiReactHooksBr\defi_jul2_sol_hd_ts\frontend\will_settler_ui> npm install    
 npm ERR! code ERESOLVE
 npm ERR! ERESOLVE unable to resolve dependency tree
