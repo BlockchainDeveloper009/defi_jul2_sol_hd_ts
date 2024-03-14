@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tests/database/test_CRUD_inPrisma.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tests/database/test_CRUD_inPrisma.js", "src/app/backup_mainpage_page.tsx.backup"],
   "exclude": ["node_modules"]
 }

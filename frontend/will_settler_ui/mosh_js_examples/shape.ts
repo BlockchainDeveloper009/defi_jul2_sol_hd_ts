@@ -24,26 +24,26 @@ interface CloudCalendar extends ICalendar {
 
 }
 
-class GoogleCalendar implements ICalendar {
+// class GoogleCalendar implements ICalendar {
   
 
-    addEvent(): void {
-        throw new Error("Method not implemented.");
-    }
-    removeEVent(): void {
-        throw new Error("Method not implemented.");
-    }
+//     addEvent(): void {
+//         throw new Error("Method not implemented.");
+//     }
+//     removeEVent(): void {
+//         throw new Error("Method not implemented.");
+//     }
 
-}
+// }
 
 class KeyValuePair<K, V>{
     constructor(public key:K, public value: V) {
 
     }
 
-    function wrapInArray<T>({ value }: { value: T; }){
-        return [value];
-    }
+    // function wrapInArray<T>({ value }: { value: T; }){
+    //     return [value];
+    // }
 
 }
 

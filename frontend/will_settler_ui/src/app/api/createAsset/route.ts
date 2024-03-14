@@ -35,7 +35,7 @@ export async function GET(req:NextRequest, res:NextResponse) {
 
     let jsonArray: Data[] = [];
     // const body = await req.json();
-  let body =  await FileHelper.readFIle(filePath2)
+  let body =  await FileHelper.readFIle(folderLocation)
 
     console.log(`--body---`)
     console.log(body)
@@ -86,20 +86,20 @@ export async function POST(req:NextRequest, res:NextResponse) {
         console.log(`'${body.asset_Id}'-'${body.asset_Name}'-'${body.asset_Amount}'`)
         try {
           // Perform database create operation with the received data
-          const createdData = await prisma.assets.create({
-            data: {
-                asset_Id: body.asset_Id,
-                asset_Amount: body.asset_Amount,
-                asset_Category: 1,
-                asset_isAvailable : 1,
-                asset_Name: body.asset_Name,
-                asset_Status: 1
-            },
-          });
-          console.log(`createdData response from create Assets`)
+          // const createdData = await prisma.assets.create({
+          //   // data: {
+          //   //     asset_Id: body.asset_Id,
+          //   //     asset_Amount: body.asset_Amount,
+          //   //     asset_Category: 1,
+          //   //     asset_isAvailable : 1,
+          //   //     asset_Name: body.asset_Name,
+          //   //     asset_Status: 1
+          //   // },
+          // });
+          // console.log(`createdData response from create Assets`)
 
-          console.log(createdData)
-          return NextResponse.json(createdData, { status: 201})
+          // console.log(createdData)
+          // return NextResponse.json(createdData, { status: 201})
           //res.status(201).json(createdData);
         } catch (error) {
           console.error('Error creating data:', error);

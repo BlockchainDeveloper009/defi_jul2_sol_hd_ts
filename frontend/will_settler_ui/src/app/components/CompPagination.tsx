@@ -8,7 +8,8 @@ interface Props {
     pageSize: number,
     currentPage: number
 }
-const CompPagination = ({itemCount, pageSize, currentPage}: Props) => {
+//: React.FC<ComponentBProps> = ({ _willId }) => 
+const CompPagination: React.FC<Props> = ({itemCount, pageSize, currentPage}: Props) => {
     const router = useRouter();
     const searchParams = useSearchParams();
 
