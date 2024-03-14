@@ -30,15 +30,17 @@ export async function PATCH (
         // might update Benefitor
         // should add validation to stop updating editor before 3 days.
 
-        const updatedWill = await prisma.will_info.update(
-            {
-                where: { will_Id: will.will_Id},
-                data: {
-                    Benefitors: body.will_Benefitors,
-                    will_EndDate: body.will_EndDate
-                }
-            }
-        )
+        const updatedWill = "not implemented"
+        
+        // await prisma.will_info.update(
+        //     {
+        //         where: { will_Id: will.will_Id},
+        //         data: {
+        //             Benefitors: body.will_Benefitors,
+        //             will_EndDate: body.will_EndDate
+        //         }
+        //     }
+        // )
 
         return NextResponse.json(updatedWill);
 
