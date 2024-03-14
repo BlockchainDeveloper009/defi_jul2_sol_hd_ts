@@ -58,10 +58,10 @@ function CompCreateAssetsForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [apiToUpdateDBError, setApiToUpdateDbError] = useState('')
   const [transactionExecutionError, settransactionExecutionError] = useState('')
-  const [selectedOption, setSelectedOption] = useState(null);
-  const handleSelectChange = (value) => {
-    setSelectedOption(value);
-  };
+  const [selectedOption, setSelectedOption] = useState<any>(null);
+  // const handleSelectChange = (value) => {
+  //   setSelectedOption(value);
+  // };
   const [abi,setAbi] = useState();
   useEffect(()=>{
     let readContractFromMongoDb;
