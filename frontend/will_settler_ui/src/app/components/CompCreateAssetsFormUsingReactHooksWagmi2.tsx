@@ -62,7 +62,7 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
   const [submittedValues, setSubmittedValues] = useState('');
   const [assetCCY, setAssetCCY] = useState<`0x${''}`>('0x');
   const [assetName, setAssetName] = useState('');
-  const [TokenCount, setTokenCount] = useState(0);
+  const [TokenCount, setTokenCount] = useState();
   
   const [eventAssetName, setEventAssetName] = useState('');
   
@@ -97,9 +97,9 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
     
   ];
   const [ccy, setCCY] = useState<AssetCCy[]>([]);
-  const handleSelectChange = (value) => {
-    setSelectedOption(value);
-  };
+  // const handleSelectChange = (value) => {
+  //   setSelectedOption(value);
+  // };
   const handleFractionChange = (value: string | number | null) => {
     setTokenFractions(value);
   };
@@ -109,7 +109,7 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
 
 
 
-  const { data: hash, error, isPending,writeContract } = useWriteContract()
+  const { data: hash, error, writeContract } = useWriteContract()
   const [abiFromMongoDb,setabiFromMongoDb] = useState();
   /** 
         useEffect(()=>{
