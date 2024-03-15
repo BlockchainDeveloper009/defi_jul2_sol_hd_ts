@@ -1,5 +1,5 @@
 "use client"
-import CompPagination from "../components/CompPagination";
+// import CompPagination from "../components/obs_CompPagination";
 
 interface Props {
     itemCount: number;

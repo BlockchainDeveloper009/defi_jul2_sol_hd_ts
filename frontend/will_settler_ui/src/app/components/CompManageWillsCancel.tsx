@@ -79,11 +79,10 @@ function CompManageWillsCancel() {
         
         try {
           const result  = writeContract({
-            abi:abiwillCreator,
             address: WillsCreator_CONTRACT_ADDRESS,
-           
+            abi:abiwillCreator,           
             functionName: 'cancelWill',
-            args: [BigInt(willId)]
+            args: [BigInt(willId), BigInt(0)],
             // chainId: 80001
             
             

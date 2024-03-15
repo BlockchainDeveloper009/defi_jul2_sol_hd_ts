@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Box, Code } from '@mantine/core';
 
-import { useAccount, useReadContract, useWriteContract,useWaitForTransactionReceipt } from 'wagmi'
+import { useAccount, useReadContract, useWriteContract,useWaitForTransactionReceipt, BaseError } from 'wagmi'
 import {
 
   WillsCreator_CONTRACT_ADDRESS,
@@ -90,7 +90,8 @@ function CompCreateWillsForm2usingWagmiHooks() {
   const { address, connector, isConnected } = useAccount()
   console.log(`address -> '${address}'`)
   const [assetId, setAssetId] = useState<string|null>(null);
-
+//
+  const [ isPending, setisPending] = useState(false);
   const [ isWillCreationSuccess, setisWillCreationSuccess] = useState<boolean>(false)
   const [ willCreationPrepareError, setWillCreationPrepareError] = useState<Error | null | undefined>();
   const [ willWriteError, setWillWriteError ] = useState<Error | null | undefined>()
@@ -102,7 +103,7 @@ function CompCreateWillsForm2usingWagmiHooks() {
   
   const [createWillFlag, setCreateWillFlag] = useState(false);
   const [submittedValues, setSubmittedValues] = useState('');
-  const { data: hash, error, isPending, writeContract} = useWriteContract();
+  const { data: hash, error, writeContract} = useWriteContract();
 
   const assetIds = async () => {
     console.log(assetIds)
@@ -193,7 +194,7 @@ useEffect(() => {
       console.log(`error caught: api call to createWill  ${error}`)
       
       console.log(error)
-      setApiToUpdateDbError(error)
+      //setApiToUpdateDbError(error.toString())
     }
   }
 
@@ -201,7 +202,7 @@ useEffect(() => {
     console.log(`callisng api to put asset details`)
     callCreateApi();
     console.log(`completed api puT call`)
-    setTransactionHash('0x0');
+    setTransactionHash('0x');
   }
   
 },[transactionHash, hash])
@@ -236,7 +237,7 @@ const CreateWill = async () => {
     console.log(`------ContractFunctionExecutionError-------`)
     console.log(error)
     console.log(`-------------`)
-    setContractExecutionError(error.message)
+   // setContractExecutionError(error.message)
     
   }
 

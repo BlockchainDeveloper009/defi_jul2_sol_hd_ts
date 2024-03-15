@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 
-import CompManageWillsEdit from '../components/CompManageWillsEdit'
+// import CompManageWillsEdit from '../components/obs_CompManageWillsEdit'
 import { createConfig } from 'wagmi'
 
 import { polygonMumbai } from 'viem/chains'

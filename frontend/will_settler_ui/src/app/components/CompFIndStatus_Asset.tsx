@@ -35,7 +35,7 @@ const CompFIndStatus_Asset: React.FC<ComponentBProps> =
       console.log(data)
      
       return (
-        <div><h2>CompFIndStatus_Asset {data.toString()}</h2></div>
+        <div><h2>CompFIndStatus_Asset {data as string}</h2></div>
       )
     } 
     if(error){

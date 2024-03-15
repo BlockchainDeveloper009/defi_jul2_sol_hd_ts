@@ -11,7 +11,7 @@ import {
 
 import { BrowserRouter, Routes, useNavigate, useParams } from "react-router-dom";
 import { formatEther } from 'viem'
-import CompWagmiTestProvider from './CompWagmiTestProvider';
+
 import { useAccount, useReadContract } from 'wagmi';
 import { IAssets } from '../models/IAssets';
 import { errAssetByUsers } from '../Errors';

@@ -119,23 +119,23 @@ function CompCreateWillsFormusingReactHooksWagmi2() {
       Benefitor: `${values.Benefitor}`,
     }),
   });
-  const result
-  = useReadContract({
-    abiwillCreator,
-    address: WillsCreator_CONTRACT_ADDRESS,    
-    functionName: 'checkAssetisAvailable',
-    args: [assetId],
-  })
+  // const result
+  // = useReadContract({
+  //   abiwillCreator,
+  //   address: WillsCreator_CONTRACT_ADDRESS,    
+  //   functionName: 'checkAssetisAvailable',
+  //   args: [assetId],
+  // })
 
-  useWatchContractEvent({
-    abiwillCreator,
-    address: WillsCreator_CONTRACT_ADDRESS,
+  // useWatchContractEvent({
+  //   abiwillCreator,
+  //   address: WillsCreator_CONTRACT_ADDRESS,
     
-    eventName: 'willCreated',
-    onLogs(logs) {
-      console.log('New logs!', logs)
-    },
-  })
+  //   eventName: 'willCreated',
+  //   onLogs(logs) {
+  //     console.log('New logs!', logs)
+  //   },
+  // })
   // const simulateResult = useSimulateContract
   // ({
   //   abi,
@@ -254,12 +254,14 @@ const { writeContract } = useWriteContract()
                         
                                 writeContract
                                 ({
-                                  abiassetsContractor,
+                                  abi:WillsCreator_CONTRACT_ADDRESS_ABI,
                                   address: WillsCreator_CONTRACT_ADDRESS,//'0x6635BaCd122cfc8e8D726633f224746Bd2578872',//,CreateBondandAdminRole_CONTRACT_ADDRESS
                                   functionName: 'a_createCryptoVault',
-                                  args: [assetId, BigInt(willStartDate),BigInt(willEndDate),
-                                  '0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a'],//benefitorAddr],//0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a
-                                  value: BigInt(0),
+                                  args: [assetId, 
+                                    BigInt(willStartDate),BigInt(willEndDate),
+                                  '0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a']
+                                  //benefitorAddr],//0x1d4F7bac4eAa3Cc5513B7A539330b53AE94A858a
+                                
                                   })
 
                             } catch (error) {

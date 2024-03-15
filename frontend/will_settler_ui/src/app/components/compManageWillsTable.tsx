@@ -184,7 +184,7 @@ function convertUnixTimestampToDateString(unixTimestamp: any): import("react").R
                 {
                   console.log(`-stat then-`)
                   console.log(s)
-                  stat["h"]= s.toString();     
+                  stat["h"]= s as string;     
 
                     console.log(`=stat ends=`)
               })

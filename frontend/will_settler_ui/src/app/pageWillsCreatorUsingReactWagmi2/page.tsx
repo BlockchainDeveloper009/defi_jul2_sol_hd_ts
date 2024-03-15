@@ -2,7 +2,7 @@
 import React from 'react'
 //import CompCreateWillsFormUsingWagmiReact from '../components/CompCreateWillsFormUsingWagmiReact'
 import CompCreateWillsFormusingReactHooksWagmi2 from '../components/CompCreateWillsFormusingReactHooksWagmi2';
-import CompCreateAssetsForm_SimulationUsingReactHooksWagmi2 from '../components/CompCreateAssetsForm_SimulationUsingReactHooksWagmi2';
+// import CompCreateAssetsForm_SimulationUsingReactHooksWagmi2 from '../components/CompCreateAssetsForm_SimulationUsingReactHooksWagmi2';
 
 import { AppProps } from 'next/app'
 

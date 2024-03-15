@@ -18,8 +18,8 @@ import {
 
 import { use, useEffect, useState } from 'react';
 import { useAccount, useWatchContractEvent } from 'wagmi'
-import CompWagmiTestProvider from './CompWagmiTestProvider';
-import { WagmiConfigProvider } from './WagmiConfigProvider';
+
+
 import { connect } from 'wagmi/actions';
 import { Account, parseEther } from 'viem';
 import  { PrismaClient } from '@prisma/client'
@@ -59,10 +59,10 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
   //   abi: CreateBondandAdminRole_CONTRACT_ABI,
   // })
   const [customerAccountAddress, setCustomerAccountAddress] = useState(0x0);
-  const [submittedValues, setSubmittedValues] = useState('');
-  const [assetCCY, setAssetCCY] = useState<`0x${''}`>('0x');
+  const [submittedValues, setSubmittedValues] = useState<`0x${string}` | undefined>(undefined);
+  const [assetCCY, setAssetCCY] = useState<`0x${string}`>();
   const [assetName, setAssetName] = useState('');
-  const [TokenCount, setTokenCount] = useState();
+  const [TokenCount, setTokenCount] = useState(0);
   
   const [eventAssetName, setEventAssetName] = useState('');
   
@@ -72,10 +72,13 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
   const [assetAmountForm, setAssetAmountForm] = useState<any>();
   const [assetIdCreated, setAssetIdCreated] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isPending, setisPending] = useState(false)
+  
   const [resetFields, setResetFields] = useState(false)
+
   const [apiToUpdateDBError, setApiToUpdateDbError] = useState('')
-  const [transactionHash, setTransactionHash] = useState<`0x${''}`>('0x');
-  const [assetCreatorAddr, setAssetCreatorAddr] = useState<`0x${''}`>('0x');
+  const [transactionHash, setTransactionHash] = useState('0x');
+  const [assetCreatorAddr, setAssetCreatorAddr] = useState<`0x${''}` | undefined>('0x');
   const [transactionExecutionError, settransactionExecutionError] = useState('')
   const [tokenFractions, setTokenFractions] = useState<string | null | number>(0.001);
 
@@ -133,10 +136,7 @@ function CompCreateAssetsFormUsingReactHooksWagmi2() {
     console.log('Selected option:', selectedOption);
   };
 // Define the onChange event handler for the input field
-const handleAssetAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  console.log(`----------handling assetAmount change----------------------`)
-  setTokenCount(event.target.value); // Update the state with the new input value
-};
+// next li
 
   const unwatch = watchContractEvent(config, {
     address: '0x0DaFC14Af4E71716971E04444fe58d9fC413dc3',//'0x7a92beDE8B87dD09C8dB1C979647f599f5AeBb14',
@@ -175,7 +175,7 @@ const handleAssetAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => 
 
 
 useEffect(()=>{
-  setAssetCreatorAddr(address)
+ // setAssetCreatorAddr(address)
 },[assetName,assetAmountForm, TokenCount, assetCreatorAddr])
   // useEffect(() => {
   //   const fetchCCY = async() => {
@@ -226,7 +226,7 @@ useEffect(()=>{
         console.log(`error caught: api call to createAsset  ${error}`)
         
         console.log(error)
-        setApiToUpdateDbError(error)
+        //setApiToUpdateDbError(error)
       }
     }
 
@@ -243,7 +243,7 @@ useEffect(()=>{
     initialValues: {
       assetName: '',
       Amount: 0,
-      assetCCY: '',
+      assetCCY: '0x',
       TokenCount: 0,
       fractionValue: 0
 
@@ -296,24 +296,31 @@ console.log(`fractionOptions-${cc}-`)
         // let cc = form.values.fractionValue * 10 000 000 000 000
         // 000;
         // console.log(`cc-${cc}-`)
-        writeContract
-        ({
-          abi,
-          address: Assets_CONTRACT_ADDRESS,
-          functionName: 'a_createAssets',
-          args: [
-            form.values.assetName, assetCCY, BigInt(cc)
-            
-          ],
-          value:BigInt(cc ),//dd.parse(BigInt(assetAmountForm)) 
-        })
-        if(hash){
-          console.log(`--set Transaction Hash -- `)
-          setTransactionHash(hash);
-        }else{
-          setTransactionHash("0x");
+  
+        if (assetCCY !== undefined) {
+          // Use assetCCY here
+
+          writeContract
+          ({
+            abi,
+            address: Assets_CONTRACT_ADDRESS,
+            functionName: 'a_createAssets',
+            args: [
+              form.values.assetName, assetCCY, BigInt(cc)
+              
+            ],
+            value:BigInt(cc ),//dd.parse(BigInt(assetAmountForm)) 
+          })
+          if(hash){
+            console.log(`--set Transaction Hash -- `)
+            setTransactionHash(hash);
+          }else{
+            setTransactionHash("0x");
+          }
+        } else {
+          console.error('Asset currency is undefined');
+          // Handle the case where assetCCY is undefined
         }
-        
 
   } catch (error) {
     console.log(`error during contract write`)
@@ -349,7 +356,7 @@ useEffect(()=> {
             form.onSubmit((values) => 
                     {
   
-                            setSubmittedValues(JSON.stringify(values, null, 2))
+                          //  setSubmittedValues(JSON.stringify(values, null, 2))
                             setAssetName(values.AssetName)
                             setAssetAmountForm(values.Amount)
                             console.log(`----Amount values----`)
@@ -384,7 +391,7 @@ useEffect(()=> {
               withAsterisk
              data={ccyOptions} 
              value={assetCCY} 
-             onChange={setAssetCCY}
+             onChange={(value) => setAssetCCY(value === null ? undefined : value as `0x${string}`)}
              searchable
              //nothingFoundMessage="Nothing found..."
              />
