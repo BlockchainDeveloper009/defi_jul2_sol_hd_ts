@@ -19,9 +19,9 @@ const harish = new nameMapping('HARISH','ஹரிஷ்','𑀳𑀭𑀺𑀱𑁆'
 const nethran = new nameMapping('nethran',' நேத்திரன்','𑀦𑁂𑀢𑁆𑀢𑀺𑀭𑀷𑁆');
 const aarthi = new nameMapping('aarthi','ஆர்த்தி','𑀆𑀭𑁆𑀢𑁆𑀢𑀺');
 
-let prisma = new PrismaClient();
+// let prisma = new PrismaClient();
 export async function GET(request:NextRequest){
-        const asstCCY = await prisma.assets.findMany()
+   //     const asstCCY = await prisma.assets.findMany()
         /**
          * 
          * 
