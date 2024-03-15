@@ -42,6 +42,6 @@ Here are some examples of Tamil-Brahmi letters:
 ஓ (OO) - Represents the long vowel "oo."
 ஔ (AU) - Represents the diphthong "au."
          */
-        return NextResponse.json(["","BTC"]);
+        return NextResponse.json(["not","implemented"]);
 
 }
