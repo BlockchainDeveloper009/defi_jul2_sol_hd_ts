@@ -1,3 +1,8 @@
+### Contract Deployed & Verified at Testnet Mumbai
+
+- [Step1: Use '0x0DaFC14Af4E71716971E04444fe858d9fC413dc3' to create assets](https://mumbai.polygonscan.com/address/0x0DaFC14Af4E71716971E04444fe858d9fC413dc3#code)
+- [Step2: Use '0xE2004201614A5D19753bd0356f96296fF536E175' to create Wills using the asset ids created in AssetCreator contract ](https://mumbai.polygonscan.com/address/0xE2004201614A5D19753bd0356f96296fF536E175#code)
+
 ### Contract Explanation:
 
 This Solidity smart contract code for a cryptoWill creator with multi-token support. The contract includes functionalities for creating assets, managing wills, settling wills manually, canceling wills, and other related operations.
@@ -30,7 +35,7 @@ Here's a brief summary of the contract's functionalities and structure:
 
 - Gas Optimization: Review the contract code to identify areas where gas costs can be reduced, after implementing each feature. This could involve optimizing loops, minimizing storage reads and writes, and using more efficient data structures.
 
-- Refactor certains functions to be converted as library functions.
+- Reduce complexity by refactoring certains functions to be converted as library functions or another contract(like how a different contract is used to create Assets)
 
 - Plan for future enhancements and scalability improvements. for eg. Introduce ZK Rollup to do computation of settlement of contracts at one go.
 
