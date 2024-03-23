@@ -21,6 +21,11 @@ Here's a brief summary of the contract's functionalities and structure:
 - Gas optimization techniques such as reducing storage usage and minimizing loop iterations are applied.
 - Overall, the contract provides a comprehensive framework for managing crypto assets and executing wills in a decentralized manner.
 
+```
+Note: Some features  for eg. automatic settlement of Wills on maturity date are still under development/improvement or may be under Research to have gas optimized design
+
+```
+
 ### Tradeoffs:
 - On-Chain vs. Off-Chain Logic:   Performing all logic on-chain increases decentralization but can be costly in terms of gas fees and computation. Off-loading certain tasks to off-chain systems can reduce costs but may sacrifice decentralization and trustlessness.
 
