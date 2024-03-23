@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { Box, Title, Text, Flex, Image, TypographyStylesProvider } from '@mantine/core'
+import { Box, Title, Text, Flex, Image, TypographyStylesProvider, Textarea } from '@mantine/core'
 
 const pageHowToUseGuide = () => {
   return (
@@ -20,42 +20,63 @@ const pageHowToUseGuide = () => {
         <Box>
           <Title order={1}> Why & What </Title>
          <Text truncate="end">
-              Will creator Application is for Crypto Tokens & Assets.
+    <ul>
+      <p>
+      Will creator Application is for Crypto Tokens & Assets.
 
-              Using Will creator Application, person `"`A`"` would be able setup a 
-              contract which will liquidate money into Benefitor account automatically
-              on Will end date.
+
+      </p>
+      <Textarea>
+      The "Will creator" app lets someone, like "A," set up an agreement. 
+      This agreement ensures that when their will ends, money from their belongings goes 
+      straight into someone else's account without needing anyone to manually do it.
+       It makes sure their wishes are carried out smoothly, making things easier for managing their estate.
+      </Textarea>
+     
+    </ul>
           
          </Text>
         </Box>
         <Flex direction="column">
         <Title order={1}> Who can use?</Title>
           <Text truncate="end">
-              <p>
-              1. People who owns Crypto tokens & would like to pass it on
-                  to benefitors automatically.
-              2. People who wants to automate, credit their benefitors on a recurring basis
-              3. People who are uncertain
+              <p><ul>
+              
+              
+              <li>1. Folks who own crypto tokens and want them to go to their beneficiaries without any hassle.</li>
+              <li>2. Individuals who want to set up automatic payments to their beneficiaries regularly.</li>
+              <li>3. People living in uncertain situations, like those working on oil rigs far out at sea or military veterans.</li>
+
+             
+            
+              </ul>
+              
+              
+              
               </p>
           </Text>
 
         <Title order={1}> How to use</Title>
         <ul>
-          <li>Step1: Create Asset(requires metamask confirmation), 
-            after you confirm, contract will create asset & give you asset id [ca-0]</li>
-          <li>Step2:  Use the asset created in step1 assetd_Id:[ca-0],
-            this will give you will_id </li>
-          <li>Step3: From home page, click [Wills Manager] tab, to look the wills created by the user</li>
+    <li>Step 1: Initiate Asset Creation (requires confirmation via MetaMask). Once confirmed, the contract will create the asset and provide you with an asset ID [ca-0].</li>
+    <li>Step 2: Utilize the asset generated in Step 1 (asset ID: [ca-0]). This action will result in obtaining a will ID.</li>
+    <li>Step 3: Navigate to the homepage and select the [Wills Manager] tab to view the wills created by the user.</li>
 
-          <li>a. Cancellation - <p>You can cancel the will before the Maturity date,
-            the amount in the asset will be refunded back to Will owner.</p>
-          </li>
-          <li>b. Manually Settle - <p>when you manually settle, the funds in the will be immediately
-            liquidated to Benefitor address</p></li>
-          <li>c. Edit - <p></p></li>
-          <li></li>
-          <li></li>
-        </ul>
+    <li>
+        a. Cancellation -
+        <p>You have the option to cancel the will before its maturity date. If cancelled, the funds held in the asset will be refunded to the owner of the will.</p>
+    </li>
+    <li>
+        b. Manual Settlement -
+        <p>By opting for manual settlement, the funds allocated within the will are immediately transferred to the beneficiary's address.</p>
+    </li>
+    <li>
+        c. Editing -
+        <p></p>
+    </li>
+</ul>
+
+   
         
         </Flex>
         </TypographyStylesProvider>

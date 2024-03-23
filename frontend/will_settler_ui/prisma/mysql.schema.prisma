@@ -6,14 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("willsett_PRISMA_URL")
-   // Uses connection pooling
-// url = env("POSTGRES_PRISMA_URL")
-  // Uses direct connection, ⚠️ make sure to keep this to `POSTGRES_URL_NON_POOLING`
-  // or you'll have dangling databases from migrations
-  directUrl = env("willsett_URL_NON_POOLING")
-
+  provider = "mysql"
+  url      = env("test_MYSQL_DATABASE_URL")
 }
 model AppConfig{
   id Int @id @default(autoincrement())
@@ -82,12 +76,4 @@ model User {
  //sessions      Session[]
 
  @@map(name: "users")
-}
-
-model BetaUsers {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  image     String
-  createdAt DateTime @default(now())
 }
