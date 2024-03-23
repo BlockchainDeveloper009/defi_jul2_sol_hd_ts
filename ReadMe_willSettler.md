@@ -19,20 +19,33 @@ This Solidity smart contract code is a cryptoWill creator with multi-token suppo
 
 Here's a brief summary of the contract's functionalities and structure:
 
+This Solidity smart contract code is a cryptoWill creator with multi-token support. The contract includes functionalities for creating assets, managing wills, settling wills manually, canceling wills, and other related operations.
+
+Here's a brief summary of the contract's functionalities and structure:
+
 - The contract allows users to create assets (crypto coins) and use them to create wills.
+
 - Users can specify the start date, maturity date, and beneficiaries for each will.
+
 - The contract supports multiple tokens for asset creation.
-- There are modifiers to restrict access to certain functions based on roles like 
-   contract moderator,          contract owner, and will owner.
+
+- There are modifiers to restrict access to certain functions based on roles like contract moderator, contract owner, and will owner.
+
 - Events are emitted for various actions such as will creation, settlement, maturity, cancellation, and more.
+
 - Admin roles can be assigned to specific addresses.
+
 - The contract includes error handling and assertions for validation purposes.
-- Some functions and modifiers are commented out, indicating that they may be part of future enhancements     or  optimizations.
+
+- Some functions and modifiers are commented out, indicating that they may be part of future enhancements or optimizations.
+
 - Gas optimization techniques such as reducing storage usage and minimizing loop iterations are applied.
+
 - Overall, the contract provides a comprehensive framework for managing crypto assets and executing wills in a decentralized manner.
 
 ```
-Note: Some features  for eg. automatic settlement of Wills on maturity date are still under development/improvement or may be under Research to have gas optimized design
+Note: Some features, e.g., automatic settlement of Wills on the maturity date, are still under development/improvement or may be under research to have a gas-optimized design.
+
 
 ```
 
@@ -46,16 +59,13 @@ Note: Some features  for eg. automatic settlement of Wills on maturity date are 
 
 ### improvements: if i rewrite, the contract from scratch, I would like to follow below items.
 
-- Upgradeability: The contract appears to have a fixed implementation, which means it lacks upgradeability. Adding upgradeability would require additional complexity and potentially introduce security risks if not implemented carefully. The tradeoff is between the immutability of the contract and the ability to upgrade and fix issues post-deployment.
+- Upgradeability: Introduce upgradeability to allow for future enhancements and fixes post-deployment while considering security risks.
 
-- Gas Optimization: Review the contract code to identify areas where gas costs can be reduced, after implementing each feature. This could involve optimizing loops, minimizing storage reads and writes, and using more efficient data structures.
+- Gas Optimization: Continuously review and optimize the contract code to reduce gas costs by optimizing loops, minimizing storage reads and writes, and using more efficient data structures.
 
-- Reduce complexity by refactoring certains functions to be converted as library functions or another contract(like how a different contract is used to create Assets)
+- Reduce Complexity: Refactor certain functions to be converted into library functions or separate contracts to reduce complexity and improve readability.
 
-- Plan for future enhancements and scalability improvements. for eg. Introduce ZK Rollup to do computation of settlement of contracts at one go.
+- Plan for Future Enhancements: Plan and implement scalability improvements such as integrating ZK Rollup for computation of contract settlements and documentation earlier in the development process using Behavior-Driven Development approach for testing.
 
-- Initiate documentation earlier, even before writing smartcontract, write Behavior Driven Development approach for testing.
-
-- Will use Foundry, as it has in built fuzz testing and other cool stuffs.
-
+- Utilize Foundry: Utilize tools like Foundry for built-in fuzz testing and other optimizations.
 
